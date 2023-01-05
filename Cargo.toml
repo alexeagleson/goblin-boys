@@ -1,0 +1,46 @@
+[package]
+authors.workspace = true
+edition.workspace = true
+license.workspace = true
+name = "gamejam"
+readme.workspace = true
+rust-version.workspace = true
+version = "0.1.0"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+ae-direction = {path = "./ae-direction"}
+ae-position = {path = "./ae-position"}
+bevy.workspace = true
+futures-util = "0.3.25"
+log = "0.4"
+pretty_env_logger = "0.4"
+rand.workspace = true
+serde.workspace = true
+serde_json.workspace = true
+sqlx = {version = "0.6.2", features = ["runtime-tokio-rustls", "sqlite", "offline"]}
+tokio = {version = "1", features = ["full"]}
+tokio-stream = "0.1.11"
+typeshare.workspace = true
+warp = "0.3.3"
+
+[workspace]
+members = [
+  "ae-position",
+  "ae-direction",
+]
+
+[workspace.package]
+authors = ["Alex Eagleson <alexeagleson@gmail.com>"]
+edition = "2021"
+license = "MIT OR Apache-2.0"
+readme = "README.md"
+rust-version = "1.65"
+
+[workspace.dependencies]
+bevy = "0.9"
+rand = "0.8.5"
+serde = {version = "1.0.151", default-features = false, features = ["derive"]}
+serde_json = {version = "1.0.90", default-features = false}
+typeshare = "1.0.0"

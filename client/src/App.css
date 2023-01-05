@@ -1,0 +1,32 @@
+.game-container {
+  display: flex;
+  flex-direction: column;
+  row-gap: 12px;
+  align-items: center;
+}
+
+.canvas-and-log-container {
+  display: flex;
+  flex-direction: row;
+  column-gap: 12px;
+  max-height: min-content;
+  padding: 4px;
+  border: 1px solid black;
+  border-radius: 4px;
+}
+
+@media (max-width: 600px) {
+  .canvas-and-log-container {
+    flex-direction: column;
+    column-gap: 0;
+    row-gap: 12px;
+  }
+}
+
+.canvas-container {
+  position: relative;
+}
+
+.log-container {
+  overflow-x: scroll;
+}

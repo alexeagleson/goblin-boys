@@ -1,0 +1,32 @@
+.control-overlay {
+  position: absolute;
+  right: 20px;
+  bottom: 20px;
+  display: grid;
+  grid-template-columns: 40px 40px 40px;
+}
+
+.controller-button {
+  border-radius: 50%;
+  height: 40px;
+}
+
+.controller-button.up {
+  grid-column: 2 / span 1;
+  grid-row: 1 / span 1;
+}
+
+.controller-button.left {
+  grid-column: 1 / span 1;
+  grid-row: 2 / span 1;
+}
+
+.controller-button.right {
+  grid-column: 3 / span 1;
+  grid-row: 2 / span 1;
+}
+
+.controller-button.down {
+  grid-column: 2 / span 1;
+  grid-row: 3 / span 1;
+}

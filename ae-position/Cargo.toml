@@ -1,0 +1,18 @@
+[package]
+authors.workspace = true
+description = "A library for handling position on a 2D grid. Intended for use in game development."
+edition.workspace = true
+homepage = "https://github.com/alexeagleson/ae-position"
+license.workspace = true
+name = "ae-position"
+readme.workspace = true
+repository = "https://github.com/alexeagleson/ae-position"
+rust-version.workspace = true
+version = "0.1.4"
+
+[dependencies]
+ae-direction = {path = "../ae-direction"}
+bevy.workspace = true
+serde.workspace = true
+serde_json.workspace = true
+typeshare.workspace = true
