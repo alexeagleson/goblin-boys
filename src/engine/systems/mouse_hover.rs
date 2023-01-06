@@ -1,18 +1,25 @@
 use ae_position::Position;
 use bevy::prelude::*;
 
-use crate::{engine::resources::{MessageSender, MouseHoverBuffer}, api::{PlayerDetails, ServerMessage}};
+use crate::{
+    api::{EntityInfo, ServerMessage},
+    engine::{
+        components::BlocksLight,
+        resources::{MessageSender, MouseHoverBuffer},
+    },
+};
 
 /// Looks for an entity at a tile position being hovered
 pub fn mouse_hover_system(
     sender: Res<MessageSender>,
     mut mouse_hover_buffer: ResMut<MouseHoverBuffer>,
-    query: Query<(&Position, &Name)>,
+    query: Query<(&Position, &Name, Option<&BlocksLight>)>,
 ) {
     if let Some((id, hover_pos)) = mouse_hover_buffer.0.pop_front() {
-        let player_details_at_tile = query.iter().find_map(|(ent_pos, name)| {
-            (hover_pos == *ent_pos).then_some(PlayerDetails {
+        let player_details_at_tile = query.iter().find_map(|(ent_pos, name, blocks_light)| {
+            (hover_pos == *ent_pos).then_some(EntityInfo {
                 name: name.into(),
+                blocks_light: blocks_light.is_some(),
             })
         });
 

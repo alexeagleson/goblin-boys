@@ -2,14 +2,9 @@
 
 import { connectToGameServer } from "./connection";
 import { createGameApp } from "./canvas";
-import {
-  Dimensions2d,
-  PlayerDetails,
-  ServerMessage,
-  UserId,
-} from "../utility/types";
+import { Dimensions2d, EntityInfo, ServerMessage } from "../utility/types";
 import { assertNever, log } from "../utility/functions";
-import { GAME_CONFIG_URI, STRICT_MODE, TILE_SIZE } from "../utility/config";
+import { GAME_CONFIG_URI, TILE_SIZE } from "../utility/config";
 import { addInputListeners } from "./input";
 
 let xPixel = 0;
@@ -21,7 +16,7 @@ const updateHoverMenuPosition = (x: number, y: number) => {
 };
 
 export const initializeGame = async (
-  onHover: (x: number, y: number, playerDetails?: PlayerDetails) => void,
+  onHover: (x: number, y: number, entityInfo?: EntityInfo) => void,
   onClick: (log: string) => void,
   onMoveCount: (count: number) => void
 ) => {

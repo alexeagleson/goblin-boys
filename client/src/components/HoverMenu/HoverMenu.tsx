@@ -1,14 +1,14 @@
-import { PlayerDetails, Position } from "../../utility/types";
+import { EntityInfo, Position } from "../../utility/types";
 import "./HoverMenu.css";
 
 export interface HoverMenuProps {
   menuPosition: Position;
-  playerDetails: PlayerDetails;
+  entityInfo: EntityInfo;
 }
 
 export const HoverMenu: React.FC<HoverMenuProps> = ({
   menuPosition,
-  playerDetails,
+  entityInfo,
 }) => {
   return (
     <div
@@ -18,7 +18,8 @@ export const HoverMenu: React.FC<HoverMenuProps> = ({
         top: menuPosition.y,
       }}
     >
-      <p>{playerDetails.name}</p>
+      <p>{entityInfo.name}</p>
+      <p>Blocks Light: {entityInfo.blocksLight ? "Yes" : "No"}</p>
     </div>
   );
 };

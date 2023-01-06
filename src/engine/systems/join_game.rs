@@ -4,7 +4,7 @@ use bevy::prelude::*;
 use crate::{
     api::{EntityIndex, EntityPositionChange, GameEntity, ServerMessage, SpriteTexture},
     engine::{
-        components::{Item, User},
+        components::{Item, User, BlocksLight},
         resources::{ConnectBuffer, MessageSender},
     },
 };
@@ -24,6 +24,7 @@ pub fn join_game_system(
 
         let player_entity_index = commands
             .spawn(User(connected_user_id))
+            .insert(BlocksLight)
             .insert(Name::new(player_name))
             .insert(initial_position.clone())
             .insert(SpriteTexture::Bunny)

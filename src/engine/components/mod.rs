@@ -10,3 +10,6 @@ pub struct Name(pub String);
 
 #[derive(Component)]
 pub struct Item;
+
+#[derive(Component)]
+pub struct BlocksLight;

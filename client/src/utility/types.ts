@@ -47,8 +47,9 @@ export interface GameEntity {
 }
 
 /** Information about a player */
-export interface PlayerDetails {
+export interface EntityInfo {
 	name: string;
+	blocksLight: boolean;
 }
 
 /**
@@ -81,7 +82,7 @@ export type ServerMessage =
 	| { type: "removeEntity", content: EntityIndex }
 	| { type: "allGameEntities", content: GameEntity[] }
 	| { type: "entityPositionChange", content: EntityPositionChange }
-	| { type: "tileHover", content?: PlayerDetails }
+	| { type: "tileHover", content?: EntityInfo }
 	| { type: "tileClick", content: LogMessage }
 	| { type: "moveCount", content: number };
 

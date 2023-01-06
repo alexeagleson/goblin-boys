@@ -38,8 +38,9 @@ pub struct GameEntity {
 #[derive(Serialize, Debug)]
 #[serde(rename_all = "camelCase")]
 /// Information about a player
-pub struct PlayerDetails {
+pub struct EntityInfo {
     pub name: String,
+    pub blocks_light: bool,
 }
 
 #[typeshare]
@@ -77,7 +78,7 @@ pub enum ServerMessage {
     RemoveEntity(EntityIndex),
     AllGameEntities(Vec<GameEntity>),
     EntityPositionChange(EntityPositionChange),
-    TileHover(Option<PlayerDetails>),
+    TileHover(Option<EntityInfo>),
     TileClick(LogMessage),
     MoveCount(i32),
 }
