@@ -29,6 +29,9 @@ name = "ae-direction"
 version = "0.1.4"
 dependencies = [
  "rand",
+ "serde",
+ "serde_json",
+ "typeshare",
 ]
 
 [[package]]

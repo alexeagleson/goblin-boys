@@ -5,9 +5,9 @@ use typeshare::typeshare;
 use crate::delta::{Delta, CARDINAL_DELTAS, ORDINAL_DELTAS};
 
 #[typeshare]
-/// Represents the location of something on a 2D grid
 #[derive(Serialize, Deserialize, Clone, Eq, PartialEq, Hash, Debug, Component)]
 #[serde(rename_all = "camelCase")]
+/// Represents the location of something on a 2D grid
 pub struct Position {
     pub x: i32,
     pub y: i32,

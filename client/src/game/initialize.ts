@@ -3,18 +3,14 @@
 import { connectToGameServer } from "./connection";
 import { createGameApp } from "./canvas";
 import {
-  Key,
-  MapDimensions,
+  Dimensions2d,
   PlayerDetails,
-  Position,
   ServerMessage,
   UserId,
 } from "../utility/types";
 import { assertNever, log } from "../utility/functions";
 import { GAME_CONFIG_URI, STRICT_MODE, TILE_SIZE } from "../utility/config";
 import { addInputListeners } from "./input";
-
-let myClientUserId: UserId | undefined = undefined;
 
 let xPixel = 0;
 let yPixel = 0;
@@ -35,7 +31,7 @@ export const initializeGame = async (
     throw Error("Failed to get initial game config");
   }
 
-  const mapDimensions: MapDimensions = await mapDimensionsResponse.json();
+  const mapDimensions: Dimensions2d = await mapDimensionsResponse.json();
 
   const { addSprite, gameCanvas, removeSprite, setSpritePosition } =
     await createGameApp(mapDimensions, TILE_SIZE);
@@ -48,27 +44,15 @@ export const initializeGame = async (
     const response: ServerMessage = JSON.parse(msg.data);
 
     switch (response.type) {
-      case "playerPosition":
+      case "entityPositionChange":
         setSpritePosition(response.content);
         break;
-      case "allPlayerPositions":
-        response.content.forEach((playerPos) => {
-          addSprite(playerPos, "bunny");
+      case "allGameEntities":
+        response.content.forEach((gameEntity) => {
+          addSprite(gameEntity);
         });
         break;
-      case "removedPlayer":
-        // We should never receive a message to remove the current client's player
-        // during game session since there is no way to manually disconnect
-        if (
-          myClientUserId !== undefined &&
-          myClientUserId === response.content
-        ) {
-          if (STRICT_MODE === true) {
-            throw Error(
-              "Player removal message was received while still connected"
-            );
-          }
-        }
+      case "removeEntity":
         removeSprite(response.content);
         break;
       case "moveCount":
@@ -79,9 +63,6 @@ export const initializeGame = async (
         break;
       case "tileClick":
         onClick(response.content);
-        break;
-      case "initialize":
-        myClientUserId = response.content;
         break;
       default:
         assertNever(response);

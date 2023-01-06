@@ -14,3 +14,6 @@ version = "0.1.4"
 
 [dependencies]
 rand.workspace = true
+serde.workspace = true
+serde_json.workspace = true
+typeshare.workspace = true

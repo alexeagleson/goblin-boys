@@ -1,19 +1,37 @@
-use std::fmt::Display;
-
+use ae_direction::BodyRelative;
 use ae_position::Position;
+use bevy::prelude::Component;
 use serde::{Deserialize, Serialize};
 use typeshare::typeshare;
 
 #[typeshare]
-pub type UserId = i32;
+#[derive(Clone, Copy, Serialize, Debug, PartialEq, Eq)]
+pub struct UserId {
+    pub id: i32,
+}
+
+#[typeshare]
+#[derive(Clone, Copy, Serialize, Debug, PartialEq, Eq)]
+pub struct EntityIndex {
+    pub index: u32,
+}
 
 #[typeshare]
 #[derive(Serialize, Debug)]
 #[serde(rename_all = "camelCase")]
 /// Information about a specific player's current position
-pub struct PlayerPosition {
-    pub id: UserId,
+pub struct EntityPositionChange {
+    pub entity_index: EntityIndex,
     pub pos: Position,
+}
+
+#[typeshare]
+#[derive(Serialize, Debug)]
+#[serde(rename_all = "camelCase")]
+/// Information about a specific player's current position
+pub struct GameEntity {
+    pub entity_position: EntityPositionChange,
+    pub sprite: SpriteTexture,
 }
 
 #[typeshare]
@@ -27,39 +45,17 @@ pub struct PlayerDetails {
 #[typeshare]
 #[derive(Serialize, Debug)]
 #[serde(rename_all = "camelCase")]
-/// Information about the game map
-pub struct MapDimensions {
-    pub width: i32,
-    pub height: i32,
-}
-
-#[typeshare]
-#[derive(Deserialize, Debug, Clone, Copy)]
-#[serde(rename_all = "camelCase")]
-/// Supported key inputs
-pub enum Key {
-    Up,
-    Down,
-    Left,
-    Right,
-}
-
-impl Display for Key {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        match self {
-            Key::Up => write!(f, "up"),
-            Key::Down => write!(f, "down"),
-            Key::Left => write!(f, "left"),
-            Key::Right => write!(f, "right"),
-        }
-    }
-}
-
-#[typeshare]
-#[derive(Serialize, Debug)]
-#[serde(rename_all = "camelCase")]
 /// A single entry in the game log
 pub struct LogMessage(pub String);
+
+#[typeshare]
+#[derive(Component, Serialize, Deserialize, Debug, Clone)]
+#[serde(rename_all = "camelCase")]
+/// A sprite to render that represents a visible entity
+pub enum SpriteTexture {
+    Bunny,
+    Carrot,
+}
 
 #[typeshare]
 #[derive(Deserialize, Debug, Clone)]
@@ -69,7 +65,7 @@ pub enum ClientMessage {
     TileHover(Position),
     TileClick(Position),
     Initialize,
-    Keypress(Key),
+    Keypress(BodyRelative),
     Disconnect,
 }
 
@@ -78,11 +74,10 @@ pub enum ClientMessage {
 #[serde(rename_all = "camelCase", tag = "type", content = "content")]
 /// Communicates information about the active game to the client
 pub enum ServerMessage {
-    RemovedPlayer(UserId),
-    AllPlayerPositions(Vec<PlayerPosition>),
-    PlayerPosition(PlayerPosition),
+    RemoveEntity(EntityIndex),
+    AllGameEntities(Vec<GameEntity>),
+    EntityPositionChange(EntityPositionChange),
     TileHover(Option<PlayerDetails>),
     TileClick(LogMessage),
     MoveCount(i32),
-    Initialize(UserId)
 }

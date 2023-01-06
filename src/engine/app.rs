@@ -4,7 +4,7 @@ use bevy::{
 };
 use tokio::sync::mpsc::{UnboundedReceiver, UnboundedSender};
 
-use crate::api::{ClientMessage, ServerMessage};
+use crate::api::{ClientMessage, ServerMessage, UserId};
 
 use super::{
     resources::{
@@ -19,8 +19,8 @@ use super::{
 };
 
 pub fn start_game_engine(
-    client_receiver: UnboundedReceiver<(i32, ClientMessage)>,
-    server_sender: UnboundedSender<(i32, ServerMessage)>,
+    client_receiver: UnboundedReceiver<(UserId, ClientMessage)>,
+    server_sender: UnboundedSender<(UserId, ServerMessage)>,
 ) {
     App::new()
         .insert_resource(MessageReceiver(client_receiver))

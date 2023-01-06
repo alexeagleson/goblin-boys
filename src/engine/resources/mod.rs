@@ -2,11 +2,12 @@ pub mod map;
 
 use std::collections::VecDeque;
 
+use ae_direction::BodyRelative;
 use ae_position::Position;
 use bevy::prelude::Resource;
 use tokio::sync::mpsc::{UnboundedReceiver, UnboundedSender};
 
-use crate::api::{ClientMessage, Key, ServerMessage, UserId};
+use crate::api::{ClientMessage, ServerMessage, UserId};
 
 #[derive(Resource)]
 pub struct MessageReceiver(pub UnboundedReceiver<(UserId, ClientMessage)>);
@@ -15,7 +16,7 @@ pub struct MessageReceiver(pub UnboundedReceiver<(UserId, ClientMessage)>);
 pub struct MessageSender(pub UnboundedSender<(UserId, ServerMessage)>);
 
 #[derive(Resource, Default)]
-pub struct KeypressBuffer(pub VecDeque<(UserId, Key)>);
+pub struct KeypressBuffer(pub VecDeque<(UserId, BodyRelative)>);
 
 #[derive(Resource, Default)]
 pub struct DisconnectBuffer(pub VecDeque<UserId>);

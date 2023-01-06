@@ -1,7 +1,5 @@
-use ae_position::Position;
+use ae_position::{Position, Dimensions2d};
 use bevy::prelude::Resource;
-
-use crate::api::MapDimensions;
 
 pub const DEFAULT_MAP_WIDTH: i32 = 12;
 pub const DEFAULT_MAP_HEIGHT: i32 = 12;
@@ -27,7 +25,7 @@ impl Default for Map {
     }
 }
 
-impl From<&Map> for MapDimensions {
+impl From<&Map> for Dimensions2d {
     fn from(map: &Map) -> Self {
         Self {
             width: map.width,

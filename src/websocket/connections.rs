@@ -18,8 +18,8 @@ impl Default for Connections {
 }
 
 impl Connections {
-    pub fn new_connection(&mut self, id: UserId, sender: mpsc::UnboundedSender<Message>) {
-        self.0.insert(id, sender);
+    pub fn new_connection(&mut self, user_id: UserId, sender: mpsc::UnboundedSender<Message>) {
+        self.0.insert(user_id.id, sender);
     }
 }
 

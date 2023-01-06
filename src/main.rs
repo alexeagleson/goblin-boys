@@ -3,7 +3,8 @@ mod database;
 mod engine;
 mod websocket;
 
-use api::{ClientMessage, MapDimensions, ServerMessage, UserId};
+use ae_position::Dimensions2d;
+use api::{ClientMessage, ServerMessage, UserId};
 use bevy::prelude::*;
 use database::{Database, DatabaseLock};
 use engine::{
@@ -64,33 +65,34 @@ fn main() {
 
             tokio::task::spawn(async move {
                 while let Some((sending_user_id, server_message)) = server_receiver.recv().await {
-                    trace!("received message from user {}", sending_user_id);
+                    info!("received message from user {}", sending_user_id.id);
 
                     let serialized_message: String =
                         serde_json::to_string(&server_message).expect("Serialize should work");
 
                     match server_message {
                         // Messages that need to go to all clients
-                        ServerMessage::RemovedPlayer(_)
-                        | ServerMessage::AllPlayerPositions(_)
-                        | ServerMessage::PlayerPosition(_)
+                        ServerMessage::RemoveEntity(_)
+                        | ServerMessage::AllGameEntities(_)
+                        | ServerMessage::EntityPositionChange(_)
                         | ServerMessage::TileClick(_)
                         | ServerMessage::MoveCount(_) => {
-                            trace!("Sending to all: {}", serialized_message);
+                            info!("Sending to all: {}", serialized_message);
                             for (&_uid, sender) in connections_extra.read().await.0.iter() {
                                 sender.send(Message::text(&serialized_message)).ok();
                             }
                         }
                         // Messages that need to go to a single specific client
-                        ServerMessage::Initialize(_) | ServerMessage::TileHover(_) => {
-                            trace!(
+                        // ServerMessage::Initialize(_) | 
+                        ServerMessage::TileHover(_) => {
+                            info!(
                                 "Sending only to user {}: {}",
-                                sending_user_id,
+                                sending_user_id.id,
                                 serialized_message
                             );
 
                             for (&uid, sender) in connections_extra.read().await.0.iter() {
-                                if uid == sending_user_id {
+                                if uid == sending_user_id.id {
                                     sender.send(Message::text(&serialized_message)).ok();
                                 }
                             }
@@ -123,7 +125,7 @@ fn main() {
             // GET /game-config returns a `200 OK` with a JSON array of ids:
             let game_config = warp::path!("api" / "game-config")
                 .map(|| {
-                    warp::reply::json(&MapDimensions {
+                    warp::reply::json(&Dimensions2d {
                         width: DEFAULT_MAP_WIDTH,
                         height: DEFAULT_MAP_HEIGHT,
                     })

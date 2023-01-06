@@ -1,10 +1,13 @@
-use ae_direction::Cardinal;
+use ae_direction::{BodyRelative, Cardinal};
 use ae_position::{Delta, Position};
 use bevy::prelude::*;
 
 use crate::{
-    api::{Key, ServerMessage, PlayerPosition},
-    engine::{resources::{map::Map, KeypressBuffer, MessageSender}, components::User},
+    api::{EntityIndex, EntityPositionChange, ServerMessage},
+    engine::{
+        components::User,
+        resources::{map::Map, KeypressBuffer, MessageSender},
+    },
 };
 
 /// Moves an entity based on a user keypress
@@ -12,45 +15,50 @@ pub fn movement_keys_system(
     map: Res<Map>,
     sender: Res<MessageSender>,
     mut keypress_buffer: ResMut<KeypressBuffer>,
-    mut query: Query<(&User, &mut Position, &Name)>,
+    mut query: Query<(Entity, &User, &mut Position, &Name)>,
 ) {
     let key = keypress_buffer.0.pop_front();
 
     if let Some((id, key)) = key {
-        for (user, mut pos, name) in query.iter_mut() {
+        for (entity, user, mut pos, name) in query.iter_mut() {
             // This user ID matches the component of the one trying to make the move
             if user.0 == id {
                 let new_pos = match key {
-                    Key::Up => pos.add_delta(&Delta::from(ae_direction::Direction::Cardinal(
-                        Cardinal::North,
-                    ))),
-                    Key::Down => pos.add_delta(&Delta::from(ae_direction::Direction::Cardinal(
-                        Cardinal::South,
-                    ))),
-                    Key::Left => pos.add_delta(&Delta::from(ae_direction::Direction::Cardinal(
-                        Cardinal::West,
-                    ))),
-                    Key::Right => pos.add_delta(&Delta::from(ae_direction::Direction::Cardinal(
-                        Cardinal::East,
-                    ))),
+                    BodyRelative::Up => pos.add_delta(&Delta::from(
+                        ae_direction::Direction::Cardinal(Cardinal::North),
+                    )),
+                    BodyRelative::Down => pos.add_delta(&Delta::from(
+                        ae_direction::Direction::Cardinal(Cardinal::South),
+                    )),
+                    BodyRelative::Left => pos.add_delta(&Delta::from(
+                        ae_direction::Direction::Cardinal(Cardinal::West),
+                    )),
+                    BodyRelative::Right => pos.add_delta(&Delta::from(
+                        ae_direction::Direction::Cardinal(Cardinal::East),
+                    )),
                 };
+
+                // [TODO] The below communication could be handled in its own system using position change detection
+                // https://bevy-cheatbook.github.io/programming/change-detection.html
 
                 if map.valid_position(&new_pos) {
                     *pos = new_pos;
-                    trace!("{} moved to {:?}", name, pos);
+                    info!("{} moved to {:?}", name, pos);
 
                     sender
                         .0
                         .send((
                             id,
-                            ServerMessage::PlayerPosition(PlayerPosition {
-                                id,
+                            ServerMessage::EntityPositionChange(EntityPositionChange {
+                                entity_index: EntityIndex {
+                                    index: entity.index(),
+                                },
                                 pos: pos.clone(),
                             }),
                         ))
                         .ok();
                 } else {
-                    trace!("{} attempted to move but failed", name);
+                    info!("{} attempted to move but failed", name);
                 }
             }
         }

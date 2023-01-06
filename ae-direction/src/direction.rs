@@ -1,6 +1,32 @@
 use std::fmt::Display;
 
 use rand::{distributions::Standard, prelude::Distribution};
+use serde::Deserialize;
+use typeshare::typeshare;
+
+#[typeshare]
+#[derive(Deserialize, Debug, Clone, Copy)]
+#[serde(rename_all = "camelCase")]
+/// Yes I know this name sucks. What's better?
+/// https://en.wikipedia.org/wiki/Body_relative_direction
+pub enum BodyRelative {
+    Up,
+    Down,
+    Left,
+    Right,
+}
+
+impl Display for BodyRelative {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match self {
+            BodyRelative::Up => write!(f, "up"),
+            BodyRelative::Down => write!(f, "down"),
+            BodyRelative::Left => write!(f, "left"),
+            BodyRelative::Right => write!(f, "right"),
+        }
+    }
+}
+
 
 #[derive(PartialEq, Clone, Debug)]
 pub enum Cardinal {

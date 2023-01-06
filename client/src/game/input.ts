@@ -1,7 +1,7 @@
 /** Handlers for user input (keyboard and mouse) */
 
 import { TILE_SIZE } from "../utility/config";
-import { ClientMessage, Key, Position, ServerMessage } from "../utility/types";
+import { BodyRelative, Position } from "../utility/types";
 import { SafeSend } from "./connection";
 
 export interface DirectionHandlers {
@@ -57,15 +57,15 @@ export const addInputListeners = (
   gameCanvas.onmousedown = onTileSelect;
   gameCanvas.ontouchstart = onTileSelect;
 
-  const sendKey = (key: Key) => {
+  const sendKey = (key: BodyRelative) => {
     safeSend({ type: "keypress", content: key });
   };
 
   const directionHandlers: DirectionHandlers = {
-    up: () => sendKey(Key.Up),
-    left: () => sendKey(Key.Left),
-    right: () => sendKey(Key.Right),
-    down: () => sendKey(Key.Down),
+    up: () => sendKey(BodyRelative.Up),
+    left: () => sendKey(BodyRelative.Left),
+    right: () => sendKey(BodyRelative.Right),
+    down: () => sendKey(BodyRelative.Down),
   };
 
   // Registers a key handler on the main window for

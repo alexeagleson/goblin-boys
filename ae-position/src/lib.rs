@@ -1,5 +1,8 @@
-mod position;
+pub mod position;
 pub use crate::position::*;
 
-mod delta;
+pub mod delta;
 pub use crate::delta::*;
+
+pub mod dimension;
+pub use crate::dimension::*;
