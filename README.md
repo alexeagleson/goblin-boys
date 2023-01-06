@@ -1,6 +1,6 @@
-# Rust / Typescript Game Template
+# Rust / Bevy / Typescript Game Template
 
-A complete template for building a 2D grid based game with a Rust backend and Typescript frontend.
+A complete template for building a 2D grid based game with a Rust backend with Bevy engine, and Typescript frontend.
 
 ## Demo
 
