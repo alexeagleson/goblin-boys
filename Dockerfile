@@ -3,11 +3,15 @@ FROM rust:1.66-slim-buster as builder
 
 ENV project=gamejam
 
+RUN rustup toolchain install nightly
+
+RUN rustup default nightly
+
 ### SERVER STUFF ###
 
 # Required for sqlx-cli
 RUN apt update
-RUN apt install -y pkg-config libssl-dev openssl
+RUN apt install -y pkg-config libssl-dev libudev-dev openssl libasound2-dev
 
 RUN cargo install sqlx-cli
 
@@ -97,6 +101,10 @@ WORKDIR /usr/src/${project}/
 FROM rust:1.66-slim-buster
 
 ENV project=gamejam
+
+# Required for sqlx-cli
+RUN apt update
+RUN apt install -y libasound2-dev
 
 WORKDIR /usr/src/${project}/
 
