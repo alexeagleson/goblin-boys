@@ -40,6 +40,7 @@ const App = () => {
           canvasContainer.current?.appendChild(gameCanvas);
           let canvasHeight = gameCanvas.height;
           const canvasWidth = gameCanvas.width;
+
           if (canvasContainer.current && logContainer.current) {
             canvasContainer.current.style.height = canvasHeight + "px";
             logContainer.current.style.width = canvasWidth + "px";
@@ -51,6 +52,11 @@ const App = () => {
 
             logContainer.current.style.height = canvasHeight + "px";
           }
+
+          gameCanvas.onmouseleave = () => {
+            setHoverMenu(undefined);
+          }
+          
         }
       );
     }

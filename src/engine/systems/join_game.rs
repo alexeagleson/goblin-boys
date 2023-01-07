@@ -4,7 +4,7 @@ use bevy::prelude::*;
 use crate::{
     api::{EntityIndex, EntityPositionChange, GameEntity, ServerMessage, SpriteTexture},
     engine::{
-        components::{Item, User, BlocksLight},
+        components::{BlocksLight, BlocksMovement, Eyes, Item, User},
         resources::{ConnectBuffer, MessageSender},
     },
 };
@@ -17,13 +17,17 @@ pub fn join_game_system(
     query: Query<(Entity, &Position, &SpriteTexture)>,
 ) {
     if let Some(connected_user_id) = connect_buffer.0.pop_front() {
-        let initial_position: Position = Position { x: 0, y: 0 };
+        let initial_position: Position = Position { x: 1, y: 1 };
         let player_name = format!("Player {}", connected_user_id.id);
 
         info!("Adding new player named {}", &player_name);
 
         let player_entity_index = commands
             .spawn(User(connected_user_id))
+            // [TODO] This needs to become an actual default I think this could probably crash
+            // if it tried to look for something before this first time the value is set for real
+            .insert(Eyes::new(10))
+            .insert(BlocksMovement)
             .insert(BlocksLight)
             .insert(Name::new(player_name))
             .insert(initial_position.clone())

@@ -9,7 +9,7 @@ use bevy::prelude::*;
 use database::{Database, DatabaseLock};
 use engine::{
     app::start_game_engine,
-    resources::map::{DEFAULT_MAP_HEIGHT, DEFAULT_MAP_WIDTH},
+    resources::map::{MAP_HEIGHT, MAP_WIDTH},
 };
 use std::sync::Arc;
 use tokio::sync::{
@@ -126,8 +126,8 @@ fn main() {
             let game_config = warp::path!("api" / "game-config")
                 .map(|| {
                     warp::reply::json(&Dimensions2d {
-                        width: DEFAULT_MAP_WIDTH,
-                        height: DEFAULT_MAP_HEIGHT,
+                        width: MAP_WIDTH,
+                        height: MAP_HEIGHT,
                     })
                 })
                 .with(any_origin_get);

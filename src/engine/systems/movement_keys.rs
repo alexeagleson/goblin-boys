@@ -5,7 +5,8 @@ use bevy::prelude::*;
 use crate::{
     api::{EntityIndex, EntityPositionChange, ServerMessage},
     engine::{
-        components::User,
+        components::{BlocksLight, BlocksMovement, User},
+        events::ShouldUpdateMap,
         resources::{map::Map, KeypressBuffer, MessageSender},
     },
 };
@@ -14,13 +15,21 @@ use crate::{
 pub fn movement_keys_system(
     map: Res<Map>,
     sender: Res<MessageSender>,
+    mut ev_update_map: EventWriter<ShouldUpdateMap>,
     mut keypress_buffer: ResMut<KeypressBuffer>,
-    mut query: Query<(Entity, &User, &mut Position, &Name)>,
+    mut query: Query<(
+        Entity,
+        &User,
+        &mut Position,
+        &Name,
+        Option<&BlocksLight>,
+        Option<&BlocksMovement>,
+    )>,
 ) {
     let key = keypress_buffer.0.pop_front();
 
     if let Some((id, key)) = key {
-        for (entity, user, mut pos, name) in query.iter_mut() {
+        for (entity, user, mut pos, name, blocks_light, blocks_movement) in query.iter_mut() {
             // This user ID matches the component of the one trying to make the move
             if user.0 == id {
                 let new_pos = match key {
@@ -41,9 +50,14 @@ pub fn movement_keys_system(
                 // [TODO] The below communication could be handled in its own system using position change detection
                 // https://bevy-cheatbook.github.io/programming/change-detection.html
 
-                if map.valid_position(&new_pos) {
+                if !map.movement_blocked(&new_pos) {
                     *pos = new_pos;
                     info!("{} moved to {:?}", name, pos);
+
+                    // If an entity that blocks light or movement moves the map should update
+                    if blocks_light.is_some() || blocks_movement.is_some() {
+                        ev_update_map.send(ShouldUpdateMap);
+                    }
 
                     sender
                         .0

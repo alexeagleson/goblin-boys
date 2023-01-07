@@ -41,10 +41,13 @@ export const createGameApp = async (
 
   const bunny = await Assets.load("bunny.png");
   const carrot = await Assets.load("carrot.png");
+  const wall = await Assets.load("wall.jpg");
+
 
   const TEXTURE_MAP: Record<SpriteTexture, Texture> = {
     [SpriteTexture.Bunny]: bunny,
     [SpriteTexture.Carrot]: carrot,
+    [SpriteTexture.Wall]: wall,
   };
 
   /** Move a sprite to another position on the canvas */

@@ -50,6 +50,7 @@ export interface GameEntity {
 export interface EntityInfo {
 	name: string;
 	blocksLight: boolean;
+	visibleToPlayer: boolean;
 }
 
 /**
@@ -67,6 +68,7 @@ export enum BodyRelative {
 export enum SpriteTexture {
 	Bunny = "bunny",
 	Carrot = "carrot",
+	Wall = "wall",
 }
 
 /** An input interaction from the client */

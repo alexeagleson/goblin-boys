@@ -37,6 +37,19 @@ impl Position {
             .map(|delta| self.add_delta(delta))
             .collect()
     }
+
+    /// The position index on a grid of tiles
+    pub fn to_idx(&self, grid_width: i32) -> usize {
+        (self.y * grid_width + self.x) as usize
+    }
+
+    /// The position from the index on a grid of tiles
+    pub fn from_idx(idx: usize, grid_width: i32) -> Self {
+        Self {
+            x: idx as i32 % grid_width,
+            y: idx as i32 / grid_width,
+        }
+    }
 }
 
 #[cfg(test)]
@@ -82,5 +95,26 @@ mod tests {
         assert!(cardinal_positions.contains(&Position { x: 6, y: 6 }));
         assert!(cardinal_positions.contains(&Position { x: 4, y: 4 }));
         assert!(cardinal_positions.contains(&Position { x: 4, y: 6 }));
+    }
+
+    #[test]
+    fn to_idx() {
+        let grid_width = 10;
+        let pos = Position { x: 5, y: 5 };
+
+        assert_eq!(pos.to_idx(grid_width), 55);
+
+        let grid_width = 8;
+        let pos = Position { x: 6, y: 2 };
+
+        assert_eq!(pos.to_idx(grid_width), 22);
+    }
+
+    #[test]
+    fn from_idx() {
+        let grid_width = 10;
+        let idx = 55;
+
+        assert_eq!(Position::from_idx(idx, grid_width), Position { x: 5, y: 5 });
     }
 }

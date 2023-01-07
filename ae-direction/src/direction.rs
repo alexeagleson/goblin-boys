@@ -27,6 +27,27 @@ impl Display for BodyRelative {
     }
 }
 
+impl From<BodyRelative> for Cardinal {
+    fn from(relative: BodyRelative) -> Self {
+        match relative {
+            BodyRelative::Up => Cardinal::North,
+            BodyRelative::Down => Cardinal::South,
+            BodyRelative::Left => Cardinal::West,
+            BodyRelative::Right => Cardinal::East,
+        }
+    }
+}
+
+impl From<Cardinal> for BodyRelative {
+    fn from(cardinal: Cardinal) -> Self {
+        match cardinal {
+            Cardinal::North => BodyRelative::Up,
+            Cardinal::East => BodyRelative::Right,
+            Cardinal::South => BodyRelative::Down,
+            Cardinal::West => BodyRelative::Left,
+        }
+    }
+}
 
 #[derive(PartialEq, Clone, Debug)]
 pub enum Cardinal {

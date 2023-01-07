@@ -1718,6 +1718,7 @@ dependencies = [
  "sqlx",
  "tokio",
  "tokio-stream",
+ "tv_shadowcasting",
  "typeshare",
  "warp",
 ]
@@ -3912,6 +3913,11 @@ dependencies = [
  "url",
  "utf-8",
 ]
+
+[[package]]
+name = "tv_shadowcasting"
+version = "0.1.0"
+source = "git+https://github.com/tylervipond/tv-shadowcasting#d762dd24481a6f8ff107c89f8bf90b176642201c"
 
 [[package]]
 name = "twoway"

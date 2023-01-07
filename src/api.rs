@@ -35,12 +35,13 @@ pub struct GameEntity {
 }
 
 #[typeshare]
-#[derive(Serialize, Debug)]
+#[derive(Serialize, Debug, Clone)]
 #[serde(rename_all = "camelCase")]
 /// Information about a player
 pub struct EntityInfo {
     pub name: String,
     pub blocks_light: bool,
+    pub visible_to_player: bool,
 }
 
 #[typeshare]
@@ -56,6 +57,7 @@ pub struct LogMessage(pub String);
 pub enum SpriteTexture {
     Bunny,
     Carrot,
+    Wall,
 }
 
 #[typeshare]

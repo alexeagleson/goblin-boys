@@ -20,6 +20,7 @@ export const HoverMenu: React.FC<HoverMenuProps> = ({
     >
       <p>{entityInfo.name}</p>
       <p>Blocks Light: {entityInfo.blocksLight ? "Yes" : "No"}</p>
+      <p>Can See: {entityInfo.visibleToPlayer ? "Yes" : "No"}</p>
     </div>
   );
 };
