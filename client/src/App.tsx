@@ -55,8 +55,7 @@ const App = () => {
 
           gameCanvas.onmouseleave = () => {
             setHoverMenu(undefined);
-          }
-          
+          };
         }
       );
     }

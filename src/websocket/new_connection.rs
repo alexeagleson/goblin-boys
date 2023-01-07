@@ -47,12 +47,12 @@ pub async fn handle_new_connection(
     connections.write().await.new_connection(new_id, tx);
 
     // Every time the user sends a message, broadcast it to all other users
-    while let Some(result) = user_ws_rx.next().await {
+    'listening: while let Some(result) = user_ws_rx.next().await {
         let msg = match result {
             Ok(msg) => msg,
             Err(e) => {
                 error!("websocket error(uid={}): {}", new_id.id, e);
-                break;
+                break 'listening;
             }
         };
         handle_message(

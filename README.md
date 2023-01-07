@@ -90,7 +90,7 @@ Install the fly CLI and then:
 ```
 fly auth login
 
-fly launch
+fly launch (if first time, see below for fly deploy if not)
 ```
 
 Fly will launch the app and create a `fly.toml` in the root directory with project config options.
