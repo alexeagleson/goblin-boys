@@ -6,3 +6,4 @@ pub mod movement_keys;
 pub mod message;
 pub mod update_map;
 pub mod spawn_walls;
+pub mod move_timer;

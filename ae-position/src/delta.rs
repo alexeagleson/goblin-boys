@@ -28,34 +28,22 @@ pub const ORDINAL_DELTAS: [Delta; 4] = [
 
 impl From<Cardinal> for Delta {
     fn from(dir: Cardinal) -> Self {
-        dir.into()
+        match dir {
+            Cardinal::North => Delta { x: 0, y: -1 },
+            Cardinal::East => Delta { x: 1, y: 0 },
+            Cardinal::South => Delta { x: 0, y: 1 },
+            Cardinal::West => Delta { x: -1, y: 0 },
+        }
     }
 }
 
 impl From<Ordinal> for Delta {
     fn from(dir: Ordinal) -> Self {
-        dir.into()
-    }
-}
-
-impl From<Cardinal> for &Delta {
-    fn from(dir: Cardinal) -> Self {
         match dir {
-            Cardinal::North => &Delta { x: 0, y: -1 },
-            Cardinal::East => &Delta { x: 1, y: 0 },
-            Cardinal::South => &Delta { x: 0, y: 1 },
-            Cardinal::West => &Delta { x: -1, y: 0 },
-        }
-    }
-}
-
-impl From<Ordinal> for &Delta {
-    fn from(dir: Ordinal) -> Self {
-        match dir {
-            Ordinal::Northeast => &Delta { x: 1, y: -1 },
-            Ordinal::Southeast => &Delta { x: 1, y: 1 },
-            Ordinal::Southwest => &Delta { x: -1, y: 1 },
-            Ordinal::Northwest => &Delta { x: -1, y: -1 },
+            Ordinal::Northeast => Delta { x: 1, y: -1 },
+            Ordinal::Southeast => Delta { x: 1, y: 1 },
+            Ordinal::Southwest => Delta { x: -1, y: 1 },
+            Ordinal::Northwest => Delta { x: -1, y: -1 },
         }
     }
 }

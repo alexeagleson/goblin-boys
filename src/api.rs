@@ -51,7 +51,7 @@ pub struct EntityData {
 pub struct LogMessage(pub String);
 
 #[typeshare]
-#[derive(Component, Serialize, Deserialize, Debug, Clone, Copy)]
+#[derive(Serialize, Deserialize, Debug, Clone, Copy)]
 #[serde(rename_all = "camelCase")]
 /// A sprite to render that represents a visible entity
 pub enum SpriteTexture {

@@ -1,7 +1,7 @@
 use ae_position::Position;
 use bevy::prelude::Component;
 
-use crate::api::UserId;
+use crate::api::{SpriteTexture, UserId};
 
 use super::resources::map::{Map, VisibilityGrid};
 
@@ -19,6 +19,11 @@ pub struct BlocksLight;
 
 #[derive(Component)]
 pub struct BlocksMovement;
+
+#[derive(Component)]
+pub struct Renderable {
+    pub texture: SpriteTexture,
+}
 
 #[derive(Component)]
 pub struct Eyes {

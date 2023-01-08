@@ -3,7 +3,7 @@ use bevy::prelude::*;
 use crate::{
     api::{EntityIndex, EntityPosition, EntityRenderData, ServerMessageAllClients, SpriteTexture},
     engine::{
-        components::{BlocksLight, BlocksMovement},
+        components::{BlocksLight, BlocksMovement, Renderable},
         resources::{map::Map, MessageSenderAllClients},
     },
 };
@@ -17,7 +17,9 @@ pub fn spawn_walls_system(
     let mut wall_entities = Vec::new();
 
     for pos in map.perimeter_positions().iter() {
-        let sprite = SpriteTexture::Wall;
+        let sprite = Renderable {
+            texture: SpriteTexture::Wall,
+        };
 
         let index = commands
             .spawn(Name::new("Wall"))

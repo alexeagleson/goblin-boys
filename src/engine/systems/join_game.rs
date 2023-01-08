@@ -7,8 +7,8 @@ use crate::{
         ServerMessageSingleClient, SpriteTexture,
     },
     engine::{
-        components::{BlocksLight, BlocksMovement, Eyes, Item, User},
-        resources::{ConnectBuffer, MessageSenderAllClients, MessageSenderSingleClient, map::Map},
+        components::{BlocksLight, BlocksMovement, Eyes, Item, Renderable, User},
+        resources::{map::Map, ConnectBuffer, MessageSenderAllClients, MessageSenderSingleClient},
     },
 };
 
@@ -19,12 +19,12 @@ pub fn join_game_system(
     map: Res<Map>,
     mut commands: Commands,
     mut connect_buffer: ResMut<ConnectBuffer>,
-    query: Query<(Entity, &Position, &SpriteTexture)>,
+    query: Query<(Entity, &Position, &Renderable)>,
 ) {
     if let Some(user_id) = connect_buffer.0.pop_front() {
-        let player_position: Position = Position { x: 1, y: 1 };
+        let player_position = map.random_movement_unblocked_tile();
         let player_name = format!("Player {}", user_id.id);
-        let player_sprite = SpriteTexture::Bunny;
+        let player_texture = SpriteTexture::Bunny;
 
         let player_index = commands
             .spawn(User(user_id))
@@ -33,7 +33,9 @@ pub fn join_game_system(
             .insert(BlocksLight)
             .insert(Name::new(player_name))
             .insert(player_position.clone())
-            .insert(player_sprite)
+            .insert(Renderable {
+                texture: player_texture,
+            })
             .id()
             .index();
 
@@ -46,19 +48,21 @@ pub fn join_game_system(
                     },
                     pos: player_position,
                 },
-                sprite: player_sprite,
+                sprite: player_texture,
             }))
             .ok();
 
-        let carrot_position = Position { x: 5, y: 5 };
-        let carrot_sprite = SpriteTexture::Carrot;
+        let carrot_position = map.random_movement_unblocked_tile();
+        let carrot_texture = SpriteTexture::Carrot;
 
         // Spawn a carrot every time a new player joins
         let carrot_entity_index = commands
             .spawn(Item)
             .insert(Name::new("Carrot"))
             .insert(carrot_position.clone())
-            .insert(carrot_sprite)
+            .insert(Renderable {
+                texture: carrot_texture,
+            })
             .id()
             .index();
 
@@ -71,7 +75,7 @@ pub fn join_game_system(
                     },
                     pos: carrot_position,
                 },
-                sprite: carrot_sprite,
+                sprite: carrot_texture,
             }))
             .ok();
 
@@ -86,7 +90,7 @@ pub fn join_game_system(
                     },
                     pos: pos.clone(),
                 },
-                sprite: sprite.to_owned(),
+                sprite: sprite.texture,
             })
             .collect::<Vec<_>>();
 

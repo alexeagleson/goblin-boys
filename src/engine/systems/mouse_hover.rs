@@ -5,7 +5,7 @@ use crate::{
     api::{EntityData, ServerMessageSingleClient},
     engine::{
         components::{BlocksLight, Eyes, User},
-        resources::{map::Map, MessageSenderSingleClient, MouseHoverBuffer},
+        resources::{MessageSenderSingleClient, MouseHoverBuffer},
     },
 };
 

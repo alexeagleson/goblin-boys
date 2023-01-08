@@ -5,7 +5,7 @@ use bevy::prelude::*;
 use crate::{
     api::{EntityIndex, EntityPosition, ServerMessageAllClients},
     engine::{
-        components::{BlocksLight, BlocksMovement, User},
+        components::{BlocksLight, BlocksMovement, Renderable, User},
         events::ShouldUpdateMap,
         resources::{map::Map, KeypressBuffer, MessageSenderAllClients},
     },
@@ -22,14 +22,17 @@ pub fn movement_keys_system(
         &User,
         &mut Position,
         &Name,
-        Option<&BlocksLight>,
         Option<&BlocksMovement>,
+        Option<&BlocksLight>,
+        Option<&Renderable>,
     )>,
 ) {
     let key = keypress_buffer.0.pop_front();
 
     if let Some((id, key)) = key {
-        for (entity, user, mut pos, name, blocks_light, blocks_movement) in query.iter_mut() {
+        for (entity, user, mut pos, name, blocks_movement, blocks_light, renderable) in
+            query.iter_mut()
+        {
             // This user ID matches the component of the one trying to make the move
             if user.0 == id {
                 let new_pos = match key {
@@ -54,22 +57,25 @@ pub fn movement_keys_system(
                     *pos = new_pos;
                     info!("{} moved to {:?}", name, pos);
 
-                    // If an entity that blocks light or movement moves the map should update
-                    if blocks_light.is_some() || blocks_movement.is_some() {
+                    // If an entity that blocks movement or light moves, the map needs to update
+                    if blocks_movement.is_some() || blocks_light.is_some() {
                         ev_update_map.send(ShouldUpdateMap);
                     }
 
-                    sender
-                        .0
-                        .send(ServerMessageAllClients::EntityPositionChange(
-                            EntityPosition {
-                                entity_index: EntityIndex {
-                                    index: entity.index(),
+                    // If the entity has a sprite to render, we need to tell the client to update that
+                    if renderable.is_some() {
+                        sender
+                            .0
+                            .send(ServerMessageAllClients::EntityPositionChange(
+                                EntityPosition {
+                                    entity_index: EntityIndex {
+                                        index: entity.index(),
+                                    },
+                                    pos: pos.clone(),
                                 },
-                                pos: pos.clone(),
-                            },
-                        ))
-                        .ok();
+                            ))
+                            .ok();
+                    }
                 } else {
                     info!("{} attempted to move but failed", name);
                 }

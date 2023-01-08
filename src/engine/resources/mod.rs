@@ -4,7 +4,7 @@ use std::collections::VecDeque;
 
 use ae_direction::BodyRelative;
 use ae_position::Position;
-use bevy::prelude::Resource;
+use bevy::{prelude::Resource, time::Stopwatch};
 use tokio::sync::mpsc::{UnboundedReceiver, UnboundedSender};
 
 use crate::api::{ClientMessage, ServerMessageAllClients, ServerMessageSingleClient, UserId};
@@ -32,3 +32,12 @@ pub struct MouseHoverBuffer(pub VecDeque<(UserId, Position)>);
 
 #[derive(Resource, Default)]
 pub struct MouseClickBuffer(pub VecDeque<(UserId, Position)>);
+
+#[derive(Resource)]
+pub struct MoveStopwatch(pub Stopwatch);
+
+impl MoveStopwatch {
+    pub fn new() -> Self {
+        Self(Stopwatch::new())
+    }
+}
