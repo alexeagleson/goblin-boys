@@ -8,7 +8,7 @@ use crate::{
     },
     engine::{
         components::{BlocksLight, BlocksMovement, Eyes, Item, User},
-        resources::{ConnectBuffer, MessageSenderAllClients, MessageSenderSingleClient},
+        resources::{ConnectBuffer, MessageSenderAllClients, MessageSenderSingleClient, map::Map},
     },
 };
 
@@ -16,6 +16,7 @@ use crate::{
 pub fn join_game_system(
     sender_single_client: Res<MessageSenderSingleClient>,
     sender_all_clients: Res<MessageSenderAllClients>,
+    map: Res<Map>,
     mut commands: Commands,
     mut connect_buffer: ResMut<ConnectBuffer>,
     query: Query<(Entity, &Position, &SpriteTexture)>,
@@ -27,7 +28,7 @@ pub fn join_game_system(
 
         let player_index = commands
             .spawn(User(user_id))
-            .insert(Eyes::new(10))
+            .insert(Eyes::new(&map, 10))
             .insert(BlocksMovement)
             .insert(BlocksLight)
             .insert(Name::new(player_name))

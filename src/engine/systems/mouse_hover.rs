@@ -5,14 +5,13 @@ use crate::{
     api::{EntityData, ServerMessageSingleClient},
     engine::{
         components::{BlocksLight, Eyes, User},
-        resources::{map::Map, MouseHoverBuffer, MessageSenderSingleClient},
+        resources::{map::Map, MessageSenderSingleClient, MouseHoverBuffer},
     },
 };
 
 /// Looks for an entity at a tile position being hovered
 pub fn mouse_hover_system(
     sender: Res<MessageSenderSingleClient>,
-    map: Res<Map>,
     mut mouse_hover_buffer: ResMut<MouseHoverBuffer>,
     mut set: ParamSet<(
         Query<(&Position, &Name, Option<&BlocksLight>)>,
@@ -35,9 +34,10 @@ pub fn mouse_hover_system(
         if let Some(hover_entity_info) = &mut hover_entity_info {
             for (user, eyes) in set.p1().iter() {
                 if user.0 == id {
-                    if eyes.visible_tiles[hover_pos.to_idx(map.width())] == 1 {
+                    if eyes.position_visible(&hover_pos) {
                         hover_entity_info.visible_to_player = true;
                     }
+
                     break;
                 }
             }

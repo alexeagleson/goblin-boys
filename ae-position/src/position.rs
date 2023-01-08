@@ -39,15 +39,15 @@ impl Position {
     }
 
     /// The position index on a grid of tiles
-    pub fn to_idx(&self, grid_width: i32) -> usize {
-        (self.y * grid_width + self.x) as usize
+    pub fn to_idx(&self, grid_width: usize) -> usize {
+        (self.y * grid_width as i32 + self.x) as usize
     }
 
     /// The position from the index on a grid of tiles
-    pub fn from_idx(idx: usize, grid_width: i32) -> Self {
+    pub fn from_idx(idx: usize, grid_width: usize) -> Self {
         Self {
-            x: idx as i32 % grid_width,
-            y: idx as i32 / grid_width,
+            x: (idx % grid_width) as i32,
+            y: (idx / grid_width) as i32,
         }
     }
 }

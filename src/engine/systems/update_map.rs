@@ -38,7 +38,7 @@ pub fn update_map_system(
         // Update the visible tiles for the entities that can see
         for (pos, _, _, eyes) in query.iter_mut() {
             if let Some(mut eyes) = eyes {
-                eyes.visible_tiles = map.visible_idxs_from_position(pos, eyes.visible_distance);
+                eyes.set_visibility(pos, &map);
             }
         }
     }
