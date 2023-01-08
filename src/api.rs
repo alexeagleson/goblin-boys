@@ -1,6 +1,5 @@
 use ae_direction::BodyRelative;
 use ae_position::Position;
-use bevy::prelude::Component;
 use serde::{Deserialize, Serialize};
 use typeshare::typeshare;
 

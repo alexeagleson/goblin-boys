@@ -4,7 +4,7 @@ use bevy::prelude::*;
 use crate::{
     api::{EntityData, ServerMessageSingleClient},
     engine::{
-        components::{BlocksLight, Eyes, User},
+        components::{eyes::Eyes, BlocksLight, User},
         resources::{MessageSenderSingleClient, MouseHoverBuffer},
     },
 };

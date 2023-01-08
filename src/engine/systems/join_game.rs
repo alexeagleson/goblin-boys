@@ -7,7 +7,7 @@ use crate::{
         ServerMessageSingleClient, SpriteTexture,
     },
     engine::{
-        components::{BlocksLight, BlocksMovement, Eyes, Item, Renderable, User},
+        components::{BlocksLight, BlocksMovement, Item, Renderable, User, eyes::Eyes, paths::Paths},
         resources::{map::Map, ConnectBuffer, MessageSenderAllClients, MessageSenderSingleClient},
     },
 };
@@ -31,6 +31,7 @@ pub fn join_game_system(
             .insert(Eyes::new(&map, 10))
             .insert(BlocksMovement)
             .insert(BlocksLight)
+            .insert(Paths::default())
             .insert(Name::new(player_name))
             .insert(player_position.clone())
             .insert(Renderable {

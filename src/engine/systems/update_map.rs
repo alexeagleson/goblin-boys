@@ -2,7 +2,7 @@ use ae_position::Position;
 use bevy::prelude::*;
 
 use crate::engine::{
-    components::{BlocksLight, BlocksMovement, Eyes},
+    components::{eyes::Eyes, BlocksLight, BlocksMovement},
     events::ShouldUpdateMap,
     resources::map::Map,
 };
