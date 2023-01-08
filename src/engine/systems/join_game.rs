@@ -2,16 +2,16 @@ use ae_position::Position;
 use bevy::prelude::*;
 
 use crate::{
-    api::{EntityIndex, EntityPositionChange, GameEntity, ServerMessage, SpriteTexture},
+    api::{EntityIndex, EntityPosition, EntityRenderData, ServerMessageAllClients, SpriteTexture},
     engine::{
         components::{BlocksLight, BlocksMovement, Eyes, Item, User},
-        resources::{ConnectBuffer, MessageSender},
+        resources::{ConnectBuffer, MessageSenderAllClients},
     },
 };
 
 /// Adds an entity to the game when the user connects
 pub fn join_game_system(
-    sender: Res<MessageSender>,
+    sender: Res<MessageSenderAllClients>,
     mut commands: Commands,
     mut connect_buffer: ResMut<ConnectBuffer>,
     query: Query<(Entity, &Position, &SpriteTexture)>,
@@ -35,8 +35,8 @@ pub fn join_game_system(
             .id()
             .index();
 
-        let new_player_entity = GameEntity {
-            entity_position: EntityPositionChange {
+        let new_player_entity = EntityRenderData {
+            entity_position: EntityPosition {
                 entity_index: EntityIndex {
                     index: player_entity_index,
                 },
@@ -57,8 +57,8 @@ pub fn join_game_system(
             .id()
             .index();
 
-        let carrot_entity = GameEntity {
-            entity_position: EntityPositionChange {
+        let carrot_entity = EntityRenderData {
+            entity_position: EntityPosition {
                 entity_index: EntityIndex {
                     index: carrot_entity_index,
                 },
@@ -70,8 +70,8 @@ pub fn join_game_system(
 
         let mut all_game_entities = query
             .iter()
-            .map(|(entity, pos, sprite)| GameEntity {
-                entity_position: EntityPositionChange {
+            .map(|(entity, pos, sprite)| EntityRenderData {
+                entity_position: EntityPosition {
                     entity_index: EntityIndex {
                         index: entity.index(),
                     },
@@ -87,10 +87,7 @@ pub fn join_game_system(
         // Communicate to all clients the positions of all entities including the new ones
         sender
             .0
-            .send((
-                connected_user_id,
-                ServerMessage::AllGameEntities(all_game_entities),
-            ))
+            .send(ServerMessageAllClients::AllEntityRenderData(all_game_entities))
             .ok();
     }
 }

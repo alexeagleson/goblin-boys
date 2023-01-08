@@ -4,7 +4,7 @@ mod engine;
 mod websocket;
 
 use ae_position::Dimensions2d;
-use api::{ClientMessage, ServerMessage, UserId};
+use api::{ClientMessage, ServerMessageAllClients, ServerMessageSingleClient, UserId};
 use bevy::prelude::*;
 use database::{Database, DatabaseLock};
 use engine::{
@@ -21,11 +21,18 @@ use websocket::{connections::ConnectionsLock, new_connection::handle_new_connect
 
 fn main() {
     let (client_sender, client_receiver) = mpsc::unbounded_channel::<(UserId, ClientMessage)>();
-    let (server_sender, mut server_receiver) = mpsc::unbounded_channel::<(UserId, ServerMessage)>();
+    let (server_sender_single_client, mut server_receiver_single_client) =
+        mpsc::unbounded_channel::<(UserId, ServerMessageSingleClient)>();
+    let (server_sender_all_clients, mut server_receiver_all_clients) =
+        mpsc::unbounded_channel::<ServerMessageAllClients>();
 
     // Initialize the Bevy game engine
     std::thread::spawn(move || {
-        start_game_engine(client_receiver, server_sender);
+        start_game_engine(
+            client_receiver,
+            server_sender_single_client,
+            server_sender_all_clients,
+        );
     });
 
     tokio::runtime::Builder::new_multi_thread()
@@ -60,42 +67,38 @@ fn main() {
 
             // Websocket setup
             let connections = ConnectionsLock::default();
-            let connections_extra = connections.clone();
+            let connections_2 = connections.clone();
+            let connections_3 = connections.clone();
+
             let connections = warp::any().map(move || connections.clone());
 
             tokio::task::spawn(async move {
-                while let Some((sending_user_id, server_message)) = server_receiver.recv().await {
-                    info!("received message from user {}", sending_user_id.id);
-
+                while let Some(all_clients_message) = server_receiver_all_clients.recv().await {
                     let serialized_message: String =
-                        serde_json::to_string(&server_message).expect("Serialize should work");
+                        serde_json::to_string(&all_clients_message).expect("Serialize should work");
 
-                    match server_message {
-                        // Messages that need to go to all clients
-                        ServerMessage::RemoveEntity(_)
-                        | ServerMessage::AllGameEntities(_)
-                        | ServerMessage::EntityPositionChange(_)
-                        | ServerMessage::TileClick(_)
-                        | ServerMessage::MoveCount(_) => {
-                            info!("Sending to all: {}", serialized_message);
-                            for (&_uid, sender) in connections_extra.read().await.0.iter() {
-                                sender.send(Message::text(&serialized_message)).ok();
-                            }
-                        }
-                        // Messages that need to go to a single specific client
-                        // ServerMessage::Initialize(_) | 
-                        ServerMessage::TileHover(_) => {
-                            info!(
-                                "Sending only to user {}: {}",
-                                sending_user_id.id,
-                                serialized_message
-                            );
+                    info!("Sending to all: {}", serialized_message);
+                    for (&_uid, sender) in connections_2.read().await.0.iter() {
+                        sender.send(Message::text(&serialized_message)).ok();
+                    }
+                }
+            });
 
-                            for (&uid, sender) in connections_extra.read().await.0.iter() {
-                                if uid == sending_user_id.id {
-                                    sender.send(Message::text(&serialized_message)).ok();
-                                }
-                            }
+            tokio::task::spawn(async move {
+                while let Some((user_id, single_client_message)) =
+                    server_receiver_single_client.recv().await
+                {
+                    let serialized_message: String = serde_json::to_string(&single_client_message)
+                        .expect("Serialize should work");
+
+                    info!(
+                        "Sending only to user {}: {}",
+                        user_id.id, serialized_message
+                    );
+
+                    for (&uid, sender) in connections_3.read().await.0.iter() {
+                        if uid == user_id.id {
+                            sender.send(Message::text(&serialized_message)).ok();
                         }
                     }
                 }

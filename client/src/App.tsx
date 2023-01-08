@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { Log, HoverMenu, ControlOverlay, HoverMenuProps } from "./components";
 import { initializeGame } from "./game/main";
-import { EntityInfo } from "./utility/types";
+import { EntityData } from "./utility/types";
 import { DirectionHandlers } from "./game/input";
 import "./App.css";
 
@@ -16,11 +16,11 @@ const App = () => {
   const [directionHandlers, setDirectionHandlers] =
     useState<DirectionHandlers>();
 
-  const onHover = (x: number, y: number, entityInfo?: EntityInfo) => {
-    if (!entityInfo) {
+  const onHover = (x: number, y: number, entityData?: EntityData) => {
+    if (!entityData) {
       setHoverMenu(undefined);
     } else {
-      setHoverMenu({ menuPosition: { x, y }, entityInfo });
+      setHoverMenu({ menuPosition: { x, y }, entityData });
     }
   };
 

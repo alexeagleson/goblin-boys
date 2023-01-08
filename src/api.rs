@@ -19,8 +19,8 @@ pub struct EntityIndex {
 #[typeshare]
 #[derive(Serialize, Debug)]
 #[serde(rename_all = "camelCase")]
-/// Information about a specific player's current position
-pub struct EntityPositionChange {
+/// Information about a specific entity's current position
+pub struct EntityPosition {
     pub entity_index: EntityIndex,
     pub pos: Position,
 }
@@ -28,17 +28,17 @@ pub struct EntityPositionChange {
 #[typeshare]
 #[derive(Serialize, Debug)]
 #[serde(rename_all = "camelCase")]
-/// Information about a specific player's current position
-pub struct GameEntity {
-    pub entity_position: EntityPositionChange,
+/// Information about a entity to render
+pub struct EntityRenderData {
+    pub entity_position: EntityPosition,
     pub sprite: SpriteTexture,
 }
 
 #[typeshare]
 #[derive(Serialize, Debug, Clone)]
 #[serde(rename_all = "camelCase")]
-/// Information about a player
-pub struct EntityInfo {
+/// Information about an entity
+pub struct EntityData {
     pub name: String,
     pub blocks_light: bool,
     pub visible_to_player: bool,
@@ -75,12 +75,21 @@ pub enum ClientMessage {
 #[typeshare]
 #[derive(Serialize, Debug)]
 #[serde(rename_all = "camelCase", tag = "type", content = "content")]
-/// Communicates information about the active game to the client
-pub enum ServerMessage {
-    RemoveEntity(EntityIndex),
-    AllGameEntities(Vec<GameEntity>),
-    EntityPositionChange(EntityPositionChange),
-    TileHover(Option<EntityInfo>),
+/// Communicates information about the active game to one client
+pub enum ServerMessageSingleClient {
+    TileHover(Option<EntityData>),
+    AllEntityRenderData(Vec<EntityRenderData>), // For ping/timeout
+}
+
+#[typeshare]
+#[derive(Serialize, Debug)]
+#[serde(rename_all = "camelCase", tag = "type", content = "content")]
+/// Communicates information about the active game to one client
+pub enum ServerMessageAllClients {
+    NewEntity(EntityRenderData), // could be used as better way on player join
+    RemovedEntity(EntityIndex),
+    AllEntityRenderData(Vec<EntityRenderData>),
+    EntityPositionChange(EntityPosition),
     TileClick(LogMessage),
     MoveCount(i32),
 }

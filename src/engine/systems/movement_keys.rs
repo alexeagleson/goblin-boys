@@ -3,18 +3,18 @@ use ae_position::{Delta, Position};
 use bevy::prelude::*;
 
 use crate::{
-    api::{EntityIndex, EntityPositionChange, ServerMessage},
+    api::{EntityIndex, EntityPosition, ServerMessageAllClients},
     engine::{
         components::{BlocksLight, BlocksMovement, User},
         events::ShouldUpdateMap,
-        resources::{map::Map, KeypressBuffer, MessageSender},
+        resources::{map::Map, KeypressBuffer, MessageSenderAllClients},
     },
 };
 
 /// Moves an entity based on a user keypress
 pub fn movement_keys_system(
     map: Res<Map>,
-    sender: Res<MessageSender>,
+    sender: Res<MessageSenderAllClients>,
     mut ev_update_map: EventWriter<ShouldUpdateMap>,
     mut keypress_buffer: ResMut<KeypressBuffer>,
     mut query: Query<(
@@ -61,14 +61,13 @@ pub fn movement_keys_system(
 
                     sender
                         .0
-                        .send((
-                            id,
-                            ServerMessage::EntityPositionChange(EntityPositionChange {
+                        .send(ServerMessageAllClients::EntityPositionChange(
+                            EntityPosition {
                                 entity_index: EntityIndex {
                                     index: entity.index(),
                                 },
                                 pos: pos.clone(),
-                            }),
+                            },
                         ))
                         .ok();
                 } else {

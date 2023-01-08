@@ -4,7 +4,7 @@ use crate::websocket::connections::USER_ID_COUNTER;
 use crate::websocket::disconnect::handle_disconnect;
 use crate::websocket::message::handle_message;
 use futures_util::{SinkExt, StreamExt, TryFutureExt};
-use log::{error, info};
+use log::{error, info, trace};
 use std::sync::atomic::Ordering;
 use tokio::sync::mpsc::{self, UnboundedSender};
 use tokio_stream::wrappers::UnboundedReceiverStream;
@@ -33,7 +33,7 @@ pub async fn handle_new_connection(
 
     tokio::task::spawn(async move {
         while let Some(message) = rx.next().await {
-            println!("message {:?}", message);
+            trace!("Received client message {:?}", message);
             user_ws_tx
                 .send(message)
                 .unwrap_or_else(|e| {

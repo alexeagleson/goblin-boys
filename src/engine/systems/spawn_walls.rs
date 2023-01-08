@@ -1,19 +1,18 @@
 use bevy::prelude::*;
 
 use crate::{
-    api::{EntityIndex, EntityPositionChange, GameEntity, ServerMessage, SpriteTexture, UserId},
+    api::{EntityIndex, EntityPosition, EntityRenderData, ServerMessageAllClients, SpriteTexture},
     engine::{
         components::{BlocksLight, BlocksMovement},
-        resources::{map::Map, MessageSender},
+        resources::{map::Map, MessageSenderAllClients},
     },
 };
 
 /// Adds the all tiles to the map on initial load
 pub fn spawn_walls_system(
-    sender: Res<MessageSender>,
+    sender: Res<MessageSenderAllClients>,
     map: Res<Map>,
     mut commands: Commands,
-    // query: Query<(Entity, &Position, &SpriteTexture)>,
 ) {
     let mut wall_entities = Vec::new();
 
@@ -28,14 +27,13 @@ pub fn spawn_walls_system(
             .id()
             .index();
 
-        let wall_game_entity = GameEntity {
-            entity_position: EntityPositionChange {
+        let wall_game_entity = EntityRenderData {
+            entity_position: EntityPosition {
                 entity_index: EntityIndex {
                     index: wall_entity_index,
                 },
                 pos: pos.clone(),
             },
-            // The other entity is a carrot
             sprite: SpriteTexture::Wall,
         };
 
@@ -45,9 +43,6 @@ pub fn spawn_walls_system(
     // Communicate to all clients the positions of all entities including the new ones
     sender
         .0
-        .send((
-            UserId { id: 0 }, // User 0 does not exist but this will send to all
-            ServerMessage::AllGameEntities(wall_entities),
-        ))
+        .send(ServerMessageAllClients::AllEntityRenderData(wall_entities))
         .ok();
 }

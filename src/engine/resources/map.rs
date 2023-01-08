@@ -34,6 +34,7 @@ pub fn default_movement_blocking_idxs() -> fn() -> Vec<u8> {
 
 /// Can use to print either an array of light blocking entities or
 /// a map of visible tiles, both use the same format
+#[allow(dead_code)]
 pub fn pretty_print_idx_map(idxs: &Vec<u8>) {
     println!("");
     for y in 0..MAP_HEIGHT {

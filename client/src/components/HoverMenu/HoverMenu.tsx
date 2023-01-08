@@ -1,14 +1,14 @@
-import { EntityInfo, Position } from "../../utility/types";
+import { EntityData, Position } from "../../utility/types";
 import "./HoverMenu.css";
 
 export interface HoverMenuProps {
   menuPosition: Position;
-  entityInfo: EntityInfo;
+  entityData: EntityData;
 }
 
 export const HoverMenu: React.FC<HoverMenuProps> = ({
   menuPosition,
-  entityInfo,
+  entityData,
 }) => {
   return (
     <div
@@ -18,9 +18,9 @@ export const HoverMenu: React.FC<HoverMenuProps> = ({
         top: menuPosition.y,
       }}
     >
-      <p>{entityInfo.name}</p>
-      <p>Blocks Light: {entityInfo.blocksLight ? "Yes" : "No"}</p>
-      <p>Can See: {entityInfo.visibleToPlayer ? "Yes" : "No"}</p>
+      <p>{entityData.name}</p>
+      <p>Blocks Light: {entityData.blocksLight ? "Yes" : "No"}</p>
+      <p>Can See: {entityData.visibleToPlayer ? "Yes" : "No"}</p>
     </div>
   );
 };

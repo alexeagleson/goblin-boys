@@ -6,8 +6,8 @@ import { STRICT_MODE } from "../utility/config";
 import {
   Dimensions2d,
   EntityIndex,
-  EntityPositionChange,
-  GameEntity,
+  EntityPosition,
+  EntityRenderData,
   SpriteTexture,
 } from "../utility/types";
 import { log } from "../utility/functions";
@@ -51,26 +51,26 @@ export const createGameApp = async (
   };
 
   /** Move a sprite to another position on the canvas */
-  const setSpritePosition = (entityPositionChange: EntityPositionChange) => {
-    log.trace("Setting sprite position", entityPositionChange);
-    const sprite = getSpriteUnsafe(entityPositionChange.entityIndex);
-    sprite.x = entityPositionChange.pos.x * tileSize + halfTile;
-    sprite.y = entityPositionChange.pos.y * tileSize + halfTile;
+  const setSpritePosition = (entityPosition: EntityPosition) => {
+    log.trace("Setting sprite position", entityPosition);
+    const sprite = getSpriteUnsafe(entityPosition.entityIndex);
+    sprite.x = entityPosition.pos.x * tileSize + halfTile;
+    sprite.y = entityPosition.pos.y * tileSize + halfTile;
   };
 
   /** Add a new sprite to the game canvas if it doesn't exist,
    * if it does exist it will update its position */
-  const addSprite = (gameEntity: GameEntity) => {
+  const addSprite = (entityRenderData: EntityRenderData) => {
     // Only add the sprite if it doesn't already exist
     if (
-      spriteMap.get(gameEntity.entityPosition.entityIndex.index) === undefined
+      spriteMap.get(entityRenderData.entityPosition.entityIndex.index) === undefined
     ) {
       log.trace(
         "Adding sprite for player",
-        gameEntity.entityPosition.entityIndex
+        entityRenderData.entityPosition.entityIndex
       );
-      const newSprite = new Sprite(TEXTURE_MAP[gameEntity.sprite]);
-      spriteMap.set(gameEntity.entityPosition.entityIndex.index, newSprite);
+      const newSprite = new Sprite(TEXTURE_MAP[entityRenderData.sprite]);
+      spriteMap.set(entityRenderData.entityPosition.entityIndex.index, newSprite);
 
       newSprite.anchor.x = 0.5;
       newSprite.anchor.y = 0.5;
@@ -84,11 +84,11 @@ export const createGameApp = async (
     } else {
       log.trace(
         "Existing sprite found for player",
-        gameEntity.entityPosition.entityIndex.index
+        entityRenderData.entityPosition.entityIndex.index
       );
     }
 
-    setSpritePosition(gameEntity.entityPosition);
+    setSpritePosition(entityRenderData.entityPosition);
   };
 
   /** Remove a sprite from the game canvas */

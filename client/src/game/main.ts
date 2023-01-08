@@ -2,7 +2,12 @@
 
 import { connectToGameServer } from "./connection";
 import { createGameApp } from "./canvas";
-import { Dimensions2d, EntityInfo, ServerMessage } from "../utility/types";
+import {
+  Dimensions2d,
+  EntityData,
+  ServerMessageAllClients,
+  ServerMessageSingleClient,
+} from "../utility/types";
 import { assertNever, log } from "../utility/functions";
 import { GAME_CONFIG_URI, TILE_SIZE } from "../utility/config";
 import { addInputListeners } from "./input";
@@ -16,7 +21,7 @@ const updateHoverMenuPosition = (x: number, y: number) => {
 };
 
 export const initializeGame = async (
-  onHover: (x: number, y: number, entityInfo?: EntityInfo) => void,
+  onHover: (x: number, y: number, entityData?: EntityData) => void,
   onClick: (log: string) => void,
   onMoveCount: (count: number) => void
 ) => {
@@ -36,19 +41,23 @@ export const initializeGame = async (
       console.error("Received invalid message", msg.data);
       throw Error;
     }
-    const response: ServerMessage = JSON.parse(msg.data);
+    const response: ServerMessageAllClients | ServerMessageSingleClient =
+      JSON.parse(msg.data);
 
     switch (response.type) {
       case "entityPositionChange":
         setSpritePosition(response.content);
         break;
-      case "allGameEntities":
-        response.content.forEach((gameEntity) => {
-          addSprite(gameEntity);
+      case "allEntityRenderData":
+        response.content.forEach((renderData) => {
+          addSprite(renderData);
         });
         break;
-      case "removeEntity":
+      case "removedEntity":
         removeSprite(response.content);
+        break;
+      case "newEntity":
+        addSprite(response.content);
         break;
       case "moveCount":
         onMoveCount(response.content);

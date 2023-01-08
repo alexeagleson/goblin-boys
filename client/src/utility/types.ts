@@ -34,20 +34,20 @@ export interface EntityIndex {
 	index: number;
 }
 
-/** Information about a specific player's current position */
-export interface EntityPositionChange {
+/** Information about a specific entity's current position */
+export interface EntityPosition {
 	entityIndex: EntityIndex;
 	pos: Position;
 }
 
-/** Information about a specific player's current position */
-export interface GameEntity {
-	entityPosition: EntityPositionChange;
+/** Information about a entity to render */
+export interface EntityRenderData {
+	entityPosition: EntityPosition;
 	sprite: SpriteTexture;
 }
 
-/** Information about a player */
-export interface EntityInfo {
+/** Information about an entity */
+export interface EntityData {
 	name: string;
 	blocksLight: boolean;
 	visibleToPlayer: boolean;
@@ -79,12 +79,17 @@ export type ClientMessage =
 	| { type: "keypress", content: BodyRelative }
 	| { type: "disconnect", content?: undefined };
 
-/** Communicates information about the active game to the client */
-export type ServerMessage = 
-	| { type: "removeEntity", content: EntityIndex }
-	| { type: "allGameEntities", content: GameEntity[] }
-	| { type: "entityPositionChange", content: EntityPositionChange }
-	| { type: "tileHover", content?: EntityInfo }
+/** Communicates information about the active game to one client */
+export type ServerMessageSingleClient = 
+	| { type: "tileHover", content?: EntityData }
+	| { type: "allEntityRenderData", content: EntityRenderData[] };
+
+/** Communicates information about the active game to one client */
+export type ServerMessageAllClients = 
+	| { type: "newEntity", content: EntityRenderData }
+	| { type: "removedEntity", content: EntityIndex }
+	| { type: "allEntityRenderData", content: EntityRenderData[] }
+	| { type: "entityPositionChange", content: EntityPosition }
 	| { type: "tileClick", content: LogMessage }
 	| { type: "moveCount", content: number };
 

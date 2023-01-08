@@ -1,16 +1,16 @@
 use bevy::prelude::*;
 
 use crate::{
-    api::{ServerMessage, EntityIndex},
+    api::{EntityIndex, ServerMessageAllClients},
     engine::{
         components::User,
-        resources::{DisconnectBuffer, MessageSender},
+        resources::{DisconnectBuffer, MessageSenderAllClients},
     },
 };
 
 /// Removes an entity from the game when the user disconnects
 pub fn leave_game_system(
-    sender: Res<MessageSender>,
+    sender: Res<MessageSenderAllClients>,
     mut commands: Commands,
     mut disconnect_buffer: ResMut<DisconnectBuffer>,
     query: Query<(Entity, &User, &Name)>,
@@ -24,12 +24,9 @@ pub fn leave_game_system(
                 // Communicate to all clients the player entity has left the game
                 sender
                     .0
-                    .send((
-                        user.0,
-                        ServerMessage::RemoveEntity(EntityIndex {
-                            index: entity.index(),
-                        }),
-                    ))
+                    .send(ServerMessageAllClients::RemovedEntity(EntityIndex {
+                        index: entity.index(),
+                    }))
                     .ok();
             }
         }

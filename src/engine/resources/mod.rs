@@ -7,13 +7,16 @@ use ae_position::Position;
 use bevy::prelude::Resource;
 use tokio::sync::mpsc::{UnboundedReceiver, UnboundedSender};
 
-use crate::api::{ClientMessage, ServerMessage, UserId};
+use crate::api::{ClientMessage, ServerMessageAllClients, ServerMessageSingleClient, UserId};
 
 #[derive(Resource)]
 pub struct MessageReceiver(pub UnboundedReceiver<(UserId, ClientMessage)>);
 
 #[derive(Resource)]
-pub struct MessageSender(pub UnboundedSender<(UserId, ServerMessage)>);
+pub struct MessageSenderSingleClient(pub UnboundedSender<(UserId, ServerMessageSingleClient)>);
+
+#[derive(Resource)]
+pub struct MessageSenderAllClients(pub UnboundedSender<ServerMessageAllClients>);
 
 #[derive(Resource, Default)]
 pub struct KeypressBuffer(pub VecDeque<(UserId, BodyRelative)>);

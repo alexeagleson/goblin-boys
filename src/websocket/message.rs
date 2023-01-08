@@ -1,9 +1,9 @@
 use crate::{
-    api::{ClientMessage, ServerMessage, UserId},
+    api::{ClientMessage, ServerMessageAllClients, UserId},
     database::DatabaseLock,
 };
 
-use log::info;
+use log::trace;
 use tokio::sync::mpsc::UnboundedSender;
 use warp::ws::Message;
 
@@ -23,7 +23,7 @@ pub async fn handle_message(
         return;
     };
 
-    info!("{}", msg);
+    trace!("{}", msg);
 
     let request = serde_json::from_str::<ClientMessage>(msg);
 
@@ -36,7 +36,7 @@ pub async fn handle_message(
         let key_string = key.to_string();
         let db = db.read().await;
 
-        // Log the move in the database regardkess of whether it succeeds because why not
+        // Log the move in the database regardless of whether it succeeds because why not
         sqlx::query!("INSERT INTO moves (direction) VALUES (?)", key_string)
             .execute(&db.0)
             .await
@@ -48,7 +48,8 @@ pub async fn handle_message(
             .unwrap();
 
         // Count should have a single record result with a count property of the number of found rows
-        let move_count: ServerMessage = ServerMessage::MoveCount(count_results[0].count);
+        let move_count: ServerMessageAllClients =
+            ServerMessageAllClients::MoveCount(count_results[0].count);
         let move_count_serialized: String =
             serde_json::to_string(&move_count).expect("that should work");
 
