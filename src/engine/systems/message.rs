@@ -35,6 +35,9 @@ pub fn message_system(
             ClientMessage::TileClick(pos) => {
                 mouse_click_buffer.0.push_back((id, pos));
             }
+            ClientMessage::KeepAlive => {
+                // No action
+            }
         }
     }
 }

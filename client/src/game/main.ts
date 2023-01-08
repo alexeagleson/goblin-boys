@@ -48,16 +48,17 @@ export const initializeGame = async (
       case "entityPositionChange":
         setSpritePosition(response.content);
         break;
-      case "allEntityRenderData":
+      case "newEntity":
+        addSprite(response.content);
+        break;
+      case "newEntities":
+      case "existingEntities":
         response.content.forEach((renderData) => {
           addSprite(renderData);
         });
         break;
       case "removedEntity":
         removeSprite(response.content);
-        break;
-      case "newEntity":
-        addSprite(response.content);
         break;
       case "moveCount":
         onMoveCount(response.content);

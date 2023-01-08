@@ -77,18 +77,23 @@ export type ClientMessage =
 	| { type: "tileClick", content: Position }
 	| { type: "initialize", content?: undefined }
 	| { type: "keypress", content: BodyRelative }
-	| { type: "disconnect", content?: undefined };
+	| { type: "disconnect", content?: undefined }
+	/**
+	 * Clients should send every 30 seconds or so to
+	 * keep from getting your socket closed when hosting on free services
+	 */
+	| { type: "keepAlive", content?: undefined };
 
 /** Communicates information about the active game to one client */
 export type ServerMessageSingleClient = 
 	| { type: "tileHover", content?: EntityData }
-	| { type: "allEntityRenderData", content: EntityRenderData[] };
+	| { type: "existingEntities", content: EntityRenderData[] };
 
 /** Communicates information about the active game to one client */
 export type ServerMessageAllClients = 
 	| { type: "newEntity", content: EntityRenderData }
+	| { type: "newEntities", content: EntityRenderData[] }
 	| { type: "removedEntity", content: EntityIndex }
-	| { type: "allEntityRenderData", content: EntityRenderData[] }
 	| { type: "entityPositionChange", content: EntityPosition }
 	| { type: "tileClick", content: LogMessage }
 	| { type: "moveCount", content: number };

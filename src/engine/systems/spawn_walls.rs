@@ -17,32 +17,29 @@ pub fn spawn_walls_system(
     let mut wall_entities = Vec::new();
 
     for pos in map.perimeter_positions().iter() {
-        // Spawn a wall
-        let wall_entity_index = commands
+        let sprite = SpriteTexture::Wall;
+
+        let index = commands
             .spawn(Name::new("Wall"))
             .insert(pos.clone())
             .insert(BlocksLight)
             .insert(BlocksMovement)
-            .insert(SpriteTexture::Wall)
+            .insert(sprite)
             .id()
             .index();
 
-        let wall_game_entity = EntityRenderData {
+        wall_entities.push(EntityRenderData {
             entity_position: EntityPosition {
-                entity_index: EntityIndex {
-                    index: wall_entity_index,
-                },
+                entity_index: EntityIndex { index },
                 pos: pos.clone(),
             },
             sprite: SpriteTexture::Wall,
-        };
-
-        wall_entities.push(wall_game_entity);
+        });
     }
 
     // Communicate to all clients the positions of all entities including the new ones
     sender
         .0
-        .send(ServerMessageAllClients::AllEntityRenderData(wall_entities))
+        .send(ServerMessageAllClients::NewEntities(wall_entities))
         .ok();
 }

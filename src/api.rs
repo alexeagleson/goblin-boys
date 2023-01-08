@@ -51,7 +51,7 @@ pub struct EntityData {
 pub struct LogMessage(pub String);
 
 #[typeshare]
-#[derive(Component, Serialize, Deserialize, Debug, Clone)]
+#[derive(Component, Serialize, Deserialize, Debug, Clone, Copy)]
 #[serde(rename_all = "camelCase")]
 /// A sprite to render that represents a visible entity
 pub enum SpriteTexture {
@@ -70,6 +70,9 @@ pub enum ClientMessage {
     Initialize,
     Keypress(BodyRelative),
     Disconnect,
+    /// Clients should send every 30 seconds or so to
+    /// keep from getting your socket closed when hosting on free services
+    KeepAlive,
 }
 
 #[typeshare]
@@ -78,7 +81,7 @@ pub enum ClientMessage {
 /// Communicates information about the active game to one client
 pub enum ServerMessageSingleClient {
     TileHover(Option<EntityData>),
-    AllEntityRenderData(Vec<EntityRenderData>), // For ping/timeout
+    ExistingEntities(Vec<EntityRenderData>),
 }
 
 #[typeshare]
@@ -86,9 +89,9 @@ pub enum ServerMessageSingleClient {
 #[serde(rename_all = "camelCase", tag = "type", content = "content")]
 /// Communicates information about the active game to one client
 pub enum ServerMessageAllClients {
-    NewEntity(EntityRenderData), // could be used as better way on player join
+    NewEntity(EntityRenderData),
+    NewEntities(Vec<EntityRenderData>),
     RemovedEntity(EntityIndex),
-    AllEntityRenderData(Vec<EntityRenderData>),
     EntityPositionChange(EntityPosition),
     TileClick(LogMessage),
     MoveCount(i32),
