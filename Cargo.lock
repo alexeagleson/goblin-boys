@@ -1715,6 +1715,7 @@ dependencies = [
  "rand",
  "serde",
  "serde_json",
+ "simple_astar",
  "sqlx",
  "tokio",
  "tokio-stream",
@@ -3385,6 +3386,15 @@ dependencies = [
 ]
 
 [[package]]
+name = "simple_astar"
+version = "0.1.0"
+source = "git+https://github.com/alexeagleson/simple-astar.git?branch=support-cardinal-movement#000efff6885b72bdcbf110e5d3b798d05e368762"
+dependencies = [
+ "fxhash",
+ "smallvec",
+]
+
+[[package]]
 name = "slab"
 version = "0.4.7"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -3916,8 +3926,8 @@ dependencies = [
 
 [[package]]
 name = "tv_shadowcasting"
-version = "0.1.0"
-source = "git+https://github.com/tylervipond/tv-shadowcasting#d762dd24481a6f8ff107c89f8bf90b176642201c"
+version = "0.1.1"
+source = "git+https://github.com/tylervipond/tv-shadowcasting#f5259c455ced9c4bfeccab874501639220b7725b"
 
 [[package]]
 name = "twoway"

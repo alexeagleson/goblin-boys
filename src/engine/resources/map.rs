@@ -1,6 +1,7 @@
 use ae_position::{Dimensions2d, Position};
 use bevy::prelude::Resource;
 use rand::seq::SliceRandom;
+use simple_astar::astar;
 use tv_shadowcasting::get_visible_idxs;
 
 pub const MAP_WIDTH: i32 = 12;
@@ -88,6 +89,10 @@ fn index_grid_to_positions(grid: &IndexGrid, grid_width: usize, blocking: bool) 
         .collect()
 }
 
+fn invert_index_grid(index_map: IndexGrid) -> IndexGrid {
+    index_map.iter().map(|val| !val).collect()
+}
+
 /// Can use to print either an array of light blocking entities or
 /// a map of visible tiles, both use the same format
 fn pretty_print_idx_map(idxs: &Vec<u8>) {
@@ -170,6 +175,27 @@ impl Map {
         self.movement_blocking_grid.0[pos.to_idx(map_width)] == 1
     }
 
+    pub fn generate_astar(&self, from: &Position, to: &Position) -> Vec<u32> {
+        let width = self.width() as usize;
+        let grid = self
+            .movement_blocking_grid
+            .0
+            .iter()
+            // This is what astar wants (0 and 1 values inverted from how movement grid stores them)
+            // Can be optimized easily or stored in a different way just need to decide on a standard
+            .map(|val| !*val as u32)
+            .collect::<Vec<_>>();
+
+        let path = astar(
+            from.to_idx(width) as u32,
+            to.to_idx(width) as u32,
+            &grid,
+            width as u32,
+            true,
+        );
+        path
+    }
+
     // Calculates all visible tiles on a grid of light blocking tiles from a given position
     pub fn visibility_grid_from_position(&self, pos: &Position, radius: u32) -> VisibilityGrid {
         self.assert_in_bounds(pos);
@@ -200,9 +226,10 @@ impl Map {
 
         let position = unblocked_positions
             .choose(&mut rand::thread_rng())
-            .expect("Attempted to find a random unblocked tile, but apparently there are none").clone();
+            .expect("Attempted to find a random unblocked tile, but apparently there are none")
+            .clone();
 
-       position
+        position
     }
 }
 

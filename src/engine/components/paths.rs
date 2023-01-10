@@ -3,6 +3,8 @@ use std::collections::VecDeque;
 use ae_position::{Delta, Position};
 use bevy::prelude::Component;
 
+use crate::engine::resources::map::Map;
+
 type Path = VecDeque<Position>;
 
 #[derive(Component)]
@@ -23,6 +25,14 @@ impl Paths {
             path.push_back(current_pos.clone());
         }
         path
+    }
+
+    pub fn generate_astar(from: &Position, to: &Position, map: &Map) -> Path {
+        let u32_path = map.generate_astar(from, to);
+        u32_path
+            .into_iter()
+            .map(|val| Position::from_idx(val as usize, map.width() as usize))
+            .collect()
     }
 
     pub fn get_next(&mut self) -> Option<Position> {

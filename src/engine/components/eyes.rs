@@ -24,4 +24,8 @@ impl Eyes {
     pub fn position_visible(&self, pos: &Position) -> bool {
         self.visibility_grid.position_visible(pos)
     }
+
+    pub fn pretty_print(&self) {
+        self.visibility_grid.pretty_print();
+    }
 }

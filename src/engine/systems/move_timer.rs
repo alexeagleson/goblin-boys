@@ -43,10 +43,13 @@ pub fn move_timer_system(
                     next_pos
                 } else {
                     // [TODO] This is still pretty janky, right now the entity will still pop from
-                    // their path even if they try to move to a blocked tile and probabaly teleport to the 
+                    // their path even if they try to move to a blocked tile and probably teleport to the
                     // next one on their turn after
                     let unlocked_position = map.random_movement_unblocked_tile();
-                    let new_path = Paths::generate_direct_to_position(&pos, &unlocked_position);
+
+                    // let new_path = Paths::generate_direct_to_position(&pos, &unlocked_position);
+                    let new_path = Paths::generate_astar(&pos, &unlocked_position, &map);
+
                     paths.set(new_path);
                     continue;
                 }
