@@ -12,7 +12,7 @@ import {
   SpriteTexture,
 } from "../utility/types";
 import { log } from "../utility/functions";
-import { camera, CAMERA_SIZE } from "./camera";
+import { camera, CAMERA_SIZE, mapPosToScreenPos } from "./camera";
 
 export interface SpritePosition {
   sprite: Sprite;
@@ -20,14 +20,20 @@ export interface SpritePosition {
   texture: SpriteTexture;
 }
 
-export const spriteMap = new Map<EntityIndex["index"], SpritePosition>();
+export const gameState: {
+  dimensions: Dimensions2d;
+  spriteMap: Map<EntityIndex["index"], SpritePosition>;
+} = {
+  dimensions: { width: 0, height: 0 },
+  spriteMap: new Map(),
+};
 
 /** Assert that a sprite exists in the render data map and return it, throw error otherwise. */
 const getSpritePositionUnsafe = (entityIndex: EntityIndex): SpritePosition => {
-  const spritePosition = spriteMap.get(entityIndex.index);
+  const spritePosition = gameState.spriteMap.get(entityIndex.index);
   if (STRICT_MODE && spritePosition === undefined) {
     console.error("sprite index", entityIndex.index);
-    console.error(spriteMap);
+    console.error(gameState.spriteMap);
     throw Error("Tried to get a non-existent sprite");
   }
   return spritePosition as SpritePosition;
@@ -57,13 +63,6 @@ export const createGameApp = async (
     [SpriteTexture.Wall]: wall,
   };
 
-  // const pxToTile = (pxPos: Position): Position => {
-  //   return {
-  //     x: (pxPos.x - halfTile) / tileSize,
-  //     y: (pxPos.y - halfTile) / tileSize,
-  //   };
-  // };
-
   const tileToPx = (tilePos: Position): Position => {
     return {
       x: tilePos.x * tileSize + halfTile,
@@ -80,21 +79,18 @@ export const createGameApp = async (
     // Change the actual entity position independent of the camera
     spritePos.pos = newEntityPosition.pos;
 
-    const cameraPos: Position = {
-      x: newEntityPosition.pos.x - camera.x,
-      y: newEntityPosition.pos.y - camera.y,
-    };
+    const screenPos = mapPosToScreenPos(newEntityPosition.pos);
 
     if (
-      cameraPos.x < 0 ||
-      cameraPos.x >= CAMERA_SIZE ||
-      cameraPos.y < 0 ||
-      cameraPos.y >= CAMERA_SIZE
+      screenPos.x < 0 ||
+      screenPos.x >= CAMERA_SIZE ||
+      screenPos.y < 0 ||
+      screenPos.y >= CAMERA_SIZE
     ) {
       sprite.visible = false;
     } else {
       sprite.visible = true;
-      const pxPos = tileToPx(cameraPos);
+      const pxPos = tileToPx(screenPos);
       sprite.x = pxPos.x;
       sprite.y = pxPos.y;
     }
@@ -105,7 +101,7 @@ export const createGameApp = async (
   const addSprite = (entityRenderData: EntityRenderData) => {
     // Only add the sprite if it doesn't already exist
     if (
-      spriteMap.get(entityRenderData.entityPosition.entityIndex.index) ===
+      gameState.spriteMap.get(entityRenderData.entityPosition.entityIndex.index) ===
       undefined
     ) {
       // log.trace(
@@ -113,7 +109,7 @@ export const createGameApp = async (
       //   entityRenderData.entityPosition.entityIndex
       // );
       const newSprite = new Sprite(TEXTURE_MAP[entityRenderData.sprite]);
-      spriteMap.set(entityRenderData.entityPosition.entityIndex.index, {
+      gameState.spriteMap.set(entityRenderData.entityPosition.entityIndex.index, {
         pos: entityRenderData.entityPosition.pos,
         sprite: newSprite,
         texture: entityRenderData.sprite,

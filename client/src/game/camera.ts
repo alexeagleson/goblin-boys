@@ -1,4 +1,3 @@
-import { log } from "../utility/functions";
 import { Position } from "../utility/types";
 
 // Game config
@@ -20,4 +19,18 @@ export const setCamera = (pos: Position) => {
 
   camera.x = newX;
   camera.y = newY;
+};
+
+export const mapPosToScreenPos = (mapPos: Position): Position => {
+  return {
+    x: mapPos.x - camera.x,
+    y: mapPos.y - camera.y,
+  };
+};
+
+export const screenPosToMapPos = (screenPos: Position): Position => {
+  return {
+    x: screenPos.x + camera.x,
+    y: screenPos.y + camera.y,
+  };
 };

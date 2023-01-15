@@ -1,7 +1,7 @@
 /** Handlers for user input (keyboard and mouse) */
 
 import { BodyRelative, Position } from "../utility/types";
-import { TILE_SIZE } from "./camera";
+import { screenPosToMapPos, TILE_SIZE } from "./camera";
 import { SafeSend } from "./connection";
 
 export interface DirectionHandlers {
@@ -35,23 +35,26 @@ export const addInputListeners = (
     }
 
     const pixelPos: Position = { x: xPixel, y: yPixel };
-    const tilePos: Position = {
+
+    const screenPos: Position = {
       x: Math.trunc(pixelPos.x / TILE_SIZE),
       y: Math.trunc(pixelPos.y / TILE_SIZE),
     };
 
-    return { tilePos, pixelPos };
+    const mapPos = screenPosToMapPos(screenPos);
+
+    return { mapPos, pixelPos };
   };
 
   gameCanvas.onmousemove = (e) => {
-    const { tilePos, pixelPos } = processTileSelectEvent(e);
+    const { mapPos, pixelPos } = processTileSelectEvent(e);
     updateHoverMenuPosition(pixelPos.x, pixelPos.y);
-    safeSend({ type: "tileHover", content: tilePos });
+    safeSend({ type: "tileHover", content: mapPos });
   };
 
   const onTileSelect = (e: MouseEvent | TouchEvent) => {
-    const { tilePos } = processTileSelectEvent(e);
-    safeSend({ type: "tileClick", content: tilePos });
+    const { mapPos } = processTileSelectEvent(e);
+    safeSend({ type: "tileClick", content: mapPos });
   };
 
   gameCanvas.onmousedown = onTileSelect;
