@@ -4,8 +4,8 @@ use rand::seq::SliceRandom;
 use simple_astar::astar;
 use tv_shadowcasting::get_visible_idxs;
 
-pub const MAP_WIDTH: i32 = 12;
-pub const MAP_HEIGHT: i32 = 12;
+pub const MAP_WIDTH: i32 = 7;
+pub const MAP_HEIGHT: i32 = 7;
 
 // const MAX_MAP_INDEX: usize = (MAP_WIDTH * MAP_HEIGHT) as usize;
 // const DEFAULT_EMPTY_INDEX_MAP: [u8; MAX_MAP_INDEX] = [0; MAX_MAP_INDEX];
@@ -87,10 +87,6 @@ fn index_grid_to_positions(grid: &IndexGrid, grid_width: usize, blocking: bool) 
         .enumerate()
         .filter_map(|(idx, val)| (*val == check_val).then(|| Position::from_idx(idx, grid_width)))
         .collect()
-}
-
-fn invert_index_grid(index_map: IndexGrid) -> IndexGrid {
-    index_map.iter().map(|val| !val).collect()
 }
 
 /// Can use to print either an array of light blocking entities or

@@ -45,7 +45,7 @@ pub fn start_game_engine(
         .add_system(message_system)
         .add_system(join_game_system.after(message_system))
         .add_system(movement_keys_system.after(message_system))
-        .add_system(move_timer_system.after(message_system))
+        // .add_system(move_timer_system.after(message_system))
         .add_system(mouse_hover_system.after(message_system))
         .add_system(mouse_click_system.after(message_system))
         .add_system(leave_game_system.after(message_system))

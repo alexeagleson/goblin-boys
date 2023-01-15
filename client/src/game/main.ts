@@ -1,16 +1,19 @@
 /** Glue that binds together the input, canvas and connection modules */
 
 import { connectToGameServer } from "./connection";
-import { createGameApp } from "./canvas";
+import { createGameApp, spriteMap, SpritePosition } from "./canvas";
 import {
   Dimensions2d,
   EntityData,
   ServerMessageAllClients,
   ServerMessageSingleClient,
+  SpriteTexture,
 } from "../utility/types";
 import { assertNever, log } from "../utility/functions";
-import { GAME_CONFIG_URI, TILE_SIZE } from "../utility/config";
+import { GAME_CONFIG_URI } from "../utility/config";
 import { addInputListeners } from "./input";
+import { camera, CAMERA_SIZE, setCamera, TILE_SIZE } from "./camera";
+import { Sprite } from "pixi.js";
 
 let xPixel = 0;
 let yPixel = 0;
@@ -31,10 +34,11 @@ export const initializeGame = async (
     throw Error("Failed to get initial game config");
   }
 
-  const mapDimensions: Dimensions2d = await mapDimensionsResponse.json();
+  // const screenDimensions: Dimensions2d = SCREEN_DIMENSIONS;
+  // await mapDimensionsResponse.json();
 
   const { addSprite, gameCanvas, removeSprite, setSpritePosition } =
-    await createGameApp(mapDimensions, TILE_SIZE);
+    await createGameApp({ width: CAMERA_SIZE, height: CAMERA_SIZE }, TILE_SIZE);
 
   const onMessage = (msg: MessageEvent<unknown>) => {
     if (typeof msg.data !== "string") {
@@ -45,6 +49,20 @@ export const initializeGame = async (
       JSON.parse(msg.data);
 
     switch (response.type) {
+      case "playerPositionChange":
+        setCamera(response.content);
+
+        for (const [entityIndex, spritePosition] of spriteMap) {
+          if (spritePosition.texture === SpriteTexture.Bunny) {
+            log.trace("Player", entityIndex, spritePosition);
+          }
+          setSpritePosition({
+            entityIndex: { index: entityIndex },
+            pos: spritePosition.pos,
+          });
+        }
+
+        break;
       case "entityPositionChange":
         setSpritePosition(response.content);
         break;

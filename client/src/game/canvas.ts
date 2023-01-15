@@ -8,21 +8,29 @@ import {
   EntityIndex,
   EntityPosition,
   EntityRenderData,
+  Position,
   SpriteTexture,
 } from "../utility/types";
 import { log } from "../utility/functions";
+import { camera, CAMERA_SIZE } from "./camera";
 
-const spriteMap = new Map<EntityIndex["index"], Sprite>();
+export interface SpritePosition {
+  sprite: Sprite;
+  pos: Position;
+  texture: SpriteTexture;
+}
 
-/** Assert that a sprite exists in the sprite map and return it, throw error otherwise. */
-const getSpriteUnsafe = (entityIndex: EntityIndex): Sprite => {
-  const maybeSprite = spriteMap.get(entityIndex.index);
-  if (STRICT_MODE && maybeSprite === undefined) {
+export const spriteMap = new Map<EntityIndex["index"], SpritePosition>();
+
+/** Assert that a sprite exists in the render data map and return it, throw error otherwise. */
+const getSpritePositionUnsafe = (entityIndex: EntityIndex): SpritePosition => {
+  const spritePosition = spriteMap.get(entityIndex.index);
+  if (STRICT_MODE && spritePosition === undefined) {
     console.error("sprite index", entityIndex.index);
     console.error(spriteMap);
     throw Error("Tried to get a non-existent sprite");
   }
-  return maybeSprite as Sprite;
+  return spritePosition as SpritePosition;
 };
 
 export const createGameApp = async (
@@ -43,19 +51,53 @@ export const createGameApp = async (
   const carrot = await Assets.load("carrot.png");
   const wall = await Assets.load("wall.jpg");
 
-
   const TEXTURE_MAP: Record<SpriteTexture, Texture> = {
     [SpriteTexture.Bunny]: bunny,
     [SpriteTexture.Carrot]: carrot,
     [SpriteTexture.Wall]: wall,
   };
 
+  // const pxToTile = (pxPos: Position): Position => {
+  //   return {
+  //     x: (pxPos.x - halfTile) / tileSize,
+  //     y: (pxPos.y - halfTile) / tileSize,
+  //   };
+  // };
+
+  const tileToPx = (tilePos: Position): Position => {
+    return {
+      x: tilePos.x * tileSize + halfTile,
+      y: tilePos.y * tileSize + halfTile,
+    };
+  };
+
   /** Move a sprite to another position on the canvas */
-  const setSpritePosition = (entityPosition: EntityPosition) => {
-    log.trace("Setting sprite position", entityPosition);
-    const sprite = getSpriteUnsafe(entityPosition.entityIndex);
-    sprite.x = entityPosition.pos.x * tileSize + halfTile;
-    sprite.y = entityPosition.pos.y * tileSize + halfTile;
+  const setSpritePosition = (newEntityPosition: EntityPosition) => {
+    // log.trace("Setting sprite position", newEntityPosition);
+    const spritePos = getSpritePositionUnsafe(newEntityPosition.entityIndex);
+    const { sprite } = spritePos;
+
+    // Change the actual entity position independent of the camera
+    spritePos.pos = newEntityPosition.pos;
+
+    const cameraPos: Position = {
+      x: newEntityPosition.pos.x - camera.x,
+      y: newEntityPosition.pos.y - camera.y,
+    };
+
+    if (
+      cameraPos.x < 0 ||
+      cameraPos.x >= CAMERA_SIZE ||
+      cameraPos.y < 0 ||
+      cameraPos.y >= CAMERA_SIZE
+    ) {
+      sprite.visible = false;
+    } else {
+      sprite.visible = true;
+      const pxPos = tileToPx(cameraPos);
+      sprite.x = pxPos.x;
+      sprite.y = pxPos.y;
+    }
   };
 
   /** Add a new sprite to the game canvas if it doesn't exist,
@@ -63,14 +105,19 @@ export const createGameApp = async (
   const addSprite = (entityRenderData: EntityRenderData) => {
     // Only add the sprite if it doesn't already exist
     if (
-      spriteMap.get(entityRenderData.entityPosition.entityIndex.index) === undefined
+      spriteMap.get(entityRenderData.entityPosition.entityIndex.index) ===
+      undefined
     ) {
-      log.trace(
-        "Adding sprite for player",
-        entityRenderData.entityPosition.entityIndex
-      );
+      // log.trace(
+      //   "Adding sprite for player",
+      //   entityRenderData.entityPosition.entityIndex
+      // );
       const newSprite = new Sprite(TEXTURE_MAP[entityRenderData.sprite]);
-      spriteMap.set(entityRenderData.entityPosition.entityIndex.index, newSprite);
+      spriteMap.set(entityRenderData.entityPosition.entityIndex.index, {
+        pos: entityRenderData.entityPosition.pos,
+        sprite: newSprite,
+        texture: entityRenderData.sprite,
+      });
 
       newSprite.anchor.x = 0.5;
       newSprite.anchor.y = 0.5;
@@ -94,8 +141,8 @@ export const createGameApp = async (
   /** Remove a sprite from the game canvas */
   const removeSprite = (entityIndex: EntityIndex) => {
     log.trace("Removing sprite for player", entityIndex.index);
-    const sprite = getSpriteUnsafe(entityIndex);
-    app.stage.removeChild(sprite);
+    const spritePosition = getSpritePositionUnsafe(entityIndex);
+    app.stage.removeChild(spritePosition.sprite);
   };
 
   const gameCanvas = app.view as HTMLCanvasElement;

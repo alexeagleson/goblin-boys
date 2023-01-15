@@ -3387,8 +3387,8 @@ dependencies = [
 
 [[package]]
 name = "simple_astar"
-version = "0.1.0"
-source = "git+https://github.com/alexeagleson/simple-astar.git?branch=support-cardinal-movement#000efff6885b72bdcbf110e5d3b798d05e368762"
+version = "0.2.0"
+source = "git+https://github.com/tylervipond/simple-astar#54f65c953b1c99860dfcb8504221099d56eaa054"
 dependencies = [
  "fxhash",
  "smallvec",

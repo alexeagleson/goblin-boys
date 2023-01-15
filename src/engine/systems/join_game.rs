@@ -53,32 +53,32 @@ pub fn join_game_system(
             }))
             .ok();
 
-        let carrot_position = map.random_movement_unblocked_tile();
-        let carrot_texture = SpriteTexture::Carrot;
+        // let carrot_position = map.random_movement_unblocked_tile();
+        // let carrot_texture = SpriteTexture::Carrot;
 
-        // Spawn a carrot every time a new player joins
-        let carrot_entity_index = commands
-            .spawn(Item)
-            .insert(Name::new("Carrot"))
-            .insert(carrot_position.clone())
-            .insert(Renderable {
-                texture: carrot_texture,
-            })
-            .id()
-            .index();
+        // // Spawn a carrot every time a new player joins
+        // let carrot_entity_index = commands
+        //     .spawn(Item)
+        //     .insert(Name::new("Carrot"))
+        //     .insert(carrot_position.clone())
+        //     .insert(Renderable {
+        //         texture: carrot_texture,
+        //     })
+        //     .id()
+        //     .index();
 
-        sender_all_clients
-            .0
-            .send(ServerMessageAllClients::NewEntity(EntityRenderData {
-                entity_position: EntityPosition {
-                    entity_index: EntityIndex {
-                        index: carrot_entity_index,
-                    },
-                    pos: carrot_position,
-                },
-                sprite: carrot_texture,
-            }))
-            .ok();
+        // sender_all_clients
+        //     .0
+        //     .send(ServerMessageAllClients::NewEntity(EntityRenderData {
+        //         entity_position: EntityPosition {
+        //             entity_index: EntityIndex {
+        //                 index: carrot_entity_index,
+        //             },
+        //             pos: carrot_position,
+        //         },
+        //         sprite: carrot_texture,
+        //     }))
+        //     .ok();
 
         // Let the new client get copies of all the entities in the existing world
 

@@ -3,18 +3,19 @@ use ae_position::{Delta, Position};
 use bevy::prelude::*;
 
 use crate::{
-    api::{EntityIndex, EntityPosition, ServerMessageAllClients},
+    api::{EntityIndex, EntityPosition, ServerMessageAllClients, ServerMessageSingleClient},
     engine::{
         components::{BlocksLight, BlocksMovement, Renderable, User},
         events::ShouldUpdateMap,
-        resources::{map::Map, KeypressBuffer, MessageSenderAllClients},
+        resources::{map::Map, KeypressBuffer, MessageSenderAllClients, MessageSenderSingleClient},
     },
 };
 
 /// Moves an entity based on a user keypress
 pub fn movement_keys_system(
     map: Res<Map>,
-    sender: Res<MessageSenderAllClients>,
+    sender_single_client: Res<MessageSenderSingleClient>,
+    sender_all_clients: Res<MessageSenderAllClients>,
     mut ev_update_map: EventWriter<ShouldUpdateMap>,
     mut keypress_buffer: ResMut<KeypressBuffer>,
     mut query: Query<(
@@ -29,12 +30,12 @@ pub fn movement_keys_system(
 ) {
     let key = keypress_buffer.0.pop_front();
 
-    if let Some((id, key)) = key {
+    if let Some((user_id, key)) = key {
         for (entity, user, mut pos, name, blocks_movement, blocks_light, renderable) in
             query.iter_mut()
         {
             // This user ID matches the component of the one trying to make the move
-            if user.0 == id {
+            if user.0 == user_id {
                 let new_pos = match key {
                     BodyRelative::Up => pos.add_delta(&Delta::from(
                         ae_direction::Direction::Cardinal(Cardinal::North),
@@ -64,7 +65,8 @@ pub fn movement_keys_system(
 
                     // If the entity has a sprite to render, we need to tell the client to update that
                     if renderable.is_some() {
-                        sender
+
+                        sender_all_clients
                             .0
                             .send(ServerMessageAllClients::EntityPositionChange(
                                 EntityPosition {
@@ -73,6 +75,14 @@ pub fn movement_keys_system(
                                     },
                                     pos: pos.clone(),
                                 },
+                            ))
+                            .ok();
+
+                        sender_single_client
+                            .0
+                            .send((
+                                user_id,
+                                ServerMessageSingleClient::PlayerPositionChange(pos.clone()),
                             ))
                             .ok();
                     }

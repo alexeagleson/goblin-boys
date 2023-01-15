@@ -87,7 +87,8 @@ export type ClientMessage =
 /** Communicates information about the active game to one client */
 export type ServerMessageSingleClient = 
 	| { type: "tileHover", content?: EntityData }
-	| { type: "existingEntities", content: EntityRenderData[] };
+	| { type: "existingEntities", content: EntityRenderData[] }
+	| { type: "playerPositionChange", content: Position };
 
 /** Communicates information about the active game to one client */
 export type ServerMessageAllClients = 

@@ -1,7 +1,7 @@
 /** Handlers for user input (keyboard and mouse) */
 
-import { TILE_SIZE } from "../utility/config";
 import { BodyRelative, Position } from "../utility/types";
+import { TILE_SIZE } from "./camera";
 import { SafeSend } from "./connection";
 
 export interface DirectionHandlers {

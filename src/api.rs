@@ -81,6 +81,7 @@ pub enum ClientMessage {
 pub enum ServerMessageSingleClient {
     TileHover(Option<EntityData>),
     ExistingEntities(Vec<EntityRenderData>),
+    PlayerPositionChange(Position),
 }
 
 #[typeshare]

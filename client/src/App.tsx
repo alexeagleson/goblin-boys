@@ -67,9 +67,9 @@ const App = () => {
       <div className="canvas-and-log-container">
         <div className="canvas-container" ref={canvasContainer}>
           {hoverMenu && <HoverMenu {...hoverMenu} />}
-          {directionHandlers && (
+          {/* {directionHandlers && (
             <ControlOverlay directionHandlers={directionHandlers} />
-          )}
+          )} */}
         </div>
         <div ref={logContainer} className="log-container">
           <Log log={log} />
