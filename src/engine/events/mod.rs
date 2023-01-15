@@ -1,1 +1,3 @@
-pub struct ShouldUpdateMap;
+use super::resources::world::MapId;
+
+pub struct ShouldUpdateMap(pub MapId);

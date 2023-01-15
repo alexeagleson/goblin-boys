@@ -1,4 +1,5 @@
 pub mod map;
+pub mod world;
 
 use std::collections::VecDeque;
 

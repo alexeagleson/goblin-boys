@@ -4,7 +4,7 @@ use bevy::prelude::*;
 use crate::{
     api::{EntityData, ServerMessageSingleClient},
     engine::{
-        components::{eyes::Eyes, BlocksLight, User},
+        components::{eyes::Eyes, BlocksLight, User, MapPosition},
         resources::{MessageSenderSingleClient, MouseHoverBuffer},
     },
 };
@@ -14,14 +14,14 @@ pub fn mouse_hover_system(
     sender: Res<MessageSenderSingleClient>,
     mut mouse_hover_buffer: ResMut<MouseHoverBuffer>,
     mut set: ParamSet<(
-        Query<(&Position, &Name, Option<&BlocksLight>)>,
+        Query<(&MapPosition, &Name, Option<&BlocksLight>)>,
         Query<(&User, &Eyes)>,
     )>,
 ) {
     if let Some((id, hover_pos)) = mouse_hover_buffer.0.pop_front() {
         let mut hover_entity_info: Option<EntityData> = None;
-        for (ent_pos, name, blocks_light) in set.p0().iter() {
-            if hover_pos == *ent_pos {
+        for (ent_map_pos, name, blocks_light) in set.p0().iter() {
+            if hover_pos == ent_map_pos.pos {
                 hover_entity_info = Some(EntityData {
                     name: name.into(),
                     blocks_light: blocks_light.is_some(),

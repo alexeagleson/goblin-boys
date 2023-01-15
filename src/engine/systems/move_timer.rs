@@ -1,13 +1,13 @@
 use ae_direction::Cardinal;
-use ae_position::{Delta, Position};
+use ae_position::Delta;
 use bevy::prelude::*;
 
 use crate::{
     api::{EntityIndex, EntityPosition, ServerMessageAllClients},
     engine::{
-        components::{paths::Paths, BlocksLight, BlocksMovement, Renderable, User},
+        components::{paths::Paths, BlocksLight, BlocksMovement, MapPosition, Renderable, User},
         events::ShouldUpdateMap,
-        resources::{map::Map, MessageSenderAllClients, MoveStopwatch},
+        resources::{world::GameWorld, MessageSenderAllClients, MoveStopwatch},
     },
 };
 
@@ -15,13 +15,13 @@ use crate::{
 pub fn move_timer_system(
     mut move_stopwatch: ResMut<MoveStopwatch>,
     sender: Res<MessageSenderAllClients>,
-    map: Res<Map>,
+    game_world: Res<GameWorld>,
     time: Res<Time>,
     mut ev_update_map: EventWriter<ShouldUpdateMap>,
     mut query: Query<(
         Entity,
         &User,
-        &mut Position,
+        &mut MapPosition,
         &Name,
         Option<&mut Paths>,
         Option<&BlocksMovement>,
@@ -33,9 +33,14 @@ pub fn move_timer_system(
         move_stopwatch.0.tick(time.delta());
     } else {
         move_stopwatch.0.reset();
-        for (entity, _user, mut pos, name, paths, blocks_movement, blocks_light, renderable) in
+        for (entity, _user, mut map_pos, name, paths, blocks_movement, blocks_light, renderable) in
             query.iter_mut()
         {
+            let map = game_world
+                .game_maps
+                .get(&map_pos.map_id)
+                .expect("Map doesn't exist somehow");
+
             let new_pos = if let Some(mut paths) = paths {
                 // Make sure it's a valid move
 
@@ -48,7 +53,7 @@ pub fn move_timer_system(
                     let unlocked_position = map.random_movement_unblocked_tile();
 
                     // let new_path = Paths::generate_direct_to_position(&pos, &unlocked_position);
-                    let new_path = Paths::generate_astar(&pos, &unlocked_position, &map);
+                    let new_path = Paths::generate_astar(&map_pos.pos, &unlocked_position, &map);
 
                     paths.set(new_path);
                     continue;
@@ -58,15 +63,15 @@ pub fn move_timer_system(
 
                 let random_direction: Cardinal = rand::random();
                 let delta: Delta = random_direction.into();
-                pos.add_delta(&delta)
+                map_pos.pos.add_delta(&delta)
             };
 
             if !map.movement_blocked(&new_pos) {
-                *pos = new_pos;
+                map_pos.pos = new_pos;
 
                 // If an entity that blocks movement or light moves, the map needs to update
                 if blocks_movement.is_some() || blocks_light.is_some() {
-                    ev_update_map.send(ShouldUpdateMap);
+                    ev_update_map.send(ShouldUpdateMap(map_pos.map_id));
                 }
 
                 // If the entity has a sprite to render, we need to tell the client to update that
@@ -78,7 +83,7 @@ pub fn move_timer_system(
                                 entity_index: EntityIndex {
                                     index: entity.index(),
                                 },
-                                pos: pos.clone(),
+                                pos: map_pos.pos.clone(),
                             },
                         ))
                         .ok();

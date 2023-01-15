@@ -1,11 +1,19 @@
+use std::sync::atomic::{AtomicI32, Ordering};
+
 use ae_position::{Dimensions2d, Position};
 use bevy::prelude::Resource;
 use rand::seq::SliceRandom;
 use simple_astar::astar;
 use tv_shadowcasting::get_visible_idxs;
 
+use super::world::MapId;
+
 pub const MAP_WIDTH: i32 = 7;
 pub const MAP_HEIGHT: i32 = 7;
+
+pub const DEFAULT_MAP_ID: i32 = 1;
+
+pub static MAP_ID_COUNTER: AtomicI32 = AtomicI32::new(DEFAULT_MAP_ID);
 
 // const MAX_MAP_INDEX: usize = (MAP_WIDTH * MAP_HEIGHT) as usize;
 // const DEFAULT_EMPTY_INDEX_MAP: [u8; MAX_MAP_INDEX] = [0; MAX_MAP_INDEX];
@@ -104,6 +112,7 @@ fn pretty_print_idx_map(idxs: &Vec<u8>) {
 
 #[derive(Debug, Resource)]
 pub struct Map {
+    map_id: MapId,
     dimensions: Dimensions2d,
     light_blocking_grid: LightBlockingGrid,
     movement_blocking_grid: MovementBlockingGrid,
@@ -120,8 +129,13 @@ impl Map {
         }
     }
 
+    pub fn id(&self) -> MapId {
+        self.map_id
+    }
+
     pub fn new(width: i32, height: i32) -> Self {
         Self {
+            map_id: MAP_ID_COUNTER.fetch_add(1, Ordering::Relaxed),
             dimensions: Dimensions2d { width, height },
             light_blocking_grid: LightBlockingGrid::new(width, height),
             movement_blocking_grid: MovementBlockingGrid::new(width, height),

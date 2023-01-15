@@ -3,18 +3,21 @@ use bevy::prelude::*;
 
 use crate::{
     api::{LogMessage, ServerMessageAllClients},
-    engine::resources::{MessageSenderAllClients, MouseClickBuffer},
+    engine::{
+        components::MapPosition,
+        resources::{MessageSenderAllClients, MouseClickBuffer},
+    },
 };
 
 /// Looks for an entity at a tile position being clicked
 pub fn mouse_click_system(
     sender: Res<MessageSenderAllClients>,
     mut mouse_click_buffer: ResMut<MouseClickBuffer>,
-    query: Query<(&Position, &Name)>,
+    query: Query<(&MapPosition, &Name)>,
 ) {
     if let Some((user_id, click_pos)) = mouse_click_buffer.0.pop_front() {
-        let log_message = query.iter().find_map(|(ent_pos, name)| {
-            (click_pos == *ent_pos)
+        let log_message = query.iter().find_map(|(ent_map_pos, name)| {
+            (click_pos == ent_map_pos.pos)
                 .then_some(LogMessage(format!("User {} clicked {}", user_id.id, &name)))
         });
 
