@@ -71,6 +71,11 @@ export enum SpriteTexture {
 	Wall = "wall",
 }
 
+/** Tell client to play audio */
+export enum Sound {
+	Punch = "punch",
+}
+
 /** An input interaction from the client */
 export type ClientMessage = 
 	| { type: "tileHover", content: Position }
@@ -93,7 +98,8 @@ export type ServerMessageSingleClient =
 	camera: Position;
 	entities: EntityRenderData[];
 }}
-	| { type: "removeSprite", content: EntityIndex };
+	| { type: "removeSprite", content: EntityIndex }
+	| { type: "playSound", content: Sound };
 
 /** Communicates information about the active game to one client */
 export type ServerMessageAllClients = 

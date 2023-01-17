@@ -6,12 +6,15 @@ import {
   EntityData,
   ServerMessageAllClients,
   ServerMessageSingleClient,
+  Sound,
   SpriteTexture,
 } from "../utility/types";
 import { assertNever, log } from "../utility/functions";
 import { GAME_CONFIG_URI } from "../utility/config";
 import { addInputListeners } from "./input";
 import { CAMERA_SIZE, setCamera, TILE_SIZE } from "./camera";
+
+var punch = new Audio("punch.ogg");
 
 let xPixel = 0;
 let yPixel = 0;
@@ -93,6 +96,12 @@ export const initializeGame = async (
         break;
       case "tileClick":
         onClick(response.content);
+        break;
+      case "playSound":
+        if (response.content == Sound.Punch) {
+          punch.currentTime = 0;
+          punch.play();
+        }
         break;
       default:
         assertNever(response);

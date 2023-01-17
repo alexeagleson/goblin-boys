@@ -60,6 +60,14 @@ pub enum SpriteTexture {
 }
 
 #[typeshare]
+#[derive(Serialize, Deserialize, Debug, Clone, Copy)]
+#[serde(rename_all = "camelCase")]
+/// Tell client to play audio
+pub enum Sound {
+    Punch,
+}
+
+#[typeshare]
 #[derive(Deserialize, Debug, Clone)]
 #[serde(rename_all = "camelCase", tag = "type", content = "content")]
 /// An input interaction from the client
@@ -88,6 +96,7 @@ pub enum ServerMessageSingleClient {
         entities: Vec<EntityRenderData>,
     },
     RemoveSprite(EntityIndex),
+    PlaySound(Sound),
 }
 
 #[typeshare]

@@ -5,6 +5,8 @@ import { EntityData } from "./utility/types";
 import { DirectionHandlers } from "./game/input";
 import "./App.css";
 
+
+
 const App = () => {
   const initialized = useRef<boolean>(false);
   const canvasContainer = useRef<HTMLDivElement | null>(null);

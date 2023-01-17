@@ -5,7 +5,7 @@ use bevy::prelude::*;
 use crate::{
     api::{
         EntityIndex, EntityPosition, EntityRenderData, ServerMessageAllClients,
-        ServerMessageSingleClient, UserId,
+        ServerMessageSingleClient, Sound, UserId,
     },
     engine::{
         components::{BlocksLight, BlocksMovement, MapPosition, Renderable, User},
@@ -132,6 +132,10 @@ pub fn movement_keys_system(
                             .ok();
                     }
                 } else {
+                    sender_single_client
+                        .0
+                        .send((user_id, ServerMessageSingleClient::PlaySound(Sound::Punch)))
+                        .ok();
                     info!("{} attempted to move but failed", name);
                 }
             }
