@@ -14,7 +14,7 @@ use crate::{
 /// Move randomly
 pub fn move_timer_system(
     mut move_stopwatch: ResMut<MoveStopwatch>,
-    sender: Res<MessageSenderAllClients>,
+    // sender: Res<MessageSenderAllClients>,
     game_world: Res<GameWorld>,
     time: Res<Time>,
     mut ev_update_map: EventWriter<ShouldUpdateMap>,
@@ -76,17 +76,17 @@ pub fn move_timer_system(
 
                 // If the entity has a sprite to render, we need to tell the client to update that
                 if renderable.is_some() {
-                    sender
-                        .0
-                        .send(ServerMessageAllClients::EntityPositionChange(
-                            EntityPosition {
-                                entity_index: EntityIndex {
-                                    index: entity.index(),
-                                },
-                                pos: map_pos.pos.clone(),
-                            },
-                        ))
-                        .ok();
+                    // sender
+                    //     .0
+                    //     .send(ServerMessageAllClients::EntityPositionChange(
+                    //         EntityPosition {
+                    //             entity_index: EntityIndex {
+                    //                 index: entity.index(),
+                    //             },
+                    //             pos: map_pos.pos.clone(),
+                    //         },
+                    //     ))
+                    //     .ok();
                 }
             } else {
                 info!("{} attempted to move but failed", name);

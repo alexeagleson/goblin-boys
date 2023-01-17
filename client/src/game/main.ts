@@ -1,7 +1,7 @@
 /** Glue that binds together the input, canvas and connection modules */
 
 import { connectToGameServer } from "./connection";
-import { createGameApp, gameState } from "./canvas";
+import { clearEverything, createGameApp, gameState } from "./canvas";
 import {
   EntityData,
   ServerMessageAllClients,
@@ -32,7 +32,7 @@ export const initializeGame = async (
     throw Error("Failed to get initial game config");
   }
 
-  gameState.dimensions = await mapDimensionsResponse.json();
+  // gameState.dimensions = await mapDimensionsResponse.json();
 
   const { addSprite, gameCanvas, removeSprite, setSpritePosition } =
     await createGameApp({ width: CAMERA_SIZE, height: CAMERA_SIZE }, TILE_SIZE);
@@ -46,12 +46,13 @@ export const initializeGame = async (
       JSON.parse(msg.data);
 
     switch (response.type) {
-      case "playerPositionChange":
+      case "centreCamera":
         setCamera(response.content);
 
         for (const [entityIndex, spritePosition] of gameState.spriteMap) {
           if (spritePosition.texture === SpriteTexture.Bunny) {
             log.trace("Player", entityIndex, spritePosition);
+            log.trace("Player new position", response.content);
           }
           setSpritePosition({
             entityIndex: { index: entityIndex },
@@ -61,18 +62,27 @@ export const initializeGame = async (
 
         break;
       case "entityPositionChange":
-        setSpritePosition(response.content);
+        setSpritePosition(response.content.entityPosition);
         break;
-      case "newEntity":
-        addSprite(response.content);
-        break;
-      case "newEntities":
-      case "existingEntities":
-        response.content.forEach((renderData) => {
+      // case "newEntity":
+      //   addSprite(response.content);
+      //   break;
+      // case "newEntities":
+      // case "existingEntities":
+      //   response.content.forEach((renderData) => {
+      //     addSprite(renderData);
+      //   });
+      //   break;
+      case "updateFullGameMap":
+        clearEverything();
+
+        setCamera(response.content.camera);
+
+        response.content.entities.forEach((renderData) => {
           addSprite(renderData);
         });
         break;
-      case "removedEntity":
+      case "removeSprite":
         removeSprite(response.content);
         break;
       case "moveCount":

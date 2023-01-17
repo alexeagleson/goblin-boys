@@ -87,15 +87,16 @@ export type ClientMessage =
 /** Communicates information about the active game to one client */
 export type ServerMessageSingleClient = 
 	| { type: "tileHover", content?: EntityData }
-	| { type: "existingEntities", content: EntityRenderData[] }
-	| { type: "playerPositionChange", content: Position };
+	| { type: "entityPositionChange", content: EntityRenderData }
+	| { type: "centreCamera", content: Position }
+	| { type: "updateFullGameMap", content: {
+	camera: Position;
+	entities: EntityRenderData[];
+}}
+	| { type: "removeSprite", content: EntityIndex };
 
 /** Communicates information about the active game to one client */
 export type ServerMessageAllClients = 
-	| { type: "newEntity", content: EntityRenderData }
-	| { type: "newEntities", content: EntityRenderData[] }
-	| { type: "removedEntity", content: EntityIndex }
-	| { type: "entityPositionChange", content: EntityPosition }
 	| { type: "tileClick", content: LogMessage }
 	| { type: "moveCount", content: number };
 

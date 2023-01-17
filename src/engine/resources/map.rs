@@ -11,9 +11,9 @@ use super::world::MapId;
 pub const MAP_WIDTH: i32 = 7;
 pub const MAP_HEIGHT: i32 = 7;
 
-pub const DEFAULT_MAP_ID: i32 = 1;
+pub const PRIMARY_MAP_ID: i32 = 1;
 
-pub static MAP_ID_COUNTER: AtomicI32 = AtomicI32::new(DEFAULT_MAP_ID);
+pub static MAP_ID_COUNTER: AtomicI32 = AtomicI32::new(PRIMARY_MAP_ID);
 
 // const MAX_MAP_INDEX: usize = (MAP_WIDTH * MAP_HEIGHT) as usize;
 // const DEFAULT_EMPTY_INDEX_MAP: [u8; MAX_MAP_INDEX] = [0; MAX_MAP_INDEX];
@@ -125,7 +125,7 @@ impl Map {
 
     fn assert_in_bounds(&self, pos: &Position) {
         if !self.inside_map_bounds(pos) {
-            panic!("Attempted to use a position outside map bounds{:?}", pos);
+            panic!("Attempted to use a position outside map bounds {:?} but map ID {} bounds are x: {} y: {}", pos, self.map_id, self.width(), self.height());
         }
     }
 

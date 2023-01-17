@@ -1,7 +1,7 @@
 pub mod map;
 pub mod world;
 
-use std::collections::VecDeque;
+use std::collections::{HashMap, VecDeque};
 
 use ae_direction::BodyRelative;
 use ae_position::Position;
@@ -9,6 +9,10 @@ use bevy::{prelude::Resource, time::Stopwatch};
 use tokio::sync::mpsc::{UnboundedReceiver, UnboundedSender};
 
 use crate::api::{ClientMessage, ServerMessageAllClients, ServerMessageSingleClient, UserId};
+
+use self::world::MapId;
+
+use super::components::MapPosition;
 
 #[derive(Resource)]
 pub struct MessageReceiver(pub UnboundedReceiver<(UserId, ClientMessage)>);
@@ -42,3 +46,7 @@ impl MoveStopwatch {
         Self(Stopwatch::new())
     }
 }
+
+#[derive(Resource, Default)]
+
+pub struct CurrentUserMaps(pub HashMap<UserId, MapPosition>);

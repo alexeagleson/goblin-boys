@@ -13,19 +13,29 @@ import {
 } from "../utility/types";
 import { log } from "../utility/functions";
 import { camera, CAMERA_SIZE, mapPosToScreenPos } from "./camera";
+import App from "../App";
 
 export interface SpritePosition {
   sprite: Sprite;
   pos: Position;
   texture: SpriteTexture;
+  remove: () => void;
 }
 
 export const gameState: {
-  dimensions: Dimensions2d;
+  // dimensions: Dimensions2d;
   spriteMap: Map<EntityIndex["index"], SpritePosition>;
 } = {
-  dimensions: { width: 0, height: 0 },
+  // dimensions: { width: 0, height: 0 },
   spriteMap: new Map(),
+};
+
+export const clearEverything = () => {
+  for (const [entityIndex, spritePosition] of gameState.spriteMap) {
+    spritePosition.remove();
+  }
+
+  gameState.spriteMap = new Map();
 };
 
 /** Assert that a sprite exists in the render data map and return it, throw error otherwise. */
@@ -101,19 +111,15 @@ export const createGameApp = async (
   const addSprite = (entityRenderData: EntityRenderData) => {
     // Only add the sprite if it doesn't already exist
     if (
-      gameState.spriteMap.get(entityRenderData.entityPosition.entityIndex.index) ===
-      undefined
+      gameState.spriteMap.get(
+        entityRenderData.entityPosition.entityIndex.index
+      ) === undefined
     ) {
       // log.trace(
       //   "Adding sprite for player",
       //   entityRenderData.entityPosition.entityIndex
       // );
       const newSprite = new Sprite(TEXTURE_MAP[entityRenderData.sprite]);
-      gameState.spriteMap.set(entityRenderData.entityPosition.entityIndex.index, {
-        pos: entityRenderData.entityPosition.pos,
-        sprite: newSprite,
-        texture: entityRenderData.sprite,
-      });
 
       newSprite.anchor.x = 0.5;
       newSprite.anchor.y = 0.5;
@@ -124,6 +130,20 @@ export const createGameApp = async (
       });
 
       app.stage.addChild(newSprite);
+
+      gameState.spriteMap.set(
+        entityRenderData.entityPosition.entityIndex.index,
+        {
+          pos: entityRenderData.entityPosition.pos,
+          sprite: newSprite,
+          texture: entityRenderData.sprite,
+          remove: () => {
+            app.stage.removeChild(newSprite);
+            // newSprite.destroy();
+            // ticker.destroy();
+          },
+        }
+      );
     } else {
       log.trace(
         "Existing sprite found for player",

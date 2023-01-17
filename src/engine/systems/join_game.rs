@@ -11,27 +11,30 @@ use crate::{
             eyes::Eyes, paths::Paths, BlocksLight, BlocksMovement, Item, MapPosition, Renderable,
             User,
         },
+        events::ShouldSendFullMapUpdateToClient,
         resources::{
-            map::{Map, DEFAULT_MAP_ID},
+            map::{Map, PRIMARY_MAP_ID},
             world::GameWorld,
-            ConnectBuffer, MessageSenderAllClients, MessageSenderSingleClient,
+            ConnectBuffer, CurrentUserMaps, MessageSenderAllClients, MessageSenderSingleClient,
         },
     },
 };
 
 /// Adds an entity to the game when the user connects
 pub fn join_game_system(
-    sender_single_client: Res<MessageSenderSingleClient>,
-    sender_all_clients: Res<MessageSenderAllClients>,
+    // sender_single_client: Res<MessageSenderSingleClient>,
+    // sender_all_clients: Res<MessageSenderAllClients>,
     game_world: Res<GameWorld>,
     mut commands: Commands,
     mut connect_buffer: ResMut<ConnectBuffer>,
     query: Query<(Entity, &MapPosition, &Renderable)>,
+    mut ev_update_client: EventWriter<ShouldSendFullMapUpdateToClient>,
+    mut current_user_maps: ResMut<CurrentUserMaps>,
 ) {
     let map = game_world
         .game_maps
-        .get(&DEFAULT_MAP_ID)
-        .expect("Somehow the default map does not exist");
+        .get(&PRIMARY_MAP_ID)
+        .expect("Somehow the primary map does not exist");
 
     if let Some(user_id) = connect_buffer.0.pop_front() {
         let player_map_position: MapPosition = MapPosition {
@@ -55,18 +58,7 @@ pub fn join_game_system(
             .id()
             .index();
 
-        sender_all_clients
-            .0
-            .send(ServerMessageAllClients::NewEntity(EntityRenderData {
-                entity_position: EntityPosition {
-                    entity_index: EntityIndex {
-                        index: player_index,
-                    },
-                    pos: player_map_position.pos,
-                },
-                sprite: player_texture,
-            }))
-            .ok();
+        current_user_maps.0.insert(user_id, player_map_position);
 
         let carrot_map_position: MapPosition = MapPosition {
             pos: map.random_movement_unblocked_tile(),
@@ -85,41 +77,43 @@ pub fn join_game_system(
             .id()
             .index();
 
-        sender_all_clients
-            .0
-            .send(ServerMessageAllClients::NewEntity(EntityRenderData {
-                entity_position: EntityPosition {
-                    entity_index: EntityIndex {
-                        index: carrot_entity_index,
-                    },
-                    pos: carrot_map_position.pos,
-                },
-                sprite: carrot_texture,
-            }))
-            .ok();
+        // sender_all_clients
+        //     .0
+        //     .send(ServerMessageAllClients::NewEntity(EntityRenderData {
+        //         entity_position: EntityPosition {
+        //             entity_index: EntityIndex {
+        //                 index: carrot_entity_index,
+        //             },
+        //             pos: carrot_map_position.pos,
+        //         },
+        //         sprite: carrot_texture,
+        //     }))
+        //     .ok();
 
         // Let the new client get copies of all the entities in the existing world
 
-        let existing_render_entities = query
-            .iter()
-            .map(|(entity, map_pos, sprite)| EntityRenderData {
-                entity_position: EntityPosition {
-                    entity_index: EntityIndex {
-                        index: entity.index(),
-                    },
-                    pos: map_pos.pos.clone(),
-                },
-                sprite: sprite.texture,
-            })
-            .collect::<Vec<_>>();
+        ev_update_client.send(ShouldSendFullMapUpdateToClient(map.id()));
 
-        // Communicate to the new client all existing render entities
-        sender_single_client
-            .0
-            .send((
-                user_id,
-                ServerMessageSingleClient::ExistingEntities(existing_render_entities),
-            ))
-            .ok();
+        // let existing_render_entities = query
+        //     .iter()
+        //     .map(|(entity, map_pos, sprite)| EntityRenderData {
+        //         entity_position: EntityPosition {
+        //             entity_index: EntityIndex {
+        //                 index: entity.index(),
+        //             },
+        //             pos: map_pos.pos.clone(),
+        //         },
+        //         sprite: sprite.texture,
+        //     })
+        //     .collect::<Vec<_>>();
+
+        // // Communicate to the new client all existing render entities
+        // sender_single_client
+        //     .0
+        //     .send((
+        //         user_id,
+        //         ServerMessageSingleClient::ExistingEntities(existing_render_entities),
+        //     ))
+        //     .ok();
     }
 }

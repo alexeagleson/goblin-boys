@@ -3,12 +3,15 @@ use ae_position::{Delta, Position};
 use bevy::prelude::*;
 
 use crate::{
-    api::{EntityIndex, EntityPosition, ServerMessageAllClients, ServerMessageSingleClient},
+    api::{
+        EntityIndex, EntityPosition, EntityRenderData, ServerMessageAllClients,
+        ServerMessageSingleClient, UserId,
+    },
     engine::{
         components::{BlocksLight, BlocksMovement, MapPosition, Renderable, User},
         events::ShouldUpdateMap,
         resources::{
-            map::Map, world::GameWorld, KeypressBuffer, MessageSenderAllClients,
+            map::Map, world::GameWorld, CurrentUserMaps, KeypressBuffer, MessageSenderAllClients,
             MessageSenderSingleClient,
         },
     },
@@ -18,7 +21,7 @@ use crate::{
 pub fn movement_keys_system(
     game_world: Res<GameWorld>,
     sender_single_client: Res<MessageSenderSingleClient>,
-    sender_all_clients: Res<MessageSenderAllClients>,
+    // sender_all_clients: Res<MessageSenderAllClients>,
     mut ev_update_map: EventWriter<ShouldUpdateMap>,
     mut keypress_buffer: ResMut<KeypressBuffer>,
     mut query: Query<(
@@ -30,6 +33,7 @@ pub fn movement_keys_system(
         Option<&BlocksLight>,
         Option<&Renderable>,
     )>,
+    mut current_user_maps: ResMut<CurrentUserMaps>,
 ) {
     let key = keypress_buffer.0.pop_front();
 
@@ -80,6 +84,10 @@ pub fn movement_keys_system(
 
                 if !map.movement_blocked(&new_pos) {
                     map_pos.pos = new_pos;
+
+                    // Update the user's position in the user resource tracker
+                    current_user_maps.0.insert(user_id, map_pos.clone());
+
                     info!("{} moved to {:?}", name, map_pos.pos);
 
                     // If an entity that blocks movement or light moves, the map needs to update
@@ -88,26 +96,38 @@ pub fn movement_keys_system(
                     }
 
                     // If the entity has a sprite to render, we need to tell the client to update that
-                    if renderable.is_some() {
-                        sender_all_clients
+                    if let Some(renderable) = renderable {
+                        current_user_maps
                             .0
-                            .send(ServerMessageAllClients::EntityPositionChange(
-                                EntityPosition {
-                                    entity_index: EntityIndex {
-                                        index: entity.index(),
-                                    },
-                                    pos: map_pos.pos.clone(),
-                                },
-                            ))
-                            .ok();
+                            .iter()
+                            .for_each(|(user_id, user_map_pos)| {
+                                if user_map_pos.map_id == map.id() {
+                                    sender_single_client
+                                        .0
+                                        .send((
+                                            *user_id,
+                                            ServerMessageSingleClient::EntityPositionChange(
+                                                EntityRenderData {
+                                                    entity_position: EntityPosition {
+                                                        entity_index: EntityIndex {
+                                                            index: entity.index(),
+                                                        },
+                                                        pos: map_pos.pos.clone(),
+                                                    },
+                                                    sprite: renderable.texture,
+                                                },
+                                            ),
+                                        ))
+                                        .ok();
+                                }
+                            });
 
+                        // Tell the user that moved to update their camera
                         sender_single_client
                             .0
                             .send((
                                 user_id,
-                                ServerMessageSingleClient::PlayerPositionChange(
-                                    map_pos.pos.clone(),
-                                ),
+                                ServerMessageSingleClient::CentreCamera(map_pos.pos.clone()),
                             ))
                             .ok();
                     }

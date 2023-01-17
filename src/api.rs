@@ -4,7 +4,7 @@ use serde::{Deserialize, Serialize};
 use typeshare::typeshare;
 
 #[typeshare]
-#[derive(Clone, Copy, Serialize, Debug, PartialEq, Eq)]
+#[derive(Clone, Copy, Serialize, Debug, PartialEq, Eq, Hash)]
 pub struct UserId {
     pub id: i32,
 }
@@ -16,7 +16,7 @@ pub struct EntityIndex {
 }
 
 #[typeshare]
-#[derive(Serialize, Debug)]
+#[derive(Serialize, Debug, Clone)]
 #[serde(rename_all = "camelCase")]
 /// Information about a specific entity's current position
 pub struct EntityPosition {
@@ -25,7 +25,7 @@ pub struct EntityPosition {
 }
 
 #[typeshare]
-#[derive(Serialize, Debug)]
+#[derive(Serialize, Debug, Clone)]
 #[serde(rename_all = "camelCase")]
 /// Information about a entity to render
 pub struct EntityRenderData {
@@ -80,8 +80,14 @@ pub enum ClientMessage {
 /// Communicates information about the active game to one client
 pub enum ServerMessageSingleClient {
     TileHover(Option<EntityData>),
-    ExistingEntities(Vec<EntityRenderData>),
-    PlayerPositionChange(Position),
+    // ExistingEntities(Vec<EntityRenderData>),
+    EntityPositionChange(EntityRenderData),
+    CentreCamera(Position),
+    UpdateFullGameMap {
+        camera: Position,
+        entities: Vec<EntityRenderData>,
+    },
+    RemoveSprite(EntityIndex),
 }
 
 #[typeshare]
@@ -89,10 +95,10 @@ pub enum ServerMessageSingleClient {
 #[serde(rename_all = "camelCase", tag = "type", content = "content")]
 /// Communicates information about the active game to one client
 pub enum ServerMessageAllClients {
-    NewEntity(EntityRenderData),
-    NewEntities(Vec<EntityRenderData>),
-    RemovedEntity(EntityIndex),
-    EntityPositionChange(EntityPosition),
+    // NewEntity(EntityRenderData),
+    // NewEntities(Vec<EntityRenderData>),
+    // RemovedEntity(EntityIndex),
+    // EntityPositionChange(EntityPosition),
     TileClick(LogMessage),
     MoveCount(i32),
 }
