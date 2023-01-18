@@ -1,5 +1,6 @@
-use crate::api::{ClientMessage, UserId};
+use crate::api::ClientMessage;
 use crate::database::DatabaseLock;
+use crate::engine::components::UserId;
 use crate::websocket::connections::USER_ID_COUNTER;
 use crate::websocket::disconnect::handle_disconnect;
 use crate::websocket::message::handle_message;
@@ -18,11 +19,9 @@ pub async fn handle_new_connection(
     db: DatabaseLock,
     sender: UnboundedSender<(UserId, ClientMessage)>,
 ) {
-    let new_id = UserId {
-        id: USER_ID_COUNTER.fetch_add(1, Ordering::Relaxed),
-    };
+    let new_id = UserId(USER_ID_COUNTER.fetch_add(1, Ordering::Relaxed));
 
-    info!("New connection: {}", new_id.id);
+    info!("New connection: {}", new_id.0);
 
     // Split the socket into a sender and receive of messages.
     let (mut user_ws_tx, mut user_ws_rx) = ws.split();
@@ -51,7 +50,7 @@ pub async fn handle_new_connection(
         let msg = match result {
             Ok(msg) => msg,
             Err(e) => {
-                error!("websocket error(uid={}): {}", new_id.id, e);
+                error!("websocket error(uid={}): {}", new_id.0, e);
                 break 'listening;
             }
         };

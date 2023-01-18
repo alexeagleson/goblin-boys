@@ -1,13 +1,15 @@
 pub mod eyes;
 pub mod paths;
 
-
 use ae_position::Position;
 use bevy::prelude::Component;
 
-use crate::api::{SpriteTexture, UserId};
+use crate::api::SpriteTexture;
 
 use super::resources::world::MapId;
+
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Hash)]
+pub struct UserId(pub i32);
 
 #[derive(Component)]
 pub struct User(pub UserId);
@@ -29,6 +31,7 @@ pub struct Renderable {
     pub texture: SpriteTexture,
 }
 
+/// The minimum information required to fully describe the location of an entity
 #[derive(Component, Clone)]
 pub struct MapPosition {
     pub pos: Position,

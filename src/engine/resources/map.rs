@@ -15,9 +15,6 @@ pub const PRIMARY_MAP_ID: i32 = 1;
 
 pub static MAP_ID_COUNTER: AtomicI32 = AtomicI32::new(PRIMARY_MAP_ID);
 
-// const MAX_MAP_INDEX: usize = (MAP_WIDTH * MAP_HEIGHT) as usize;
-// const DEFAULT_EMPTY_INDEX_MAP: [u8; MAX_MAP_INDEX] = [0; MAX_MAP_INDEX];
-
 type IndexGrid = Vec<u8>;
 
 #[derive(Debug)]
@@ -125,7 +122,7 @@ impl Map {
 
     fn assert_in_bounds(&self, pos: &Position) {
         if !self.inside_map_bounds(pos) {
-            panic!("Attempted to use a position outside map bounds {:?} but map ID {} bounds are x: {} y: {}", pos, self.map_id, self.width(), self.height());
+            panic!("Attempted to use a position outside map bounds {:?} but map ID {} bounds are x: {} y: {}", pos, self.id().0, self.width(), self.height());
         }
     }
 
@@ -135,7 +132,7 @@ impl Map {
 
     pub fn new(width: i32, height: i32) -> Self {
         Self {
-            map_id: MAP_ID_COUNTER.fetch_add(1, Ordering::Relaxed),
+            map_id: MapId(MAP_ID_COUNTER.fetch_add(1, Ordering::Relaxed)),
             dimensions: Dimensions2d { width, height },
             light_blocking_grid: LightBlockingGrid::new(width, height),
             movement_blocking_grid: MovementBlockingGrid::new(width, height),

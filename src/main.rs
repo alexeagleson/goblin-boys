@@ -4,11 +4,12 @@ mod engine;
 mod websocket;
 
 use ae_position::Dimensions2d;
-use api::{ClientMessage, ServerMessageAllClients, ServerMessageSingleClient, UserId};
+use api::{ClientMessage, ServerMessageAllClients, ServerMessageSingleClient};
 use bevy::prelude::*;
 use database::{Database, DatabaseLock};
 use engine::{
     app::start_game_engine,
+    components::UserId,
     resources::map::{MAP_HEIGHT, MAP_WIDTH},
 };
 use std::sync::Arc;
@@ -91,13 +92,10 @@ fn main() {
                     let serialized_message: String = serde_json::to_string(&single_client_message)
                         .expect("Serialize should work");
 
-                    info!(
-                        "Sending only to user {}: {}",
-                        user_id.id, serialized_message
-                    );
+                    info!("Sending only to user {}: {}", user_id.0, serialized_message);
 
                     for (&uid, sender) in connections_3.read().await.0.iter() {
-                        if uid == user_id.id {
+                        if uid == user_id.0 {
                             sender.send(Message::text(&serialized_message)).ok();
                         }
                     }

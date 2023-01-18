@@ -1,17 +1,16 @@
-use ae_position::Position;
 use bevy::prelude::*;
 
 use crate::{
     api::{EntityData, ServerMessageSingleClient},
     engine::{
-        components::{eyes::Eyes, BlocksLight, User, MapPosition},
+        components::{eyes::Eyes, BlocksLight, MapPosition, User},
         resources::{MessageSenderSingleClient, MouseHoverBuffer},
     },
 };
 
 /// Looks for an entity at a tile position being hovered
 pub fn mouse_hover_system(
-    sender: Res<MessageSenderSingleClient>,
+    sender_single_client: Res<MessageSenderSingleClient>,
     mut mouse_hover_buffer: ResMut<MouseHoverBuffer>,
     mut set: ParamSet<(
         Query<(&MapPosition, &Name, Option<&BlocksLight>)>,
@@ -46,7 +45,7 @@ pub fn mouse_hover_system(
         // Communicate the entity at the hover position to the client that requested it
         // It's important to specifically communicate `None` if there is no entity to handle
         // the case where the user hovers from a tile with an entity to a tile without one
-        sender
+        sender_single_client
             .0
             .send((id, ServerMessageSingleClient::TileHover(hover_entity_info)))
             .ok();

@@ -1,7 +1,7 @@
 /** Glue that binds together the input, canvas and connection modules */
 
 import { connectToGameServer } from "./connection";
-import { clearEverything, createGameApp, gameState } from "./canvas";
+import { clearEverything, createGameApp, spriteMap } from "./canvas";
 import {
   EntityData,
   ServerMessageAllClients,
@@ -52,20 +52,21 @@ export const initializeGame = async (
       case "centreCamera":
         setCamera(response.content);
 
-        for (const [entityIndex, spritePosition] of gameState.spriteMap) {
+        for (const [entityIndex, spritePosition] of spriteMap) {
           if (spritePosition.texture === SpriteTexture.Bunny) {
             log.trace("Player", entityIndex, spritePosition);
             log.trace("Player new position", response.content);
           }
           setSpritePosition({
-            entityIndex: { index: entityIndex },
+            entity: { idx: entityIndex },
             pos: spritePosition.pos,
+            sprite: spritePosition.texture,
           });
         }
 
         break;
       case "entityPositionChange":
-        setSpritePosition(response.content.entityPosition);
+        setSpritePosition(response.content);
         break;
       // case "newEntity":
       //   addSprite(response.content);

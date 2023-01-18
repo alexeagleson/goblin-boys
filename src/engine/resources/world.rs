@@ -1,13 +1,11 @@
-use std::{
-    collections::HashMap,
-    sync::atomic::{AtomicI32, Ordering},
-};
+use std::collections::HashMap;
 
 use bevy::prelude::*;
 
 use super::map::Map;
 
-pub type MapId = i32;
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+pub struct MapId(pub i32);
 
 type GameMaps = HashMap<MapId, Map>;
 

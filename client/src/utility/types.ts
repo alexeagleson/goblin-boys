@@ -26,27 +26,18 @@ export interface Position {
 	y: number;
 }
 
-export interface UserId {
-	id: number;
-}
-
 export interface EntityIndex {
-	index: number;
+	idx: number;
 }
 
-/** Information about a specific entity's current position */
-export interface EntityPosition {
-	entityIndex: EntityIndex;
+/** Information about a sprite to render */
+export interface SpriteUpdate {
+	entity: EntityIndex;
 	pos: Position;
-}
-
-/** Information about a entity to render */
-export interface EntityRenderData {
-	entityPosition: EntityPosition;
 	sprite: SpriteTexture;
 }
 
-/** Information about an entity */
+/** Information about an entity to display to the user */
 export interface EntityData {
 	name: string;
 	blocksLight: boolean;
@@ -92,11 +83,11 @@ export type ClientMessage =
 /** Communicates information about the active game to one client */
 export type ServerMessageSingleClient = 
 	| { type: "tileHover", content?: EntityData }
-	| { type: "entityPositionChange", content: EntityRenderData }
+	| { type: "entityPositionChange", content: SpriteUpdate }
 	| { type: "centreCamera", content: Position }
 	| { type: "updateFullGameMap", content: {
 	camera: Position;
-	entities: EntityRenderData[];
+	entities: SpriteUpdate[];
 }}
 	| { type: "removeSprite", content: EntityIndex }
 	| { type: "playSound", content: Sound };

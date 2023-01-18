@@ -4,39 +4,25 @@ use serde::{Deserialize, Serialize};
 use typeshare::typeshare;
 
 #[typeshare]
-#[derive(Clone, Copy, Serialize, Debug, PartialEq, Eq, Hash)]
-pub struct UserId {
-    pub id: i32,
-}
-
-#[typeshare]
 #[derive(Clone, Copy, Serialize, Debug, PartialEq, Eq)]
 pub struct EntityIndex {
-    pub index: u32,
+    pub idx: u32,
 }
 
 #[typeshare]
 #[derive(Serialize, Debug, Clone)]
 #[serde(rename_all = "camelCase")]
-/// Information about a specific entity's current position
-pub struct EntityPosition {
-    pub entity_index: EntityIndex,
+/// Information about a sprite to render
+pub struct SpriteUpdate {
+    pub entity: EntityIndex,
     pub pos: Position,
-}
-
-#[typeshare]
-#[derive(Serialize, Debug, Clone)]
-#[serde(rename_all = "camelCase")]
-/// Information about a entity to render
-pub struct EntityRenderData {
-    pub entity_position: EntityPosition,
     pub sprite: SpriteTexture,
 }
 
 #[typeshare]
 #[derive(Serialize, Debug, Clone)]
 #[serde(rename_all = "camelCase")]
-/// Information about an entity
+/// Information about an entity to display to the user
 pub struct EntityData {
     pub name: String,
     pub blocks_light: bool,
@@ -89,11 +75,11 @@ pub enum ClientMessage {
 pub enum ServerMessageSingleClient {
     TileHover(Option<EntityData>),
     // ExistingEntities(Vec<EntityRenderData>),
-    EntityPositionChange(EntityRenderData),
+    EntityPositionChange(SpriteUpdate),
     CentreCamera(Position),
     UpdateFullGameMap {
         camera: Position,
-        entities: Vec<EntityRenderData>,
+        entities: Vec<SpriteUpdate>,
     },
     RemoveSprite(EntityIndex),
     PlaySound(Sound),

@@ -8,11 +8,9 @@ use ae_position::Position;
 use bevy::{prelude::Resource, time::Stopwatch};
 use tokio::sync::mpsc::{UnboundedReceiver, UnboundedSender};
 
-use crate::api::{ClientMessage, ServerMessageAllClients, ServerMessageSingleClient, UserId};
+use crate::api::{ClientMessage, ServerMessageAllClients, ServerMessageSingleClient};
 
-use self::world::MapId;
-
-use super::components::MapPosition;
+use super::components::{MapPosition, UserId};
 
 #[derive(Resource)]
 pub struct MessageReceiver(pub UnboundedReceiver<(UserId, ClientMessage)>);

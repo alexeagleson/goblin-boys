@@ -1,30 +1,19 @@
-use std::collections::HashMap;
-
-use ae_position::Position;
 use bevy::prelude::*;
 
-const MAP_2_ID: i32 = 2;
-
 use crate::{
-    api::{
-        EntityIndex, EntityPosition, EntityRenderData, LogMessage, ServerMessageAllClients,
-        ServerMessageSingleClient, SpriteTexture, UserId,
-    },
+    api::{EntityIndex, ServerMessageSingleClient, SpriteUpdate},
     engine::{
         components::{MapPosition, Renderable, User},
         events::ShouldSendFullMapUpdateToClient,
-        resources::{
-            world::MapId, CurrentUserMaps, MessageSenderAllClients, MessageSenderSingleClient,
-            MouseClickBuffer,
-        },
+        resources::{world::MapId, CurrentUserMaps, MessageSenderSingleClient},
     },
 };
 
+/// Communicate any relevant sprite change information from the game engine to the client
 pub fn update_client_system(
     sender_single_client: Res<MessageSenderSingleClient>,
     mut ev_update_client: EventReader<ShouldSendFullMapUpdateToClient>,
     current_user_maps: Res<CurrentUserMaps>,
-
     query: Query<(Entity, &MapPosition, Option<&User>, &Renderable)>,
 ) {
     if ev_update_client.is_empty() {
@@ -35,7 +24,6 @@ pub fn update_client_system(
 
     ev_update_client.iter().for_each(|event| {
         let update_map_id = event.0;
-        // let users_on_map = users_by_map.get(&update_map_id);
         if !updated_maps.contains(&update_map_id) {
             updated_maps.push(update_map_id);
 
@@ -45,13 +33,11 @@ pub fn update_client_system(
                     if map_pos.map_id != update_map_id {
                         None
                     } else {
-                        Some(EntityRenderData {
-                            entity_position: EntityPosition {
-                                entity_index: EntityIndex {
-                                    index: entity.index(),
-                                },
-                                pos: map_pos.pos.clone(),
+                        Some(SpriteUpdate {
+                            entity: EntityIndex {
+                                idx: entity.index(),
                             },
+                            pos: map_pos.pos.clone(),
                             sprite: sprite.texture,
                         })
                     }

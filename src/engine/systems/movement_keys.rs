@@ -1,19 +1,13 @@
 use ae_direction::{BodyRelative, Cardinal};
-use ae_position::{Delta, Position};
+use ae_position::Delta;
 use bevy::prelude::*;
 
 use crate::{
-    api::{
-        EntityIndex, EntityPosition, EntityRenderData, ServerMessageAllClients,
-        ServerMessageSingleClient, Sound, UserId,
-    },
+    api::{EntityIndex, ServerMessageSingleClient, Sound, SpriteUpdate},
     engine::{
         components::{BlocksLight, BlocksMovement, MapPosition, Renderable, User},
         events::ShouldUpdateMap,
-        resources::{
-            map::Map, world::GameWorld, CurrentUserMaps, KeypressBuffer, MessageSenderAllClients,
-            MessageSenderSingleClient,
-        },
+        resources::{world::GameWorld, CurrentUserMaps, KeypressBuffer, MessageSenderSingleClient},
     },
 };
 
@@ -21,7 +15,6 @@ use crate::{
 pub fn movement_keys_system(
     game_world: Res<GameWorld>,
     sender_single_client: Res<MessageSenderSingleClient>,
-    // sender_all_clients: Res<MessageSenderAllClients>,
     mut ev_update_map: EventWriter<ShouldUpdateMap>,
     mut keypress_buffer: ResMut<KeypressBuffer>,
     mut query: Query<(
@@ -74,11 +67,8 @@ pub fn movement_keys_system(
                     }
                 };
 
-                // [TODO] The below communication could be handled in its own system using position change detection
-                // https://bevy-cheatbook.github.io/programming/change-detection.html
-
                 let map = game_world.game_maps.get(&map_pos.map_id).expect(&format!(
-                    "Tried to move on a map that does not exist. Map ID: {}",
+                    "Tried to move on a map that does not exist. Map ID: {:?}",
                     map_pos.map_id
                 ));
 
@@ -107,13 +97,11 @@ pub fn movement_keys_system(
                                         .send((
                                             *user_id,
                                             ServerMessageSingleClient::EntityPositionChange(
-                                                EntityRenderData {
-                                                    entity_position: EntityPosition {
-                                                        entity_index: EntityIndex {
-                                                            index: entity.index(),
-                                                        },
-                                                        pos: map_pos.pos.clone(),
+                                                SpriteUpdate {
+                                                    entity: EntityIndex {
+                                                        idx: entity.index(),
                                                     },
+                                                    pos: map_pos.pos.clone(),
                                                     sprite: renderable.texture,
                                                 },
                                             ),
@@ -132,10 +120,12 @@ pub fn movement_keys_system(
                             .ok();
                     }
                 } else {
+                    // [TODO] Turn this audio trigger prototype into something more permanent
                     sender_single_client
                         .0
                         .send((user_id, ServerMessageSingleClient::PlaySound(Sound::Punch)))
                         .ok();
+
                     info!("{} attempted to move but failed", name);
                 }
             }

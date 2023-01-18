@@ -1,54 +1,99 @@
+use ae_position::Position;
 use bevy::prelude::*;
 
 use crate::{
-    api::{EntityIndex, EntityPosition, EntityRenderData, ServerMessageAllClients, SpriteTexture},
+    api::{EntityIndex, SpriteTexture, SpriteUpdate},
     engine::{
         components::{BlocksLight, BlocksMovement, MapPosition, Renderable},
-        events::ShouldSendFullMapUpdateToClient,
-        resources::{world::GameWorld, MessageSenderAllClients},
+        resources::world::{GameWorld, MapId},
     },
 };
 
-/// Adds the all tiles to the map on initial load
-pub fn spawn_walls_system(
-    // sender: Res<MessageSenderAllClients>,
-    game_world: Res<GameWorld>,
-    mut commands: Commands,
-) {
+/// Adds the all tiles to the maps on initial load
+pub fn spawn_walls_system(game_world: Res<GameWorld>, mut commands: Commands) {
     for map in game_world.game_maps.values() {
         let mut wall_entities = Vec::new();
 
-        for pos in map.perimeter_positions().iter() {
-            let sprite = Renderable {
-                texture: SpriteTexture::Wall,
-            };
+        if map.id() == (MapId(1)) {
+            for pos in map.perimeter_positions().iter() {
+                let sprite = Renderable {
+                    texture: SpriteTexture::Wall,
+                };
 
-            let index = commands
-                .spawn(Name::new("Wall"))
-                .insert(MapPosition {
-                    pos: pos.clone(),
-                    map_id: map.id(),
-                })
-                .insert(BlocksLight)
-                .insert(BlocksMovement)
-                .insert(sprite)
-                .id()
-                .index();
+                let idx = commands
+                    .spawn(Name::new("Wall"))
+                    .insert(MapPosition {
+                        pos: pos.clone(),
+                        map_id: map.id(),
+                    })
+                    .insert(BlocksLight)
+                    .insert(BlocksMovement)
+                    .insert(sprite)
+                    .id()
+                    .index();
 
-            wall_entities.push(EntityRenderData {
-                entity_position: EntityPosition {
-                    entity_index: EntityIndex { index },
+                wall_entities.push(SpriteUpdate {
+                    entity: EntityIndex { idx },
                     pos: pos.clone(),
-                },
-                sprite: SpriteTexture::Wall,
+                    sprite: SpriteTexture::Wall,
+                });
+            }
+        } else {
+            // [TODO] Turn this working prototype into something more permanent
+            let map_chars = r#"
+                ##########
+                #..#######
+                #.......##
+                ##......##
+                ##...#..##
+                ##...#..##
+                ##...#..##
+                ##...#..##
+                ##########
+                ##########
+            "#;
+
+            let stuff = map_chars.lines().filter_map(|line| {
+                let trimmed_line = line.trim();
+
+                (trimmed_line.len() > 0).then_some(trimmed_line)
             });
+
+            for (y, line) in stuff.enumerate() {
+                let trimmed_line = line.trim();
+
+                for (x, character) in trimmed_line.chars().enumerate() {
+                    if character == '#' {
+                        let pos = Position {
+                            x: x as i32,
+                            y: y as i32,
+                        };
+
+                        let sprite = Renderable {
+                            texture: SpriteTexture::Wall,
+                        };
+
+                        let idx = commands
+                            .spawn(Name::new("Wall"))
+                            .insert(MapPosition {
+                                pos: pos.clone(),
+                                map_id: map.id(),
+                            })
+                            .insert(BlocksLight)
+                            .insert(BlocksMovement)
+                            .insert(sprite)
+                            .id()
+                            .index();
+
+                        wall_entities.push(SpriteUpdate {
+                            entity: EntityIndex { idx },
+                            pos,
+
+                            sprite: SpriteTexture::Wall,
+                        });
+                    }
+                }
+            }
         }
-
-
-        // // Communicate to all clients the positions of all entities including the new ones
-        // sender
-        //     .0
-        //     .send(ServerMessageAllClients::NewEntities(wall_entities))
-        //     .ok();
     }
 }

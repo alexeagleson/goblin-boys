@@ -1,6 +1,6 @@
 use crate::{
-    api::{ClientMessage, ServerMessageAllClients, UserId},
-    database::DatabaseLock,
+    api::{ClientMessage, ServerMessageAllClients},
+    database::DatabaseLock, engine::components::UserId,
 };
 
 use log::trace;
