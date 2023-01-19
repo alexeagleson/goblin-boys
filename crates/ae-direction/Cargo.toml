@@ -1,0 +1,21 @@
+[package]
+authors.workspace = true
+description = "A Rust library for handling directions (cardinal and ordinal).  Intended for use in game development."
+edition.workspace = true
+homepage = "https://github.com/alexeagleson/ae-direction"
+license.workspace = true
+name = "ae-direction"
+readme.workspace = true
+repository = "https://github.com/alexeagleson/ae-direction"
+rust-version.workspace = true
+version = "0.1.4"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+# ae-direction.workspace = true
+# ae-position.workspace = true
+rand.workspace = true
+serde.workspace = true
+serde_json.workspace = true
+typeshare.workspace = true

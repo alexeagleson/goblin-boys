@@ -1,0 +1,23 @@
+[package]
+authors.workspace = true
+description = "The main engine for the game, powered by Bevy"
+edition.workspace = true
+homepage = ""
+license.workspace = true
+name = "core-engine"
+readme.workspace = true
+repository = ""
+rust-version.workspace = true
+version = "0.1.0"
+
+[dependencies]
+ae-direction = {path = "../ae-direction"}
+ae-position = {path = "../ae-position"}
+bevy = "0.9"
+core-api = {path = "../core-api"}
+rand.workspace = true
+serde.workspace = true
+serde_json.workspace = true
+simple_astar = {version = "0.2.0", git = "https://github.com/tylervipond/simple-astar"}
+tokio.workspace = true
+tv_shadowcasting = {version = "0.1.1", git = "https://github.com/tylervipond/tv-shadowcasting"}

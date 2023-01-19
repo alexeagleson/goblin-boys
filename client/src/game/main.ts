@@ -29,11 +29,11 @@ export const initializeGame = async (
   onClick: (log: string) => void,
   onMoveCount: (count: number) => void
 ) => {
-  const mapDimensionsResponse = await fetch(GAME_CONFIG_URI, { method: "GET" });
+  // const mapDimensionsResponse = await fetch(GAME_CONFIG_URI, { method: "GET" });
 
-  if (!mapDimensionsResponse.ok) {
-    throw Error("Failed to get initial game config");
-  }
+  // if (!mapDimensionsResponse.ok) {
+  //   throw Error("Failed to get initial game config");
+  // }
 
   // gameState.dimensions = await mapDimensionsResponse.json();
 

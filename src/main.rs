@@ -1,24 +1,13 @@
-mod api;
-mod database;
-mod engine;
-mod websocket;
-
-use ae_position::Dimensions2d;
-use api::{ClientMessage, ServerMessageAllClients, ServerMessageSingleClient};
-use bevy::prelude::*;
-use database::{Database, DatabaseLock};
-use engine::{
-    app::start_game_engine,
-    components::UserId,
-    resources::map::{MAP_HEIGHT, MAP_WIDTH},
+use core_api::{
+    ClientMessage, DatabaseRequest, DatabaseResponse, ServerMessageAllClients,
+    ServerMessageSingleClient, UserId,
 };
-use std::sync::Arc;
-use tokio::sync::{
-    mpsc::{self, UnboundedSender},
-    RwLock,
-};
+use core_database::{database_setup, increment_db_move_count_and_get_total};
+use core_engine::start_game_engine;
+use core_server::{connections::ConnectionsLock, new_connection::handle_new_connection};
+use log::info;
+use tokio::sync::mpsc::{self, UnboundedSender};
 use warp::{ws::Message, Filter};
-use websocket::{connections::ConnectionsLock, new_connection::handle_new_connection};
 
 fn main() {
     let (client_sender, client_receiver) = mpsc::unbounded_channel::<(UserId, ClientMessage)>();
@@ -27,12 +16,20 @@ fn main() {
     let (server_sender_all_clients, mut server_receiver_all_clients) =
         mpsc::unbounded_channel::<ServerMessageAllClients>();
 
+    let (engine_to_db_sender, mut engine_to_db_receiver) =
+        mpsc::unbounded_channel::<(UserId, DatabaseRequest)>();
+
+    let (db_to_engine_sender, db_to_engine_receiver) =
+        mpsc::unbounded_channel::<(UserId, DatabaseResponse)>();
+
     // Initialize the Bevy game engine
     std::thread::spawn(move || {
         start_game_engine(
             client_receiver,
             server_sender_single_client,
             server_sender_all_clients,
+            engine_to_db_sender,
+            db_to_engine_receiver,
         );
     });
 
@@ -43,26 +40,8 @@ fn main() {
         .block_on(async {
             pretty_env_logger::init();
 
-            // Database setup
-            // Initiate a connection to the database file, creating the file if required.
-            let database = sqlx::sqlite::SqlitePoolOptions::new()
-                .max_connections(5)
-                .connect_with(
-                    sqlx::sqlite::SqliteConnectOptions::new()
-                        .filename("database.sqlite")
-                        .create_if_missing(true),
-                )
-                .await
-                .expect("Couldn't connect to database");
-
-            // Run migrations, which updates the database's schema to the latest version.
-            sqlx::migrate!("./migrations")
-                .run(&database)
-                .await
-                .expect("Couldn't run database migrations");
-
-            let db: DatabaseLock = Arc::new(RwLock::new(Database(database)));
-            let db = warp::any().map(move || db.clone());
+            let db = database_setup().await;
+            // let db = warp::any().map(move || db.clone());
 
             let sender = warp::any().map(move || client_sender.clone());
 
@@ -71,8 +50,24 @@ fn main() {
             let connections_2 = connections.clone();
             let connections_3 = connections.clone();
 
-            let connections = warp::any().map(move || connections.clone());
+            let connections_filter = warp::any().map(move || connections.clone());
 
+            // Database listener
+            tokio::task::spawn(async move {
+                while let Some((user_id, db_response)) = engine_to_db_receiver.recv().await {
+                    match db_response {
+                        DatabaseRequest::Placeholder => {
+                            let move_count = increment_db_move_count_and_get_total(&db).await;
+
+                            db_to_engine_sender
+                                .send((user_id, DatabaseResponse::MoveCount(move_count)))
+                                .ok();
+                        }
+                    }
+                }
+            });
+
+            // Listener for messages to communicate to all clients
             tokio::task::spawn(async move {
                 while let Some(all_clients_message) = server_receiver_all_clients.recv().await {
                     let serialized_message: String =
@@ -85,6 +80,7 @@ fn main() {
                 }
             });
 
+            // Listener for messages to communicate to specific clients
             tokio::task::spawn(async move {
                 while let Some((user_id, single_client_message)) =
                     server_receiver_single_client.recv().await
@@ -106,32 +102,39 @@ fn main() {
             let game = warp::path!("api" / "game")
                 // The `ws()` filter will prepare Websocket handshake...
                 .and(warp::ws())
-                .and(connections)
-                .and(db)
+                .and(connections_filter)
+                // .and(db)
                 .and(sender)
                 .map(
                     |ws: warp::ws::Ws,
                      connections: ConnectionsLock,
-                     db: DatabaseLock,
+                     //  db: DatabaseLock,
                      sender: UnboundedSender<(UserId, ClientMessage)>| {
                         // This will call our function if the handshake succeeds.
                         ws.on_upgrade(move |socket| {
-                            handle_new_connection(socket, connections, db, sender)
+                            handle_new_connection(
+                                socket,
+                                connections,
+                                //  db,
+                                sender,
+                            )
                         })
                     },
                 );
 
-            let any_origin_get = warp::cors().allow_any_origin().allow_method("GET");
+            // If you need to set REST endpoints you can use the example below
 
-            // GET /game-config returns a `200 OK` with a JSON array of ids:
-            let game_config = warp::path!("api" / "game-config")
-                .map(|| {
-                    warp::reply::json(&Dimensions2d {
-                        width: MAP_WIDTH,
-                        height: MAP_HEIGHT,
-                    })
-                })
-                .with(any_origin_get);
+            // let any_origin_get = warp::cors().allow_any_origin().allow_method("GET");
+
+            // // GET /game-config returns a `200 OK` with a JSON array of ids:
+            // let game_config = warp::path!("api" / "game-config")
+            //     .map(|| {
+            //         warp::reply::json(&Dimensions2d {
+            //             width: MAP_WIDTH,
+            //             height: MAP_HEIGHT,
+            //         })
+            //     })
+            //     .with(any_origin_get);
 
             // // GET / -> index html
             // let index = warp::path::end()
@@ -140,7 +143,9 @@ fn main() {
             // Serve static directory -- not currently used
             let index = warp::fs::dir("client/dist");
 
-            let routes = index.or(game_config).or(game);
+            let routes = index
+                // .or(game_config)
+                .or(game);
 
             warp::serve(routes).run(([0, 0, 0, 0], 8080)).await;
         });

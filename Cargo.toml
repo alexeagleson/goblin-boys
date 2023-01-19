@@ -10,27 +10,25 @@ version = "0.1.0"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-ae-direction = {path = "./ae-direction"}
-ae-position = {path = "./ae-position"}
-bevy.workspace = true
-futures-util = "0.3.25"
-log = "0.4"
-pretty_env_logger = "0.4"
+core-api.workspace = true
+core-database.workspace = true
+core-engine.workspace = true
+core-server.workspace = true
+log.workspace = true
+pretty_env_logger.workspace = true
 rand.workspace = true
 serde.workspace = true
 serde_json.workspace = true
-simple_astar = {version = "0.2.0", git = "https://github.com/tylervipond/simple-astar"}
-sqlx = {version = "0.6.2", features = ["runtime-tokio-rustls", "sqlite", "offline"]}
-tokio = {version = "1", features = ["full"]}
-tokio-stream = "0.1.11"
-tv_shadowcasting = {version = "0.1.1", git = "https://github.com/tylervipond/tv-shadowcasting"}
-typeshare.workspace = true
-warp = "0.3.3"
+tokio.workspace = true
+warp.workspace = true
 
 [workspace]
 members = [
-  "ae-position",
-  "ae-direction",
+  "crates/ae-position",
+  "crates/ae-direction",
+  "crates/core-engine",
+  "crates/core-server",
+  "crates/core-api",
 ]
 
 [workspace.package]
@@ -41,8 +39,17 @@ readme = "README.md"
 rust-version = "1.65"
 
 [workspace.dependencies]
-bevy = "0.9"
+ae-direction = {path = "./crates/ae-direction"}
+ae-position = {path = "./crates/ae-position"}
+core-api = {path = "./crates/core-api"}
+core-database = {path = "./crates/core-database"}
+core-engine = {path = "./crates/core-engine"}
+core-server = {path = "./crates/core-server"}
+log = "0.4"
+pretty_env_logger = "0.4"
 rand = "0.8.5"
 serde = {version = "1.0.151", default-features = false, features = ["derive"]}
 serde_json = {version = "1.0.90", default-features = false}
+tokio = {version = "1", features = ["full"]}
 typeshare = "1.0.0"
+warp = "0.3.3"

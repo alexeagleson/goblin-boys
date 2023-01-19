@@ -1,0 +1,19 @@
+{
+  "query": "SELECT COUNT(id) as count FROM moves",
+  "describe": {
+    "columns": [
+      {
+        "name": "count",
+        "ordinal": 0,
+        "type_info": "Int"
+      }
+    ],
+    "parameters": {
+      "Right": 0
+    },
+    "nullable": [
+      false
+    ]
+  },
+  "hash": "ca14069bb53b9d1d6c66f32f1957cb057f0dae46a037e3859c61c0ab88d51593"
+}
