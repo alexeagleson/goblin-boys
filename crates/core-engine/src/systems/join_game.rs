@@ -35,7 +35,7 @@ pub fn join_game_system(
         };
         commands
             .spawn(User(user_id))
-            .insert(Eyes::new(&map, 10))
+            .insert(Eyes::new(map, 10))
             .insert(BlocksMovement)
             .insert(BlocksLight)
             .insert(Paths::default())

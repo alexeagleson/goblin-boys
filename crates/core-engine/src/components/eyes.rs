@@ -1,7 +1,7 @@
 use ae_position::Position;
 use bevy::prelude::Component;
 
-use crate::resources::map::{VisibilityGrid, GameMap};
+use crate::resources::map::{GameMap, VisibilityGrid};
 
 // use crate::engine::resources::map::{Map, VisibilityGrid};
 
@@ -14,7 +14,7 @@ pub struct Eyes {
 impl Eyes {
     pub fn new(map: &GameMap, visible_distance: u32) -> Self {
         Self {
-            visibility_grid: VisibilityGrid::new(&map),
+            visibility_grid: VisibilityGrid::new(map),
             visible_distance,
         }
     }

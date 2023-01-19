@@ -2,8 +2,8 @@ use bevy::prelude::*;
 use core_api::{LogMessage, ServerMessageAllClients};
 
 use crate::{
-        components::MapPosition,
-        resources::{MessageSenderAllClients, MouseClickBuffer},
+    components::MapPosition,
+    resources::{MessageSenderAllClients, MouseClickBuffer},
 };
 
 /// Looks for an entity at a tile position being clicked

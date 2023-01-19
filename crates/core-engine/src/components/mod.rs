@@ -5,8 +5,6 @@ use ae_position::Position;
 use bevy::prelude::Component;
 use core_api::{SpriteTexture, UserId};
 
-// use crate::api::SpriteTexture;
-
 use super::resources::world::MapId;
 
 #[derive(Component)]

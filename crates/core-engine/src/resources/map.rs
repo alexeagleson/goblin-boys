@@ -96,15 +96,15 @@ fn index_grid_to_positions(grid: &IndexGrid, grid_width: usize, blocking: bool) 
 
 /// Can use to print either an array of light blocking entities or
 /// a map of visible tiles, both use the same format
-fn pretty_print_idx_map(idxs: &Vec<u8>) {
-    println!("");
+fn pretty_print_idx_map(idxs: &[u8]) {
+    println!();
     for y in 0..MAP_HEIGHT {
         for x in 0..MAP_WIDTH {
             print!("{}", idxs[(MAP_WIDTH * y) as usize + x as usize])
         }
-        println!("");
+        println!();
     }
-    println!("");
+    println!();
 }
 
 #[derive(Debug, Resource)]

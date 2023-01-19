@@ -1,7 +1,7 @@
 use ae_direction::{BodyRelative, Cardinal};
 use ae_position::Delta;
 use bevy::prelude::*;
-use core_api::{ServerMessageSingleClient, SpriteUpdate, EntityIndex, Sound};
+use core_api::{EntityIndex, ServerMessageSingleClient, Sound, SpriteUpdate};
 
 use crate::{
     components::{BlocksLight, BlocksMovement, MapPosition, Renderable, User},

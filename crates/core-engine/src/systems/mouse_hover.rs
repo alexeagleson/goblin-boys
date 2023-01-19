@@ -2,8 +2,8 @@ use bevy::prelude::*;
 use core_api::{EntityData, ServerMessageSingleClient};
 
 use crate::{
-        components::{eyes::Eyes, BlocksLight, MapPosition, User},
-        resources::{MessageSenderSingleClient, MouseHoverBuffer},
+    components::{eyes::Eyes, BlocksLight, MapPosition, User},
+    resources::{MessageSenderSingleClient, MouseHoverBuffer},
 };
 
 /// Looks for an entity at a tile position being hovered

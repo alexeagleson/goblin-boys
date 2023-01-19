@@ -1,6 +1,6 @@
 use ae_position::Position;
 use bevy::prelude::*;
-use core_api::{ServerMessageSingleClient, EntityIndex};
+use core_api::{EntityIndex, ServerMessageSingleClient};
 
 use crate::{
     components::{MapPosition, User},

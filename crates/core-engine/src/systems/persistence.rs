@@ -1,9 +1,9 @@
 use bevy::prelude::*;
-use core_api::{DatabaseRequest, UserId};
+use core_api::{DatabaseRequest, ServerMessageAllClients, UserId};
 
 use crate::{
     components::MapPosition,
-    resources::{DatabaseReceiver, DatabaseSender},
+    resources::{DatabaseReceiver, DatabaseSender, MessageSenderAllClients},
 };
 
 /// Send any request for data, or send data to save in the SQLite database
@@ -24,8 +24,18 @@ pub fn database_sender_system(
 }
 
 /// Receive a response from the SQLite database message system
-pub fn database_receiver_system(mut db_receiver: ResMut<DatabaseReceiver>) {
+pub fn database_receiver_system(
+    mut db_receiver: ResMut<DatabaseReceiver>,
+    sender_all_clients: Res<MessageSenderAllClients>,
+) {
     while let Ok((_user_id, db_response)) = db_receiver.0.try_recv() {
-        println!("{:?}", db_response);
+        match db_response {
+            core_api::DatabaseResponse::MoveCount(move_count) => {
+                sender_all_clients
+                    .0
+                    .send(ServerMessageAllClients::MoveCount(move_count))
+                    .ok();
+            }
+        }
     }
 }

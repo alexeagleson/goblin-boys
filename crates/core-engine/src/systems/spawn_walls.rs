@@ -54,7 +54,7 @@ pub fn spawn_walls_system(game_world: Res<GameWorld>, mut commands: Commands) {
             let stuff = map_chars.lines().filter_map(|line| {
                 let trimmed_line = line.trim();
 
-                (trimmed_line.len() > 0).then_some(trimmed_line)
+                (!trimmed_line.is_empty()).then_some(trimmed_line)
             });
 
             for (y, line) in stuff.enumerate() {

@@ -1,17 +1,10 @@
 use bevy::prelude::*;
-use core_api::{ServerMessageSingleClient, EntityIndex};
+use core_api::{EntityIndex, ServerMessageSingleClient};
 
-use crate::{resources::{MessageSenderSingleClient, CurrentUserMaps, DisconnectBuffer}, components::{User, MapPosition}};
-
-// use crate::{
-//     api::{EntityIndex, ServerMessageSingleClient},
-//     engine::{
-//         components::{MapPosition, User},
-//         resources::{
-//             CurrentUserMaps, DisconnectBuffer, MessageSenderSingleClient,
-//         },
-//     },
-// };
+use crate::{
+    components::{MapPosition, User},
+    resources::{CurrentUserMaps, DisconnectBuffer, MessageSenderSingleClient},
+};
 
 /// Removes a user's player entity from the game when the user disconnects
 pub fn leave_game_system(

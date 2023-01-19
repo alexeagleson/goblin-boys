@@ -4,7 +4,6 @@ use rand::{distributions::Standard, prelude::Distribution};
 use serde::Deserialize;
 use typeshare::typeshare;
 
-
 #[typeshare]
 #[derive(Deserialize, Debug, Clone, Copy)]
 #[serde(rename_all = "camelCase")]
@@ -148,8 +147,8 @@ impl Direction {
 impl Display for Direction {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
-            Direction::Cardinal(cardinal) => write!(f, "{}", cardinal),
-            Direction::Ordinal(ordinal) => write!(f, "{}", ordinal),
+            Direction::Cardinal(cardinal) => write!(f, "{cardinal}"),
+            Direction::Ordinal(ordinal) => write!(f, "{ordinal}"),
         }
     }
 }

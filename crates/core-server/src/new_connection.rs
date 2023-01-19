@@ -1,4 +1,4 @@
-use core_api::{UserId, ClientMessage};
+use core_api::{ClientMessage, UserId};
 use futures_util::{SinkExt, StreamExt, TryFutureExt};
 use log::{error, info, trace};
 use std::sync::atomic::Ordering;
@@ -6,7 +6,7 @@ use tokio::sync::mpsc::{self, UnboundedSender};
 use tokio_stream::wrappers::UnboundedReceiverStream;
 use warp::ws::WebSocket;
 
-use crate::{connections::USER_ID_COUNTER, message::handle_message, disconnect::handle_disconnect};
+use crate::{connections::USER_ID_COUNTER, disconnect::handle_disconnect, message::handle_message};
 
 use super::connections::ConnectionsLock;
 
@@ -51,9 +51,7 @@ pub async fn handle_new_connection(
             }
         };
         handle_message(
-            new_id,
-            msg,
-            // &connections,
+            new_id, msg, // &connections,
             // &db,
             // &world,
             &sender,

@@ -30,6 +30,4 @@ pub async fn handle_message(
     if let Ok(ref request) = request {
         sender.send((id, request.clone())).ok();
     }
-
-   
 }
