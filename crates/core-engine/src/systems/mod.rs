@@ -4,7 +4,7 @@ pub mod leave_game;
 pub mod message;
 pub mod mouse_click;
 pub mod mouse_hover;
-pub mod move_timer;
+pub mod pathing;
 pub mod movement_keys;
 pub mod persistence;
 pub mod spawn_walls;

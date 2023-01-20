@@ -11,7 +11,6 @@ rust-version.workspace = true
 version = "0.1.4"
 
 [dependencies]
-# ae-direction.workspace = true
 ae-direction = {path = "../ae-direction"}
 serde.workspace = true
 serde_json.workspace = true

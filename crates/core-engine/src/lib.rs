@@ -14,7 +14,10 @@ use core_api::{
     ServerMessageSingleClient, UserId,
 };
 use resources::{DatabaseReceiver, DatabaseSender};
-use systems::persistence::{database_receiver_system, database_sender_system};
+use systems::{
+    pathing::pathing_system,
+    persistence::{database_receiver_system, database_sender_system},
+};
 use tokio::sync::mpsc::{UnboundedReceiver, UnboundedSender};
 
 use crate::{
@@ -61,15 +64,16 @@ pub fn start_game_engine(
         .add_system(message_system)
         .add_system(join_game_system.after(message_system))
         .add_system(movement_keys_system.after(message_system))
-        // [TODO] Reimplement this pathfinding system in a better way
-        // .add_system(move_timer_system.after(message_system))
+        .add_system(pathing_system.after(message_system))
         .add_system(mouse_hover_system.after(message_system))
         .add_system(mouse_click_system.after(message_system))
         .add_system(leave_game_system.after(message_system))
         .add_system(change_map_system.after(message_system))
         // Don't run the map updater until after entities have moved
         .add_system(
-            update_map_system.after(movement_keys_system), // .after(move_timer_system),
+            update_map_system
+                .after(movement_keys_system)
+                .after(pathing_system),
         )
         .add_system(database_sender_system.after(update_map_system))
         .add_system(database_receiver_system.after(update_map_system))

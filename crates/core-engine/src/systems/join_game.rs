@@ -38,7 +38,6 @@ pub fn join_game_system(
             .insert(Eyes::new(map, 10))
             .insert(BlocksMovement)
             .insert(BlocksLight)
-            .insert(Paths::default())
             .insert(Name::new(player_name))
             .insert(player_map_position.clone())
             .insert(Renderable {
@@ -52,6 +51,8 @@ pub fn join_game_system(
         commands
             .spawn(Item)
             .insert(Name::new("Carrot"))
+            // A walking carrot...
+            .insert(Paths::default())
             .insert(MapPosition {
                 pos: map.random_movement_unblocked_tile(),
                 map_id: map.id(),

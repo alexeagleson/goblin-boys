@@ -73,10 +73,10 @@ pub fn movement_keys_system(
                 if !map.movement_blocked(&new_pos) {
                     map_pos.pos = new_pos;
 
+                    info!("{} moved to {:?}", name, map_pos.pos);
+
                     // Update the user's position in the user resource tracker
                     current_user_maps.0.insert(user_id, map_pos.clone());
-
-                    info!("{} moved to {:?}", name, map_pos.pos);
 
                     // If an entity that blocks movement or light moves, the map needs to update
                     if blocks_movement.is_some() || blocks_light.is_some() {
