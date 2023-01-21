@@ -70,15 +70,15 @@ export const createGameApp = async (
     return str.charAt(0).toLowerCase() + str.slice(1);
   }
 
-  for (const upperTextureId in SpriteTexture) {
-    const textureId = lowerFirst(upperTextureId);
+  for (const tex in SpriteTexture) {
+    const textureId = lowerFirst(tex);
     if (textureId === "empty") {
       continue;
     }
 
     try {
       const texture = (await Assets.load(
-        `sprites/v2/${upperTextureId}.png`
+        `sprites/v2/${textureId}.png`
       )) as Texture;
 
       texture.baseTexture.scaleMode = SCALE_MODES.NEAREST;
@@ -89,7 +89,7 @@ export const createGameApp = async (
       for (let i = 1; i < Infinity; i++) {
         try {
           const texture = (await Assets.load(
-            `sprites/v2/${upperTextureId}${i}.png`
+            `sprites/v2/${textureId}${i}.png`
           )) as Texture;
 
           texture.baseTexture.scaleMode = SCALE_MODES.NEAREST;
@@ -149,12 +149,10 @@ export const createGameApp = async (
         if (Array.isArray(textureOrArray)) {
           const sprite = new Sprite(randomElement(textureOrArray));
           sprite.zIndex = 0;
-          console.log("A");
           return sprite;
         } else {
           const sprite = new Sprite(textureOrArray);
           sprite.zIndex = 1;
-          console.log("B");
           return sprite;
         }
       };
