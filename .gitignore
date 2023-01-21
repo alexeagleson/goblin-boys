@@ -4,3 +4,6 @@
 .env
 database.sqlite*
 fly.toml
+*.db
+*.db-shm
+*.db-wal
