@@ -1,4 +1,4 @@
-.npc-dialogue-menu {
+/* .npc-dialogue-menu {
     z-index: 1;
     pointer-events: none;
     position: absolute;
@@ -8,4 +8,57 @@
     color: white;
     border-radius: 4px;
   }
-  
+   */
+
+.dialogue-container {
+  /* background-color: aquamarine; */
+  position: absolute;
+  top: 0;
+  left: 0;
+  background-color: black;
+  border-style: solid;
+  border-color: white;
+  border-radius: 8px;
+  color: white;
+  margin: 5%;
+  padding: 16px;
+  max-height: 80%;
+  overflow-y: scroll;
+}
+
+img {
+  width: 64px;
+  height: 64px;
+  image-rendering: crisp-edges;
+  border: solid;
+  padding: 16px;
+  border-radius: 8px;
+  transform: scaleX(-1);
+  /* background-color: rgba(255, 255, 255, 0.45); */
+}
+
+.sprite-and-name {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: center;
+  gap: 16px;
+}
+
+.dialogue-text {
+  margin: 16px 0 16px 0;
+  font-size: 14px;
+}
+
+button {
+  text-align: left;
+  padding: 8px;
+  border-radius: 4px;
+  background-color: white;
+}
+
+.button-container {
+  display: flex;
+  flex-direction: column;
+  row-gap: 12px;
+}

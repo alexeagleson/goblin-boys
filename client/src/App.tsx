@@ -41,9 +41,9 @@ const App = () => {
     dialogue: string;
   }) => {
     setNpcDialogueMenu({ dialogue, menuPosition: { x: 24, y: 24 } });
-    setTimeout(() => {
-      setNpcDialogueMenu(undefined);
-    }, 2000);
+    // setTimeout(() => {
+    //   setNpcDialogueMenu(undefined);
+    // }, 2000);
   };
 
   // Queries the server for the game configuration (to determine the canvas size)
