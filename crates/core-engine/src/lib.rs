@@ -13,8 +13,10 @@ use core_api::{
     ClientMessage, DatabaseRequest, DatabaseResponse, ServerMessageAllClients,
     ServerMessageSingleClient, UserId,
 };
+use events::TryAttack;
 use resources::{DatabaseReceiver, DatabaseSender};
 use systems::{
+    combat::combat_system,
     pathing::pathing_system,
     persistence::{database_receiver_system, database_sender_system},
 };
@@ -59,22 +61,22 @@ pub fn start_game_engine(
         .insert_resource(CurrentUserMaps::default())
         .add_event::<ShouldUpdateMap>()
         .add_event::<ShouldSendFullMapUpdateToClient>()
+        .add_event::<TryAttack>()
         .add_startup_system(spawn_walls_system)
         .add_system(update_client_system.before(message_system))
         .add_system(message_system)
         .add_system(join_game_system.after(message_system))
         .add_system(movement_keys_system.after(message_system))
-        .add_system(pathing_system.after(message_system))
+        // .add_system(pathing_system.after(message_system))
         .add_system(mouse_hover_system.after(message_system))
         .add_system(mouse_click_system.after(message_system))
         .add_system(leave_game_system.after(message_system))
         .add_system(change_map_system.after(message_system))
         // Don't run the map updater until after entities have moved
         .add_system(
-            update_map_system
-                .after(movement_keys_system)
-                .after(pathing_system),
+            update_map_system.after(movement_keys_system), // .after(combat_system), // .after(pathing_system),
         )
+        .add_system(combat_system.after(update_map_system))
         .add_system(database_sender_system.after(update_map_system))
         .add_system(database_receiver_system.after(update_map_system))
         .add_plugins(MinimalPlugins)

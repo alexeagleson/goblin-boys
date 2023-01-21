@@ -15,20 +15,67 @@ RUN apt install -y pkg-config libssl-dev libudev-dev openssl libasound2-dev
 
 RUN cargo install sqlx-cli
 
-WORKDIR /usr/src/${project}/ae-position
+### CRATE: ae-position ###
+
+WORKDIR /usr/src/${project}/crates/ae-position
 
 # Copy Cargo files
-COPY ./ae-position/Cargo.toml .
-COPY ./ae-position/Cargo.lock .
+COPY ./crates/ae-position/Cargo.toml .
 
 # Create fake main.rs file in src and build
 RUN mkdir ./src && echo 'fn main() { println!("Dummy!"); }' > ./src/main.rs
 
-WORKDIR /usr/src/${project}/ae-direction
+
+### CRATE: ae-direction ###
+
+WORKDIR /usr/src/${project}/crates/ae-direction
 
 # Copy Cargo files
-COPY ./ae-direction/Cargo.toml .
-COPY ./ae-direction/Cargo.lock .
+COPY ./crates/ae-direction/Cargo.toml .
+
+# Create fake main.rs file in src and build
+RUN mkdir ./src && echo 'fn main() { println!("Dummy!"); }' > ./src/main.rs
+
+
+### CRATE: core-engine ###
+
+WORKDIR /usr/src/${project}/crates/core-engine
+
+# Copy Cargo files
+COPY ./crates/core-engine/Cargo.toml .
+
+# Create fake main.rs file in src and build
+RUN mkdir ./src && echo 'fn main() { println!("Dummy!"); }' > ./src/main.rs
+
+
+### CRATE: core-api ###
+
+WORKDIR /usr/src/${project}/crates/core-api
+
+# Copy Cargo files
+COPY ./crates/core-api/Cargo.toml .
+
+# Create fake main.rs file in src and build
+RUN mkdir ./src && echo 'fn main() { println!("Dummy!"); }' > ./src/main.rs
+
+
+### CRATE: core-database ###
+
+WORKDIR /usr/src/${project}/crates/core-database
+
+# Copy Cargo files
+COPY ./crates/core-database/Cargo.toml .
+
+# Create fake main.rs file in src and build
+RUN mkdir ./src && echo 'fn main() { println!("Dummy!"); }' > ./src/main.rs
+
+
+### CRATE: core-server ###
+
+WORKDIR /usr/src/${project}/crates/core-server
+
+# Copy Cargo files
+COPY ./crates/core-server/Cargo.toml .
 
 # Create fake main.rs file in src and build
 RUN mkdir ./src && echo 'fn main() { println!("Dummy!"); }' > ./src/main.rs
@@ -51,8 +98,12 @@ RUN rm ./**/*.rs
 
 # Copy actual source code
 COPY ./src ./src
-COPY ./ae-direction/src ./ae-direction/src
-COPY ./ae-position/src ./ae-position/src
+COPY ./crates/ae-direction/src ./crates/ae-direction/src
+COPY ./crates/ae-position/src ./crates/ae-position/src
+COPY ./crates/core-api/src ./crates/core-api/src
+COPY ./crates/core-database/src ./crates/core-database/src
+COPY ./crates/core-engine/src ./crates/core-engine/src
+COPY ./crates/core-server/src ./crates/core-server/src
 
 # Copy additional relevant fies
 COPY ./.env ./.env
