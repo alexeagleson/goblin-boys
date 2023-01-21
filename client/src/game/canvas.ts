@@ -64,6 +64,17 @@ export const createGameApp = async (
 
   app.stage.sortableChildren = true;
 
+  const TEXTURE_MAP = {} as Record<SpriteTexture, Texture>;
+  for (const textureId in SpriteTexture) {
+    const texture = (await Assets.load(`sprites/v2/${textureId}.png`)) as Texture;
+    texture.baseTexture.scaleMode = SCALE_MODES.NEAREST;
+    TEXTURE_MAP[textureId as unknown as SpriteTexture] = texture;
+  }
+
+  console.log(TEXTURE_MAP)
+
+  
+
   const bunny = (await Assets.load("sprites/character/zilla_1.png")) as Texture;
   const carrot = (await Assets.load("sprites/character/test_1.png")) as Texture;
   const wall = (await Assets.load("sprites/environment/brick.png")) as Texture;
@@ -132,31 +143,31 @@ export const createGameApp = async (
 
   characterBoneyBoi.baseTexture.scaleMode = SCALE_MODES.NEAREST;
 
-  const TEXTURE_MAP: Record<SpriteTexture, Texture> = {
-    [SpriteTexture.Bunny]: bunny,
-    [SpriteTexture.Carrot]: carrot,
-    [SpriteTexture.WallBrick]: wall,
-    [SpriteTexture.FloorConcrete]: concrete1,
-    [SpriteTexture.ObjectRedSoda]: objectRedSoda,
-    [SpriteTexture.ObjectSewerGrate]: objectSewerGrate,
+  // const TEXTURE_MAP: Record<SpriteTexture, Texture> = {
+  //   [SpriteTexture.Bunny]: bunny,
+  //   [SpriteTexture.Carrot]: carrot,
+  //   [SpriteTexture.WallBrick]: wall,
+  //   [SpriteTexture.FloorConcrete]: concrete1,
+  //   [SpriteTexture.ObjectRedSoda]: objectRedSoda,
+  //   [SpriteTexture.ObjectSewerGrate]: objectSewerGrate,
 
-    [SpriteTexture.EnvironmentGrass]: environmentGrass,
+  //   [SpriteTexture.EnvironmentGrass]: environmentGrass,
 
-    [SpriteTexture.EnvironmentSlime]: environmentSlime,
+  //   [SpriteTexture.EnvironmentSlime]: environmentSlime,
 
-    [SpriteTexture.EnvironmentWater]: environmentWater,
+  //   [SpriteTexture.EnvironmentWater]: environmentWater,
 
-    [SpriteTexture.ObjectWindow]: objectWindow,
-    [SpriteTexture.ObjectLadderUp]: objectLadderUp,
-    [SpriteTexture.ObjectLadderDown]: objectLadderDown,
+  //   [SpriteTexture.ObjectWindow]: objectWindow,
+  //   [SpriteTexture.ObjectLadderUp]: objectLadderUp,
+  //   [SpriteTexture.ObjectLadderDown]: objectLadderDown,
 
-    [SpriteTexture.CharacterBoneyBoi]: characterBoneyBoi,
+  //   [SpriteTexture.CharacterBoneyBoi]: characterBoneyBoi,
 
-    // Represents a character on the map that didn't appear in the legend
-    [SpriteTexture.Unrecognized]: carrot,
-    // Client should never receive this value
-    [SpriteTexture.None]: carrot,
-  };
+  //   // Represents a character on the map that didn't appear in the legend
+  //   [SpriteTexture.Unrecognized]: carrot,
+  //   // Client should never receive this value
+  //   [SpriteTexture.None]: carrot,
+  // };
 
   const tileToPx = (tilePos: Position): Position => {
     return {

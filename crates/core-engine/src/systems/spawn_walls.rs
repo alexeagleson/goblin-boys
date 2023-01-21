@@ -50,7 +50,7 @@ fn str_map_to_game_map(
             // Check if there is stuff on top of the floor
             let sprite = legend(character);
 
-            if sprite != SpriteTexture::None {
+            if sprite != SpriteTexture::Empty {
                 commands
                     .spawn(Name::new("Wall"))
                     .insert(MapPosition {

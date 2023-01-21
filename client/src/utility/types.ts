@@ -57,21 +57,20 @@ export enum BodyRelative {
 
 /** A sprite to render that represents a visible entity */
 export enum SpriteTexture {
-	Bunny = "bunny",
-	Carrot = "carrot",
 	WallBrick = "wallBrick",
-	CharacterBoneyBoi = "characterBoneyBoi",
+	PcBoneyBoi = "pcBoneyBoi",
 	ObjectRedSoda = "objectRedSoda",
 	ObjectSewerGrate = "objectSewerGrate",
 	ObjectWindow = "objectWindow",
 	ObjectLadderUp = "objectLadderUp",
 	ObjectLadderDown = "objectLadderDown",
-	EnvironmentSlime = "environmentSlime",
-	EnvironmentWater = "environmentWater",
-	EnvironmentGrass = "environmentGrass",
+	ObjectSlime = "objectSlime",
+	ObjectWater = "objectWater",
+	FloorGrass = "floorGrass",
 	FloorConcrete = "floorConcrete",
+	NpcRat = "npcRat",
 	Unrecognized = "unrecognized",
-	None = "none",
+	Empty = "empty",
 }
 
 /** Tell client to play audio */

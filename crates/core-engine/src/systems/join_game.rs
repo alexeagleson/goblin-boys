@@ -69,12 +69,7 @@ pub fn join_game_system(
             })
             .insert(enemy_configs.carrot.hp.clone())
             .insert(enemy_configs.carrot.combat_stats.clone());
-        if enemy_configs.carrot.blocks_movement {
-            carrot_commands.insert(Paths::default());
-        }
-        if enemy_configs.carrot.paths {
-            carrot_commands.insert(BlocksMovement);
-        }
+
         // Refresh the full map of all clients when a player joins
         // [TODO] This is probably overkill -- could just send the new player sprite
         ev_update_client.send(ShouldSendFullMapUpdateToClient(map.id()));
