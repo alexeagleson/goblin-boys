@@ -4,6 +4,7 @@ import { connectToGameServer } from "./connection";
 import { clearEverything, createGameApp, spriteMap } from "./canvas";
 import {
   EntityData,
+  EntityIndex,
   ServerMessageAllClients,
   ServerMessageSingleClient,
   Sound,
@@ -27,7 +28,14 @@ const updateHoverMenuPosition = (x: number, y: number) => {
 export const initializeGame = async (
   onHover: (x: number, y: number, entityData?: EntityData) => void,
   onClick: (log: string) => void,
-  onMoveCount: (count: number) => void
+  onMoveCount: (count: number) => void,
+  onDialogue: ({
+    entity,
+    dialogue,
+  }: {
+    entity: EntityIndex;
+    dialogue: string;
+  }) => void
 ) => {
   // const mapDimensionsResponse = await fetch(GAME_CONFIG_URI, { method: "GET" });
 
@@ -49,6 +57,10 @@ export const initializeGame = async (
       JSON.parse(msg.data);
 
     switch (response.type) {
+      case "showDialogue":
+        onDialogue(response.content);
+
+        break;
       case "centreCamera":
         setCamera(response.content);
 

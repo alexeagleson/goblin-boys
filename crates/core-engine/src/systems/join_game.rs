@@ -69,7 +69,9 @@ pub fn join_game_system(
                 texture: enemy_configs.slime.texture,
             })
             .insert(enemy_configs.slime.hp.clone())
-            .insert(enemy_configs.slime.combat_stats.clone());
+            .insert(enemy_configs.slime.combat_stats.clone())
+            .insert(BlocksMovement)
+            .insert(Speaks("I AM A SLIME".to_string()));
 
         // Spawn a test NPC
         let mut npc_commands = commands.spawn(Speaks("I AM A RAT".to_string()));

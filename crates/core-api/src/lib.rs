@@ -98,6 +98,10 @@ pub enum ServerMessageSingleClient {
     },
     RemoveSprite(EntityIndex),
     PlaySound(Sound),
+    ShowDialogue {
+        entity: EntityIndex,
+        dialogue: String
+    }
 }
 
 #[typeshare]

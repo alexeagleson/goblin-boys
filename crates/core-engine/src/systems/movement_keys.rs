@@ -148,6 +148,7 @@ pub fn movement_keys_system(
 
                     // This entity will try to speak to a tile
                     ev_try_speak.send(TrySpeak {
+                        user_id,
                         map_position: MapPosition {
                             pos: new_pos,
                             map_id: map.id(),

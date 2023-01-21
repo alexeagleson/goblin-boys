@@ -102,7 +102,11 @@ export type ServerMessageSingleClient =
 	entities: SpriteUpdate[];
 }}
 	| { type: "removeSprite", content: EntityIndex }
-	| { type: "playSound", content: Sound };
+	| { type: "playSound", content: Sound }
+	| { type: "showDialogue", content: {
+	entity: EntityIndex;
+	dialogue: string;
+}};
 
 /** Communicates information about the active game to one client */
 export type ServerMessageAllClients = 

@@ -41,7 +41,21 @@ pub fn speaking_system(
             //     killed_guys.push((ent, map_pos.map_id));
             //     println!("oh no shit I'm dead");
             // }
-            println!("{}", speak.0);
+            // println!("{}", speak.0);
+
+            // Communicate the entity at the hover position to the client that requested it
+            // It's important to specifically communicate `None` if there is no entity to handle
+            // the case where the user hovers from a tile with an entity to a tile without one
+            sender_single_client
+                .0
+                .send((
+                    speak_event.user_id,
+                    ServerMessageSingleClient::ShowDialogue {
+                        entity: EntityIndex { idx: ent.index() },
+                        dialogue: speak.0.clone(),
+                    },
+                ))
+                .ok();
         }
     });
 

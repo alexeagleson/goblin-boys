@@ -1,11 +1,13 @@
 import { useEffect, useRef, useState } from "react";
 import { Log, HoverMenu, ControlOverlay, HoverMenuProps } from "./components";
 import { initializeGame } from "./game/main";
-import { EntityData } from "./utility/types";
+import { EntityData, EntityIndex } from "./utility/types";
 import { DirectionHandlers } from "./game/input";
 import "./App.css";
-
-
+import {
+  NpcDialogue,
+  NpcDialogueProps,
+} from "./components/NpcDialogue/NpcDialogue";
 
 const App = () => {
   const initialized = useRef<boolean>(false);
@@ -13,6 +15,7 @@ const App = () => {
   const logContainer = useRef<HTMLDivElement | null>(null);
 
   const [hoverMenu, setHoverMenu] = useState<HoverMenuProps>();
+  const [npcDialogueMenu, setNpcDialogueMenu] = useState<NpcDialogueProps>();
   const [log, setLog] = useState<string[]>([]);
   const [moveCount, setMoveCount] = useState<number>();
   const [directionHandlers, setDirectionHandlers] =
@@ -30,13 +33,26 @@ const App = () => {
     setLog((oldLog) => [logEntry, ...oldLog]);
   };
 
+  const onDialogue = ({
+    entity,
+    dialogue,
+  }: {
+    entity: EntityIndex;
+    dialogue: string;
+  }) => {
+    setNpcDialogueMenu({ dialogue, menuPosition: { x: 24, y: 24 } });
+    setTimeout(() => {
+      setNpcDialogueMenu(undefined);
+    }, 2000);
+  };
+
   // Queries the server for the game configuration (to determine the canvas size)
   // and then initializes the game.  Will only fire once (due to `initialized` check)
   // so the game state will persist during Vite dev server hot reloading
   useEffect(() => {
     if (initialized.current === false) {
       initialized.current = true;
-      initializeGame(onHover, onClick, setMoveCount).then(
+      initializeGame(onHover, onClick, setMoveCount, onDialogue).then(
         ({ gameCanvas, directionHandlers: dirHandlers }) => {
           setDirectionHandlers(dirHandlers);
           canvasContainer.current?.appendChild(gameCanvas);
@@ -69,6 +85,7 @@ const App = () => {
       <div className="canvas-and-log-container">
         <div className="canvas-container" ref={canvasContainer}>
           {hoverMenu && <HoverMenu {...hoverMenu} />}
+          {npcDialogueMenu && <NpcDialogue {...npcDialogueMenu} />}
           {/* {directionHandlers && (
             <ControlOverlay directionHandlers={directionHandlers} />
           )} */}

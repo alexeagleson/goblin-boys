@@ -1,3 +1,5 @@
+use core_api::UserId;
+
 use crate::components::MapPosition;
 
 use super::resources::world::MapId;
@@ -12,5 +14,6 @@ pub struct TryAttack {
 }
 
 pub struct TrySpeak {
+    pub user_id: UserId,
     pub map_position: MapPosition,
 }
