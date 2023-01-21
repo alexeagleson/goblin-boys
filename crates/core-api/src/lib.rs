@@ -47,6 +47,7 @@ pub enum SpriteTexture {
     // Carrot,
     WallBrick,
     PcBoneyBoi,
+    PcKidZilla,
     ObjectRedSoda,
     ObjectSewerGrate,
     ObjectWindow,
