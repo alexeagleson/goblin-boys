@@ -1,0 +1,10 @@
+(
+    visibility: 10,
+    blocks_movement: true,
+    blocks_light: true,
+    texture: bunny,
+    combat_stats: (
+      attack: 6,
+      defense: 1
+    )
+)

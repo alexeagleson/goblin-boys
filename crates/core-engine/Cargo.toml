@@ -18,6 +18,7 @@ core-api = {path = "../core-api"}
 rand.workspace = true
 serde.workspace = true
 serde_json.workspace = true
+ron.workspace = true
 simple_astar = {version = "0.2.0", git = "https://github.com/tylervipond/simple-astar"}
 tokio.workspace = true
 tv_shadowcasting = {version = "0.1.1", git = "https://github.com/tylervipond/tv-shadowcasting"}

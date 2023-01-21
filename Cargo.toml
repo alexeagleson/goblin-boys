@@ -21,6 +21,7 @@ serde.workspace = true
 serde_json.workspace = true
 tokio.workspace = true
 warp.workspace = true
+ron.workspace = true
 
 [workspace]
 members = [
@@ -39,17 +40,18 @@ readme = "README.md"
 rust-version = "1.65"
 
 [workspace.dependencies]
-ae-direction = {path = "./crates/ae-direction"}
-ae-position = {path = "./crates/ae-position"}
-core-api = {path = "./crates/core-api"}
-core-database = {path = "./crates/core-database"}
-core-engine = {path = "./crates/core-engine"}
-core-server = {path = "./crates/core-server"}
+ae-direction = { path = "./crates/ae-direction" }
+ae-position = { path = "./crates/ae-position" }
+core-api = { path = "./crates/core-api" }
+core-database = { path = "./crates/core-database" }
+core-engine = { path = "./crates/core-engine" }
+core-server = { path = "./crates/core-server" }
 log = "0.4"
 pretty_env_logger = "0.4"
 rand = "0.8.5"
-serde = {version = "1.0.151", default-features = false, features = ["derive"]}
-serde_json = {version = "1.0.90", default-features = false}
-tokio = {version = "1", features = ["full"]}
+serde = { version = "1.0.151", default-features = false, features = ["derive"] }
+serde_json = { version = "1.0.90", default-features = false }
+ron = "0.8"
+tokio = { version = "1", features = ["full"] }
 typeshare = "1.0.0"
 warp = "0.3.3"
