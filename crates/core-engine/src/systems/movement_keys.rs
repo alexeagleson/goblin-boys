@@ -5,7 +5,7 @@ use core_api::{EntityIndex, ServerMessageSingleClient, Sound, SpriteUpdate};
 
 use crate::{
     components::{BlocksLight, BlocksMovement, MapPosition, Renderable, User},
-    events::ShouldUpdateMap,
+    events::{ShouldUpdateMap, TryAttack},
     resources::{world::GameWorld, CurrentUserMaps, KeypressBuffer, MessageSenderSingleClient},
 };
 
@@ -14,6 +14,7 @@ pub fn movement_keys_system(
     game_world: Res<GameWorld>,
     sender_single_client: Res<MessageSenderSingleClient>,
     mut ev_update_map: EventWriter<ShouldUpdateMap>,
+    mut ev_try_attack: EventWriter<TryAttack>,
     mut keypress_buffer: ResMut<KeypressBuffer>,
     mut query: Query<(
         Entity,
@@ -123,6 +124,13 @@ pub fn movement_keys_system(
                         .0
                         .send((user_id, ServerMessageSingleClient::PlaySound(Sound::Punch)))
                         .ok();
+
+                    // This entity will try to attack a tile
+
+                    ev_try_attack.send(TryAttack(MapPosition {
+                        pos: new_pos,
+                        map_id: map.id(),
+                    }));
 
                     info!("{} attempted to move but failed", name);
                 }

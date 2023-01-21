@@ -3,7 +3,8 @@ use core_api::SpriteTexture;
 
 use crate::{
     components::{
-        eyes::Eyes, paths::Paths, BlocksLight, BlocksMovement, Item, MapPosition, Renderable, User,
+        eyes::Eyes, hp::Hp, paths::Paths, BlocksLight, BlocksMovement, Item, MapPosition,
+        Renderable, User,
     },
     events::ShouldSendFullMapUpdateToClient,
     resources::{
@@ -53,12 +54,17 @@ pub fn join_game_system(
             .insert(Name::new("Carrot"))
             // A walking carrot...
             .insert(Paths::default())
+            .insert(BlocksMovement)
             .insert(MapPosition {
                 pos: map.random_movement_unblocked_tile(),
                 map_id: map.id(),
             })
             .insert(Renderable {
                 texture: SpriteTexture::Carrot,
+            })
+            .insert(Hp {
+                current: 10,
+                max: 10,
             });
 
         // Refresh the full map of all clients when a player joins

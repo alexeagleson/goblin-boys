@@ -40,7 +40,7 @@ pub async fn database_setup() -> DatabaseLock {
         .expect("Couldn't connect to database");
 
     // Run migrations, which updates the database's schema to the latest version.
-    sqlx::migrate!("./migrations")
+    sqlx::migrate!("../../migrations")
         .run(&database)
         .await
         .expect("Couldn't run database migrations");

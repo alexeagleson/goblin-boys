@@ -1,5 +1,6 @@
 pub mod eyes;
 pub mod paths;
+pub mod hp;
 
 use ae_position::Position;
 use bevy::prelude::Component;
@@ -28,7 +29,7 @@ pub struct Renderable {
 }
 
 /// The minimum information required to fully describe the location of an entity
-#[derive(Component, Clone)]
+#[derive(Component, Clone, PartialEq, Eq)]
 pub struct MapPosition {
     pub pos: Position,
     pub map_id: MapId,
