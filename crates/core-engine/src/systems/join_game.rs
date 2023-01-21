@@ -3,9 +3,9 @@ use core_api::SpriteTexture;
 
 use crate::{
     components::{
-        combat_stats::CombatStats, eyes::Eyes, hp::Hp, paths::Paths, BlocksLight, BlocksMovement,
-        Item, MapPosition, Renderable, User,
+        eyes::Eyes, paths::Paths, BlocksLight, BlocksMovement, Item, MapPosition, Renderable, User,
     },
+    data::{enemy_configs::EnemyConfigs, player_config::PlayerConfig},
     events::ShouldSendFullMapUpdateToClient,
     resources::{
         map::PRIMARY_MAP_ID,
@@ -22,6 +22,8 @@ pub fn join_game_system(
     // query: Query<(Entity, &MapPosition, &Renderable)>,
     mut ev_update_client: EventWriter<ShouldSendFullMapUpdateToClient>,
     mut current_user_maps: ResMut<CurrentUserMaps>,
+    player_config: Res<PlayerConfig>,
+    enemy_configs: Res<EnemyConfigs>,
 ) {
     let map = game_world
         .game_maps
@@ -34,47 +36,45 @@ pub fn join_game_system(
             pos: map.random_movement_unblocked_tile(),
             map_id: map.id(),
         };
-        commands
-            .spawn(User(user_id))
-            .insert(Eyes::new(map, 10))
-            .insert(BlocksMovement)
-            .insert(BlocksLight)
+        let mut player_commands = commands.spawn(User(user_id));
+        player_commands.insert(Eyes::new(map, player_config.visibility));
+        if player_config.blocks_movement {
+            player_commands.insert(BlocksMovement);
+        }
+        if player_config.blocks_movement {
+            player_commands.insert(BlocksLight);
+        }
+        player_commands
             .insert(Name::new(player_name))
             .insert(player_map_position.clone())
             .insert(Renderable {
                 texture: SpriteTexture::Bunny,
             })
-            .insert(CombatStats {
-                attack: 3,
-                defense: 1,
-            });
+            .insert(player_config.combat_stats.clone());
 
         // Track the current map the new user is on
         current_user_maps.0.insert(user_id, player_map_position);
 
         // Spawn a carrot every time a new player joins
-        commands
-            .spawn(Item)
-            .insert(Name::new("Carrot"))
+        let mut carrot_commands = commands.spawn(Item);
+        carrot_commands
+            .insert(Name::new(enemy_configs.carrot.name.clone()))
             // A walking carrot...
-            .insert(Paths::default())
-            .insert(BlocksMovement)
             .insert(MapPosition {
                 pos: map.random_movement_unblocked_tile(),
                 map_id: map.id(),
             })
             .insert(Renderable {
-                texture: SpriteTexture::Carrot,
+                texture: enemy_configs.carrot.texture,
             })
-            .insert(Hp {
-                current: 10,
-                max: 10,
-            })
-            .insert(CombatStats {
-                attack: 2,
-                defense: 1,
-            });
-
+            .insert(enemy_configs.carrot.hp.clone())
+            .insert(enemy_configs.carrot.combat_stats.clone());
+        if enemy_configs.carrot.blocks_movement {
+            carrot_commands.insert(Paths::default());
+        }
+        if enemy_configs.carrot.paths {
+            carrot_commands.insert(BlocksMovement);
+        }
         // Refresh the full map of all clients when a player joins
         // [TODO] This is probably overkill -- could just send the new player sprite
         ev_update_client.send(ShouldSendFullMapUpdateToClient(map.id()));
