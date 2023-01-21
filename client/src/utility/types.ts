@@ -59,6 +59,7 @@ export enum BodyRelative {
 export enum SpriteTexture {
 	WallBrick = "wallBrick",
 	PcBoneyBoi = "pcBoneyBoi",
+	PcKidZilla = "pcKidZilla",
 	ObjectRedSoda = "objectRedSoda",
 	ObjectSewerGrate = "objectSewerGrate",
 	ObjectWindow = "objectWindow",

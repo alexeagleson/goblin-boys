@@ -64,110 +64,44 @@ export const createGameApp = async (
 
   app.stage.sortableChildren = true;
 
-  const TEXTURE_MAP = {} as Record<SpriteTexture, Texture>;
-  for (const textureId in SpriteTexture) {
-    const texture = (await Assets.load(`sprites/v2/${textureId}.png`)) as Texture;
-    texture.baseTexture.scaleMode = SCALE_MODES.NEAREST;
-    TEXTURE_MAP[textureId as unknown as SpriteTexture] = texture;
+  const TEXTURE_MAP: Record<string, Texture | Texture[]> = {};
+
+  function lowerFirst(str: string) {
+    return str.charAt(0).toLowerCase() + str.slice(1);
   }
 
-  console.log(TEXTURE_MAP)
+  for (const upperTextureId in SpriteTexture) {
+    const textureId = lowerFirst(upperTextureId);
+    if (textureId === "empty") {
+      continue;
+    }
 
-  
+    try {
+      const texture = (await Assets.load(
+        `sprites/v2/${upperTextureId}.png`
+      )) as Texture;
 
-  const bunny = (await Assets.load("sprites/character/zilla_1.png")) as Texture;
-  const carrot = (await Assets.load("sprites/character/test_1.png")) as Texture;
-  const wall = (await Assets.load("sprites/environment/brick.png")) as Texture;
-  const concrete1 = (await Assets.load(
-    "sprites/environment/concrete_1.png"
-  )) as Texture;
-  const concrete2 = (await Assets.load(
-    "sprites/environment/concrete_2.png"
-  )) as Texture;
-  const concrete3 = (await Assets.load(
-    "sprites/environment/concrete_3.png"
-  )) as Texture;
+      texture.baseTexture.scaleMode = SCALE_MODES.NEAREST;
+      TEXTURE_MAP[textureId as unknown as SpriteTexture] = texture;
+    } catch (e) {
+      const textureArray: Texture[] = [];
 
-  const objectRedSoda = (await Assets.load(
-    "sprites/object/red_soda.png"
-  )) as Texture;
+      for (let i = 1; i < Infinity; i++) {
+        try {
+          const texture = (await Assets.load(
+            `sprites/v2/${upperTextureId}${i}.png`
+          )) as Texture;
 
-  const objectSewerGrate = (await Assets.load(
-    "sprites/environment/sewer_grate.png"
-  )) as Texture;
-
-  const environmentGrass = (await Assets.load(
-    "sprites/environment/grass.png"
-  )) as Texture;
-
-  const environmentSlime = (await Assets.load(
-    "sprites/environment/slime.png"
-  )) as Texture;
-
-  const environmentWater = (await Assets.load(
-    "sprites/environment/water.png"
-  )) as Texture;
-
-  const objectWindow = (await Assets.load(
-    "sprites/object/window.png"
-  )) as Texture;
-
-  const objectLadderUp = (await Assets.load(
-    "sprites/object/ladder_up.png"
-  )) as Texture;
-
-  const objectLadderDown = (await Assets.load(
-    "sprites/object/ladder_down.png"
-  )) as Texture;
-
-  const characterBoneyBoi = (await Assets.load(
-    "sprites/character/boney_boi.png"
-  )) as Texture;
-
-  bunny.baseTexture.scaleMode = SCALE_MODES.NEAREST;
-  carrot.baseTexture.scaleMode = SCALE_MODES.NEAREST;
-  wall.baseTexture.scaleMode = SCALE_MODES.NEAREST;
-  concrete1.baseTexture.scaleMode = SCALE_MODES.NEAREST;
-  concrete2.baseTexture.scaleMode = SCALE_MODES.NEAREST;
-  concrete3.baseTexture.scaleMode = SCALE_MODES.NEAREST;
-  objectRedSoda.baseTexture.scaleMode = SCALE_MODES.NEAREST;
-  objectSewerGrate.baseTexture.scaleMode = SCALE_MODES.NEAREST;
-  environmentGrass.baseTexture.scaleMode = SCALE_MODES.NEAREST;
-
-  environmentSlime.baseTexture.scaleMode = SCALE_MODES.NEAREST;
-  environmentWater.baseTexture.scaleMode = SCALE_MODES.NEAREST;
-
-  objectWindow.baseTexture.scaleMode = SCALE_MODES.NEAREST;
-  objectLadderUp.baseTexture.scaleMode = SCALE_MODES.NEAREST;
-  objectLadderDown.baseTexture.scaleMode = SCALE_MODES.NEAREST;
-
-  characterBoneyBoi.baseTexture.scaleMode = SCALE_MODES.NEAREST;
-
-  // const TEXTURE_MAP: Record<SpriteTexture, Texture> = {
-  //   [SpriteTexture.Bunny]: bunny,
-  //   [SpriteTexture.Carrot]: carrot,
-  //   [SpriteTexture.WallBrick]: wall,
-  //   [SpriteTexture.FloorConcrete]: concrete1,
-  //   [SpriteTexture.ObjectRedSoda]: objectRedSoda,
-  //   [SpriteTexture.ObjectSewerGrate]: objectSewerGrate,
-
-  //   [SpriteTexture.EnvironmentGrass]: environmentGrass,
-
-  //   [SpriteTexture.EnvironmentSlime]: environmentSlime,
-
-  //   [SpriteTexture.EnvironmentWater]: environmentWater,
-
-  //   [SpriteTexture.ObjectWindow]: objectWindow,
-  //   [SpriteTexture.ObjectLadderUp]: objectLadderUp,
-  //   [SpriteTexture.ObjectLadderDown]: objectLadderDown,
-
-  //   [SpriteTexture.CharacterBoneyBoi]: characterBoneyBoi,
-
-  //   // Represents a character on the map that didn't appear in the legend
-  //   [SpriteTexture.Unrecognized]: carrot,
-  //   // Client should never receive this value
-  //   [SpriteTexture.None]: carrot,
-  // };
+          texture.baseTexture.scaleMode = SCALE_MODES.NEAREST;
+          textureArray.push(texture);
+        } catch (e) {
+          // Run out of numbered textures
+          TEXTURE_MAP[textureId as unknown as SpriteTexture] = textureArray;
+          break;
+        }
+      }
+    }
+  }
 
   const tileToPx = (tilePos: Position): Position => {
     return {
@@ -207,25 +141,20 @@ export const createGameApp = async (
   const addSprite = (spriteUpdate: SpriteUpdate) => {
     // Only add the sprite if it doesn't already exist
     if (spriteMap.get(spriteUpdate.entity.idx) === undefined) {
-      // log.trace(
-      //   "Adding sprite for player",
-      //   entityRenderData.entityPosition.entityIndex
-      // );
-
       const randomElement = <T>(arr: T[]): T =>
         arr[Math.floor(Math.random() * arr.length)];
 
       const getSprite = (): Sprite => {
-        if (spriteUpdate.sprite == SpriteTexture.FloorConcrete) {
-          const sprite = new Sprite(
-            randomElement([concrete1, concrete2, concrete3])
-          );
+        const textureOrArray = TEXTURE_MAP[spriteUpdate.sprite];
+        if (Array.isArray(textureOrArray)) {
+          const sprite = new Sprite(randomElement(textureOrArray));
           sprite.zIndex = 0;
+          console.log("A");
           return sprite;
         } else {
-          const sprite = new Sprite(TEXTURE_MAP[spriteUpdate.sprite]);
+          const sprite = new Sprite(textureOrArray);
           sprite.zIndex = 1;
-
+          console.log("B");
           return sprite;
         }
       };

@@ -1,9 +1,9 @@
 (
     carrot: (
-        name: "carrot",
+        name: "Slime",
         blocks_movement: true,
         paths: true,
-        texture: carrot,
+        texture: objectSlime,
         hp: (
             current: 10,
             max: 10,

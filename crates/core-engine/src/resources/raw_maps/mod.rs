@@ -41,9 +41,9 @@ pub fn example_map_1_legend(character: char) -> SpriteTexture {
     match character {
         '#' => SpriteTexture::WallBrick,
         's' => SpriteTexture::ObjectSewerGrate,
-        '.' => SpriteTexture::None,
-        'w' => SpriteTexture::EnvironmentWater,
-        'h' => SpriteTexture::EnvironmentGrass,
+        '.' => SpriteTexture::Empty,
+        'w' => SpriteTexture::ObjectWater,
+        'h' => SpriteTexture::FloorGrass,
         _ => SpriteTexture::Unrecognized,
     }
 }
@@ -67,7 +67,7 @@ pub fn example_map_2_legend(character: char) -> SpriteTexture {
     match character {
         '#' => SpriteTexture::WallBrick,
         'r' => SpriteTexture::ObjectRedSoda,
-        '.' => SpriteTexture::None,
+        '.' => SpriteTexture::Empty,
         _ => SpriteTexture::Unrecognized,
     }
 }

@@ -1,8 +1,8 @@
-pub mod eyes;
-pub mod paths;
-pub mod hp;
 pub mod combat_stats;
-
+pub mod eyes;
+pub mod hp;
+pub mod paths;
+pub mod speaks;
 use ae_position::Position;
 use bevy::prelude::Component;
 use core_api::{SpriteTexture, UserId};

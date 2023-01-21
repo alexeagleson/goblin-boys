@@ -53,10 +53,10 @@ export const initializeGame = async (
         setCamera(response.content);
 
         for (const [entityIndex, spritePosition] of spriteMap) {
-          if (spritePosition.texture === SpriteTexture.Bunny) {
-            log.trace("Player", entityIndex, spritePosition);
-            log.trace("Player new position", response.content);
-          }
+          // if (spritePosition.texture === SpriteTexture.Bunny) {
+          //   log.trace("Player", entityIndex, spritePosition);
+          //   log.trace("Player new position", response.content);
+          // }
           setSpritePosition({
             entity: { idx: entityIndex },
             pos: spritePosition.pos,

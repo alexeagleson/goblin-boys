@@ -3,7 +3,8 @@ use core_api::SpriteTexture;
 
 use crate::{
     components::{
-        eyes::Eyes, paths::Paths, BlocksLight, BlocksMovement, Item, MapPosition, Renderable, User,
+        eyes::Eyes, paths::Paths, speaks::Speaks, BlocksLight, BlocksMovement, Item, MapPosition,
+        Renderable, User,
     },
     data::{enemy_configs::EnemyConfigs, player_config::PlayerConfig},
     events::ShouldSendFullMapUpdateToClient,
@@ -48,7 +49,7 @@ pub fn join_game_system(
             .insert(Name::new(player_name))
             .insert(player_map_position.clone())
             .insert(Renderable {
-                texture: SpriteTexture::Bunny,
+                texture: SpriteTexture::PcKidZilla,
             })
             .insert(player_config.combat_stats.clone());
 
@@ -69,6 +70,18 @@ pub fn join_game_system(
             })
             .insert(enemy_configs.carrot.hp.clone())
             .insert(enemy_configs.carrot.combat_stats.clone());
+
+        // Spawn a test NPC
+        let mut npc_commands = commands.spawn(Speaks);
+        npc_commands
+            .insert(Name::new("Npc Rat".to_string()))
+            .insert(MapPosition {
+                pos: map.random_movement_unblocked_tile(),
+                map_id: map.id(),
+            })
+            .insert(Renderable {
+                texture: SpriteTexture::NpcRat,
+            });
 
         // Refresh the full map of all clients when a player joins
         // [TODO] This is probably overkill -- could just send the new player sprite
