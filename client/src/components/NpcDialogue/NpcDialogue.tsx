@@ -4,11 +4,13 @@ import "./NpcDialogue.css";
 export interface NpcDialogueProps {
   dialogue: string;
   menuPosition: Position;
+  onDialogueClick: () => void;
 }
 
 export const NpcDialogue: React.FC<NpcDialogueProps> = ({
   dialogue,
   menuPosition,
+  onDialogueClick,
 }) => {
   return (
     <div className="dialogue-container">
@@ -26,8 +28,8 @@ export const NpcDialogue: React.FC<NpcDialogueProps> = ({
       </p>
 
       <div className="button-container">
-        <button>Option 1</button>
-        <button>Option 2</button>
+        <button onClick={onDialogueClick}>Option 1</button>
+        <button onClick={onDialogueClick}>Option 2</button>
       </div>
     </div>
   );

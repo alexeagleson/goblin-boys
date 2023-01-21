@@ -12,7 +12,7 @@ import {
 } from "../utility/types";
 import { assertNever, log } from "../utility/functions";
 import { GAME_CONFIG_URI } from "../utility/config";
-import { addInputListeners } from "./input";
+import { addInputListeners, GameInputState } from "./input";
 import { CAMERA_SIZE, setCamera, TILE_SIZE } from "./camera";
 
 var punch = new Audio("punch.ogg");
@@ -35,7 +35,8 @@ export const initializeGame = async (
   }: {
     entity: EntityIndex;
     dialogue: string;
-  }) => void
+  }) => void,
+  gameInputState: GameInputState
 ) => {
   // const mapDimensionsResponse = await fetch(GAME_CONFIG_URI, { method: "GET" });
 
@@ -134,7 +135,8 @@ export const initializeGame = async (
   const directionHandlers = addInputListeners(
     gameCanvas,
     updateHoverMenuPosition,
-    safeSend
+    safeSend,
+    gameInputState
   );
 
   let interval = setInterval(() => {

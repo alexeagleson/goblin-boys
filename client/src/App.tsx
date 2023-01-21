@@ -2,12 +2,14 @@ import { useEffect, useRef, useState } from "react";
 import { Log, HoverMenu, ControlOverlay, HoverMenuProps } from "./components";
 import { initializeGame } from "./game/main";
 import { EntityData, EntityIndex } from "./utility/types";
-import { DirectionHandlers } from "./game/input";
+import { DirectionHandlers, GameInputState } from "./game/input";
 import "./App.css";
 import {
   NpcDialogue,
   NpcDialogueProps,
 } from "./components/NpcDialogue/NpcDialogue";
+
+const gameInputState: GameInputState = { enabled: true };
 
 const App = () => {
   const initialized = useRef<boolean>(false);
@@ -33,6 +35,11 @@ const App = () => {
     setLog((oldLog) => [logEntry, ...oldLog]);
   };
 
+  const onDialogueClick = () => {
+    gameInputState.enabled = true;
+    setNpcDialogueMenu(undefined);
+  };
+
   const onDialogue = ({
     entity,
     dialogue,
@@ -40,7 +47,13 @@ const App = () => {
     entity: EntityIndex;
     dialogue: string;
   }) => {
-    setNpcDialogueMenu({ dialogue, menuPosition: { x: 24, y: 24 } });
+    setNpcDialogueMenu({
+      dialogue,
+      menuPosition: { x: 24, y: 24 },
+      onDialogueClick,
+    });
+
+    gameInputState.enabled = false;
     // setTimeout(() => {
     //   setNpcDialogueMenu(undefined);
     // }, 2000);
@@ -52,30 +65,34 @@ const App = () => {
   useEffect(() => {
     if (initialized.current === false) {
       initialized.current = true;
-      initializeGame(onHover, onClick, setMoveCount, onDialogue).then(
-        ({ gameCanvas, directionHandlers: dirHandlers }) => {
-          setDirectionHandlers(dirHandlers);
-          canvasContainer.current?.appendChild(gameCanvas);
-          let canvasHeight = gameCanvas.height;
-          const canvasWidth = gameCanvas.width;
+      initializeGame(
+        onHover,
+        onClick,
+        setMoveCount,
+        onDialogue,
+        gameInputState
+      ).then(({ gameCanvas, directionHandlers: dirHandlers }) => {
+        setDirectionHandlers(dirHandlers);
+        canvasContainer.current?.appendChild(gameCanvas);
+        let canvasHeight = gameCanvas.height;
+        const canvasWidth = gameCanvas.width;
 
-          if (canvasContainer.current && logContainer.current) {
-            canvasContainer.current.style.height = canvasHeight + "px";
-            logContainer.current.style.width = canvasWidth + "px";
+        if (canvasContainer.current && logContainer.current) {
+          canvasContainer.current.style.height = canvasHeight + "px";
+          logContainer.current.style.width = canvasWidth + "px";
 
-            // Log height is shorter on mobile
-            if (window.matchMedia("(max-width: 600px)").matches) {
-              canvasHeight = Math.floor(canvasHeight / 2);
-            }
-
-            logContainer.current.style.height = canvasHeight + "px";
+          // Log height is shorter on mobile
+          if (window.matchMedia("(max-width: 600px)").matches) {
+            canvasHeight = Math.floor(canvasHeight / 2);
           }
 
-          gameCanvas.onmouseleave = () => {
-            setHoverMenu(undefined);
-          };
+          logContainer.current.style.height = canvasHeight + "px";
         }
-      );
+
+        gameCanvas.onmouseleave = () => {
+          setHoverMenu(undefined);
+        };
+      });
     }
   });
 
