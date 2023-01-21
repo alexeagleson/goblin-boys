@@ -12,3 +12,7 @@ JUST GET EVERYONE ELSE'S CHANGES
 ```
 git pull
 ```
+
+FOR MIKE:
+
+When you pull and a confusing screen pops up press `:q` to exit it
