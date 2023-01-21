@@ -56,9 +56,9 @@ export const createGameApp = async (
     
   });
 
-  const bunny = await Assets.load("zilla1.png") as Texture;
-  const carrot = await Assets.load("test01.png") as Texture;
-  const wall = await Assets.load("brick.png") as Texture;
+  const bunny = await Assets.load("sprites/character/zilla_1.png") as Texture;
+  const carrot = await Assets.load("sprites/character/test_1.png") as Texture;
+  const wall = await Assets.load("sprites/environment/brick.png") as Texture;
 
   bunny.baseTexture.scaleMode = SCALE_MODES.NEAREST;
   carrot.baseTexture.scaleMode = SCALE_MODES.NEAREST;
