@@ -88,6 +88,33 @@ pub fn spawn_walls_system(game_world: Res<GameWorld>, mut commands: Commands) {
                             pos,
                             sprite: SpriteTexture::Wall,
                         });
+                    } else {
+                        let pos = Position {
+                            x: x as i32,
+                            y: y as i32,
+                        };
+
+                        let sprite = Renderable {
+                            texture: SpriteTexture::FloorConcrete,
+                        };
+
+                        let idx = commands
+                            .spawn(Name::new("Floor"))
+                            .insert(MapPosition {
+                                pos: pos.clone(),
+                                map_id: map.id(),
+                            })
+                            .insert(BlocksLight)
+                            // .insert(BlocksMovement)
+                            .insert(sprite)
+                            .id()
+                            .index();
+
+                        wall_entities.push(SpriteUpdate {
+                            entity: EntityIndex { idx },
+                            pos,
+                            sprite: SpriteTexture::Wall,
+                        });
                     }
                 }
             }

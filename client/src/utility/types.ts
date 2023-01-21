@@ -60,6 +60,7 @@ export enum SpriteTexture {
 	Bunny = "bunny",
 	Carrot = "carrot",
 	Wall = "wall",
+	FloorConcrete = "floorConcrete",
 }
 
 /** Tell client to play audio */
