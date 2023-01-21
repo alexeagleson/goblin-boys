@@ -46,6 +46,7 @@ pub enum SpriteTexture {
     Bunny,
     Carrot,
     Wall,
+    FloorConcrete,
 }
 
 #[typeshare]

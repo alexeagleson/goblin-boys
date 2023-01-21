@@ -1,7 +1,14 @@
 /** Handles everything related to the actual game canvas rendering
  * and primary consuming of the Pixi.js library */
 
-import { Application, Assets, BaseTexture, SCALE_MODES, Sprite, Texture } from "pixi.js";
+import {
+  Application,
+  Assets,
+  BaseTexture,
+  SCALE_MODES,
+  Sprite,
+  Texture,
+} from "pixi.js";
 import { STRICT_MODE } from "../utility/config";
 import {
   Dimensions2d,
@@ -53,16 +60,27 @@ export const createGameApp = async (
   const app = new Application({
     width: dimensions.width * tileSize,
     height: dimensions.height * tileSize,
-    
   });
 
-  const bunny = await Assets.load("sprites/character/zilla_1.png") as Texture;
-  const carrot = await Assets.load("sprites/character/test_1.png") as Texture;
-  const wall = await Assets.load("sprites/environment/brick.png") as Texture;
+  const bunny = (await Assets.load("sprites/character/zilla_1.png")) as Texture;
+  const carrot = (await Assets.load("sprites/character/test_1.png")) as Texture;
+  const wall = (await Assets.load("sprites/environment/brick.png")) as Texture;
+  const concrete1 = (await Assets.load(
+    "sprites/environment/concrete_1.png"
+  )) as Texture;
+  const concrete2 = (await Assets.load(
+    "sprites/environment/concrete_2.png"
+  )) as Texture;
+  const concrete3 = (await Assets.load(
+    "sprites/environment/concrete_3.png"
+  )) as Texture;
 
   bunny.baseTexture.scaleMode = SCALE_MODES.NEAREST;
   carrot.baseTexture.scaleMode = SCALE_MODES.NEAREST;
   wall.baseTexture.scaleMode = SCALE_MODES.NEAREST;
+  concrete1.baseTexture.scaleMode = SCALE_MODES.NEAREST;
+  concrete2.baseTexture.scaleMode = SCALE_MODES.NEAREST;
+  concrete3.baseTexture.scaleMode = SCALE_MODES.NEAREST;
 
   // bunny.scaleMode = SCALE_MODES.LINEAR;
 
@@ -70,6 +88,7 @@ export const createGameApp = async (
     [SpriteTexture.Bunny]: bunny,
     [SpriteTexture.Carrot]: carrot,
     [SpriteTexture.Wall]: wall,
+    [SpriteTexture.FloorConcrete]: concrete1,
   };
 
   const tileToPx = (tilePos: Position): Position => {
@@ -114,7 +133,19 @@ export const createGameApp = async (
       //   "Adding sprite for player",
       //   entityRenderData.entityPosition.entityIndex
       // );
-      const newSprite = new Sprite(TEXTURE_MAP[spriteUpdate.sprite]);
+
+      const randomElement = <T>(arr: T[]): T =>
+        arr[Math.floor(Math.random() * arr.length)];
+
+      const getSprite = (): Sprite => {
+        if (spriteUpdate.sprite == SpriteTexture.FloorConcrete) {
+          return new Sprite(randomElement([concrete1, concrete2, concrete3]));
+        } else {
+          return new Sprite(TEXTURE_MAP[spriteUpdate.sprite]);
+        }
+      };
+
+      const newSprite = getSprite();
 
       newSprite.anchor.x = 0.5;
       newSprite.anchor.y = 0.5;
