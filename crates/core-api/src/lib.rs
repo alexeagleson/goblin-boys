@@ -39,14 +39,25 @@ pub struct EntityData {
 pub struct LogMessage(pub String);
 
 #[typeshare]
-#[derive(Serialize, Deserialize, Debug, Clone, Copy)]
+#[derive(Serialize, Deserialize, Debug, Clone, Copy, PartialEq, Eq)]
 #[serde(rename_all = "camelCase")]
 /// A sprite to render that represents a visible entity
 pub enum SpriteTexture {
     Bunny,
     Carrot,
-    Wall,
+    WallBrick,
+    CharacterBoneyBoi,
+    ObjectRedSoda,
+    ObjectSewerGrate,
+    ObjectWindow,
+    ObjectLadderUp,
+    ObjectLadderDown,
+    EnvironmentSlime,
+    EnvironmentWater,
+    EnvironmentGrass,
     FloorConcrete,
+    Unrecognized,
+    None,
 }
 
 #[typeshare]

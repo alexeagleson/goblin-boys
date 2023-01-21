@@ -1,0 +1,16 @@
+(
+    carrot: (
+        name: "carrot",
+        blocks_movement: true,
+        paths: true,
+        texture: carrot,
+        hp: (
+            current: 10,
+            max: 10,
+        ),
+        combat_stats: (
+            attack: 2,
+            defense: 1
+        )
+    )
+)

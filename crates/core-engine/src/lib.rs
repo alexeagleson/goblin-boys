@@ -1,4 +1,5 @@
 pub mod components;
+pub mod data;
 pub mod events;
 pub mod resources;
 pub mod systems;
@@ -12,6 +13,9 @@ use bevy::{
 use core_api::{
     ClientMessage, DatabaseRequest, DatabaseResponse, ServerMessageAllClients,
     ServerMessageSingleClient, UserId,
+};
+use data::{
+    enemy_configs::EnemyConfigs, enemy_configs_str, player_config::PlayerConfig, player_config_str,
 };
 use events::TryAttack;
 use resources::{DatabaseReceiver, DatabaseSender};
@@ -59,6 +63,8 @@ pub fn start_game_engine(
         .insert_resource(MoveStopwatch::new())
         .insert_resource(Time::default())
         .insert_resource(CurrentUserMaps::default())
+        .insert_resource(ron::from_str::<PlayerConfig>(player_config_str).unwrap())
+        .insert_resource(ron::from_str::<EnemyConfigs>(enemy_configs_str).unwrap())
         .add_event::<ShouldUpdateMap>()
         .add_event::<ShouldSendFullMapUpdateToClient>()
         .add_event::<TryAttack>()
