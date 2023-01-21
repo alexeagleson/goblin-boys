@@ -2,11 +2,14 @@
  * and primary consuming of the Pixi.js library */
 
 import {
+  AnimatedSprite,
   Application,
   Assets,
   BaseTexture,
+  ISpritesheetData,
   SCALE_MODES,
   Sprite,
+  Spritesheet,
   Texture,
 } from "pixi.js";
 import { STRICT_MODE } from "../utility/config";
@@ -64,7 +67,10 @@ export const createGameApp = async (
 
   app.stage.sortableChildren = true;
 
-  const TEXTURE_MAP: Record<string, Texture | Texture[]> = {};
+  const TEXTURE_MAP: Record<string, Texture | Texture[] | Spritesheet> = {};
+
+  // add it to the stage to render
+  // app.stage.addChild(anim);
 
   function lowerFirst(str: string) {
     return str.charAt(0).toLowerCase() + str.slice(1);
@@ -73,6 +79,56 @@ export const createGameApp = async (
   for (const tex in SpriteTexture) {
     const textureId = lowerFirst(tex);
     if (textureId === "empty") {
+      continue;
+    }
+
+    if (textureId === "npcRat") {
+      // Create object to store sprite sheet data
+      const atlasData = {
+        frames: {
+          rat1: {
+            frame: { x: 0, y: 0, w: 16, h: 16 },
+            sourceSize: { w: 16, h: 16 },
+            spriteSourceSize: { x: 0, y: 0, w: 16, h: 16 },
+          },
+          rat2: {
+            frame: { x: 16, y: 0, w: 16, h: 16 },
+            sourceSize: { w: 16, h: 16 },
+            spriteSourceSize: { x: 0, y: 0, w: 16, h: 16 },
+          },
+          rat3: {
+            frame: { x: 32, y: 0, w: 16, h: 16 },
+            sourceSize: { w: 16, h: 16 },
+            spriteSourceSize: { x: 0, y: 0, w: 16, h: 16 },
+          },
+          rat4: {
+            frame: { x: 48, y: 0, w: 16, h: 16 },
+            sourceSize: { w: 16, h: 16 },
+            spriteSourceSize: { x: 0, y: 0, w: 16, h: 16 },
+          },
+        },
+        meta: {
+          image: "sprites/npcs/rat-sheet.png",
+          format: "RGBA8888",
+          size: { w: 16 * 4, h: 16 },
+          scale: "1",
+        },
+        animations: {
+          rat: ["rat1", "rat2", "rat3", "rat4"], //array of frames by name
+        },
+      };
+
+      // Create the SpriteSheet from data and image
+      const spriteSheet = new Spritesheet(
+        BaseTexture.from(atlasData.meta.image),
+        atlasData
+      );
+
+      // Generate all the Textures asynchronously
+      await spriteSheet.parse();
+
+      TEXTURE_MAP[textureId as unknown as SpriteTexture] = spriteSheet;
+
       continue;
     }
 
@@ -144,9 +200,28 @@ export const createGameApp = async (
       const randomElement = <T>(arr: T[]): T =>
         arr[Math.floor(Math.random() * arr.length)];
 
-      const getSprite = (): Sprite => {
+      const getSprite = (): Sprite | AnimatedSprite => {
         const textureOrArray = TEXTURE_MAP[spriteUpdate.sprite];
-        if (Array.isArray(textureOrArray)) {
+
+        if (textureOrArray instanceof Spritesheet) {
+          // spritesheet is ready to use!
+          const animatedSprite = new AnimatedSprite(textureOrArray.animations.rat);
+
+          animatedSprite.texture.baseTexture.scaleMode = SCALE_MODES.NEAREST;
+          // animatedSprite.scale = { x: SPRITE_SCALE, y: SPRITE_SCALE };
+          // set the animation speed
+          animatedSprite.animationSpeed = 0.1666;
+
+          // play the animation on a loop
+          animatedSprite.play();
+
+          // const texture = (await Assets.load(
+          //   `sprites/v2/${textureId}.png`
+          // )) as Texture;
+
+          // animTexture.baseTexture.scaleMode = SCALE_MODES.NEAREST;
+          return animatedSprite;
+        } else if (Array.isArray(textureOrArray)) {
           const sprite = new Sprite(randomElement(textureOrArray));
           sprite.zIndex = spriteUpdate.sprite
             .toLocaleLowerCase()
