@@ -148,11 +148,20 @@ export const createGameApp = async (
         const textureOrArray = TEXTURE_MAP[spriteUpdate.sprite];
         if (Array.isArray(textureOrArray)) {
           const sprite = new Sprite(randomElement(textureOrArray));
-          sprite.zIndex = 0;
+          sprite.zIndex = spriteUpdate.sprite
+            .toLocaleLowerCase()
+            .includes("floor")
+            ? 0
+            : 1;
+
           return sprite;
         } else {
           const sprite = new Sprite(textureOrArray);
-          sprite.zIndex = 1;
+          sprite.zIndex = spriteUpdate.sprite
+            .toLocaleLowerCase()
+            .includes("floor")
+            ? 0
+            : 1;
           return sprite;
         }
       };
