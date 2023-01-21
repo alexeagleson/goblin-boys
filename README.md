@@ -39,17 +39,28 @@ For initializing the SQLite database:
 cargo install sqlx-cli
 ```
 
-Before running for the first time you must run these commands to build the initial types file and initialize the database:
+Before running for the first time you must do the following to build the initial types file and initialize the database:
 
+1. Create your env file:
+```bash
+# assuming linux-like os
+cp .env.example .env
 ```
+2. Update the env file by replacing DATABASE_URL with a database url, for example `sqlite://mydb.db`
+
+3. Create and migrate the database
+```bash
 sqlx database create
 
 sqlx migrate run
+```
 
+4. Generate your types
+```bash
 typeshare ./ --lang=typescript --output-file=client/src/utility/types.ts
 ```
 
-Then run the server with:
+When this is done, you can run the server with:
 
 ```
 cargo run
