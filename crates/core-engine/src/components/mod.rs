@@ -1,6 +1,7 @@
 pub mod eyes;
 pub mod paths;
 pub mod hp;
+pub mod combat_stats;
 
 use ae_position::Position;
 use bevy::prelude::Component;

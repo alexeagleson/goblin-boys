@@ -4,7 +4,9 @@ use bevy::prelude::*;
 use core_api::{EntityIndex, ServerMessageSingleClient, Sound, SpriteUpdate};
 
 use crate::{
-    components::{BlocksLight, BlocksMovement, MapPosition, Renderable, User},
+    components::{
+        combat_stats::CombatStats, BlocksLight, BlocksMovement, MapPosition, Renderable, User,
+    },
     events::{ShouldUpdateMap, TryAttack},
     resources::{world::GameWorld, CurrentUserMaps, KeypressBuffer, MessageSenderSingleClient},
 };
@@ -24,14 +26,23 @@ pub fn movement_keys_system(
         Option<&BlocksMovement>,
         Option<&BlocksLight>,
         Option<&Renderable>,
+        &CombatStats,
     )>,
     mut current_user_maps: ResMut<CurrentUserMaps>,
 ) {
     let key = keypress_buffer.0.pop_front();
 
     if let Some((user_id, key)) = key {
-        for (entity, user, mut map_pos, name, blocks_movement, blocks_light, renderable) in
-            query.iter_mut()
+        for (
+            entity,
+            user,
+            mut map_pos,
+            name,
+            blocks_movement,
+            blocks_light,
+            renderable,
+            combat_stats,
+        ) in query.iter_mut()
         {
             // This user ID matches the component of the one trying to make the move
             if user.0 == user_id {
@@ -126,11 +137,13 @@ pub fn movement_keys_system(
                         .ok();
 
                     // This entity will try to attack a tile
-
-                    ev_try_attack.send(TryAttack(MapPosition {
-                        pos: new_pos,
-                        map_id: map.id(),
-                    }));
+                    ev_try_attack.send(TryAttack {
+                        map_position: MapPosition {
+                            pos: new_pos,
+                            map_id: map.id(),
+                        },
+                        attack_value: combat_stats.attack,
+                    });
 
                     info!("{} attempted to move but failed", name);
                 }

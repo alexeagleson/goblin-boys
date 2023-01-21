@@ -3,14 +3,18 @@ use bevy::prelude::*;
 use core_api::{EntityIndex, ServerMessageSingleClient};
 
 use crate::{
-    components::{hp::Hp, MapPosition, User},
+    components::{
+        combat_stats::{self, CombatStats},
+        hp::Hp,
+        MapPosition, User,
+    },
     events::{ShouldSendFullMapUpdateToClient, ShouldUpdateMap, TryAttack},
     resources::{world::MapId, CurrentUserMaps, MessageSenderSingleClient},
 };
 
 pub fn combat_system(
     // sender_single_client: Res<MessageSenderSingleClient>,
-    mut query: Query<(Entity, &Name, &mut Hp, &MapPosition)>,
+    mut query: Query<(Entity, &Name, &mut Hp, &MapPosition, &CombatStats)>,
     // mut ev_update_client: EventWriter<ShouldSendFullMapUpdateToClient>,
     // mut current_user_maps: ResMut<CurrentUserMaps>,
     mut ev_try_attack: EventReader<TryAttack>,
@@ -25,17 +29,19 @@ pub fn combat_system(
 
     let mut killed_guys: Vec<(Entity, MapId)> = vec![];
 
-    ev_try_attack.iter().for_each(|event| {
+    ev_try_attack.iter().for_each(|attack_event| {
         // Find out if an attackable target exists on the tile
         let target = query
             .iter_mut()
-            .find(|(_, _, _, map_pos)| &event.0 == *map_pos);
+            .find(|(_, _, _, map_pos, _)| &attack_event.map_position == *map_pos);
 
-        if let Some((ent, _, mut hp, map_pos)) = target {
-            hp.current -= 1;
+        if let Some((ent, _, mut hp, map_pos, combat_stats)) = target {
+            hp.current -= (attack_event.attack_value - combat_stats.defense).max(0);
             println!("OW");
-
-            killed_guys.push((ent, map_pos.map_id));
+            if hp.current <= 0 {
+                killed_guys.push((ent, map_pos.map_id));
+                println!("oh no shit I'm dead");
+            }
         }
     });
 

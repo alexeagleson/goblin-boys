@@ -3,8 +3,8 @@ use core_api::SpriteTexture;
 
 use crate::{
     components::{
-        eyes::Eyes, hp::Hp, paths::Paths, BlocksLight, BlocksMovement, Item, MapPosition,
-        Renderable, User,
+        combat_stats::CombatStats, eyes::Eyes, hp::Hp, paths::Paths, BlocksLight, BlocksMovement,
+        Item, MapPosition, Renderable, User,
     },
     events::ShouldSendFullMapUpdateToClient,
     resources::{
@@ -43,6 +43,10 @@ pub fn join_game_system(
             .insert(player_map_position.clone())
             .insert(Renderable {
                 texture: SpriteTexture::Bunny,
+            })
+            .insert(CombatStats {
+                attack: 3,
+                defense: 1,
             });
 
         // Track the current map the new user is on
@@ -65,6 +69,10 @@ pub fn join_game_system(
             .insert(Hp {
                 current: 10,
                 max: 10,
+            })
+            .insert(CombatStats {
+                attack: 2,
+                defense: 1,
             });
 
         // Refresh the full map of all clients when a player joins
