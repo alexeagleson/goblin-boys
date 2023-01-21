@@ -1,7 +1,7 @@
 /** Handles everything related to the actual game canvas rendering
  * and primary consuming of the Pixi.js library */
 
-import { Application, Assets, Sprite, Texture } from "pixi.js";
+import { Application, Assets, BaseTexture, SCALE_MODES, Sprite, Texture } from "pixi.js";
 import { STRICT_MODE } from "../utility/config";
 import {
   Dimensions2d,
@@ -11,7 +11,7 @@ import {
   SpriteUpdate,
 } from "../utility/types";
 import { log } from "../utility/functions";
-import { CAMERA_SIZE, mapPosToScreenPos } from "./camera";
+import { CAMERA_SIZE, mapPosToScreenPos, SPRITE_SCALE } from "./camera";
 
 export interface SpritePosition {
   sprite: Sprite;
@@ -53,11 +53,18 @@ export const createGameApp = async (
   const app = new Application({
     width: dimensions.width * tileSize,
     height: dimensions.height * tileSize,
+    
   });
 
-  const bunny = await Assets.load("bunny.png");
-  const carrot = await Assets.load("carrot.png");
-  const wall = await Assets.load("wall.jpg");
+  const bunny = await Assets.load("zilla1.png") as Texture;
+  const carrot = await Assets.load("test01.png") as Texture;
+  const wall = await Assets.load("brick.png") as Texture;
+
+  bunny.baseTexture.scaleMode = SCALE_MODES.NEAREST;
+  carrot.baseTexture.scaleMode = SCALE_MODES.NEAREST;
+  wall.baseTexture.scaleMode = SCALE_MODES.NEAREST;
+
+  // bunny.scaleMode = SCALE_MODES.LINEAR;
 
   const TEXTURE_MAP: Record<SpriteTexture, Texture> = {
     [SpriteTexture.Bunny]: bunny,
@@ -112,10 +119,14 @@ export const createGameApp = async (
       newSprite.anchor.x = 0.5;
       newSprite.anchor.y = 0.5;
 
+      // newSprite.scaleMode
+
+      newSprite.scale = { x: SPRITE_SCALE, y: SPRITE_SCALE };
+
       // Each frame we spin the sprite around in circles just for shits
-      const ticker = app.ticker.add(() => {
-        newSprite.rotation += 0.05;
-      });
+      // const ticker = app.ticker.add(() => {
+      //   newSprite.rotation += 0.05;
+      // });
 
       app.stage.addChild(newSprite);
 
@@ -144,6 +155,10 @@ export const createGameApp = async (
   };
 
   const gameCanvas = app.view as HTMLCanvasElement;
+
+  // app.rend
+
+  // app.stage.scale.set(7);
 
   return { addSprite, removeSprite, setSpritePosition, gameCanvas };
 };

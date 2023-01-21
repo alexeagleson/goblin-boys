@@ -32,6 +32,7 @@ impl VisibilityGrid {
     }
 
     pub fn position_visible(&self, pos: &Position) -> bool {
+        // [TODO] This has panicked before
         self.grid[pos.to_idx(self.width)] == 1
     }
 

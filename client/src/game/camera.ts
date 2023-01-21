@@ -1,7 +1,9 @@
 import { Position } from "../utility/types";
 
+export const SPRITE_SCALE = 4;
+
 // Game config
-export const TILE_SIZE = 24;
+export const TILE_SIZE = 16 * SPRITE_SCALE;
 
 export const CAMERA_RADIUS = 3;
 export const CAMERA_SIZE = CAMERA_RADIUS * 2 + 1;
