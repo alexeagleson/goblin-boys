@@ -5,5 +5,5 @@ use super::enemy_config::EnemyConfig;
 
 #[derive(Debug, Deserialize, Serialize, Resource)]
 pub struct EnemyConfigs {
-    pub carrot: EnemyConfig,
+    pub slime: EnemyConfig,
 }

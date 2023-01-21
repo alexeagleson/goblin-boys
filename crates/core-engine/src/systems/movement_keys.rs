@@ -7,7 +7,7 @@ use crate::{
     components::{
         combat_stats::CombatStats, BlocksLight, BlocksMovement, MapPosition, Renderable, User,
     },
-    events::{ShouldUpdateMap, TryAttack},
+    events::{ShouldUpdateMap, TryAttack, TrySpeak},
     resources::{world::GameWorld, CurrentUserMaps, KeypressBuffer, MessageSenderSingleClient},
 };
 
@@ -17,6 +17,7 @@ pub fn movement_keys_system(
     sender_single_client: Res<MessageSenderSingleClient>,
     mut ev_update_map: EventWriter<ShouldUpdateMap>,
     mut ev_try_attack: EventWriter<TryAttack>,
+    mut ev_try_speak: EventWriter<TrySpeak>,
     mut keypress_buffer: ResMut<KeypressBuffer>,
     mut query: Query<(
         Entity,
@@ -139,10 +140,18 @@ pub fn movement_keys_system(
                     // This entity will try to attack a tile
                     ev_try_attack.send(TryAttack {
                         map_position: MapPosition {
-                            pos: new_pos,
+                            pos: new_pos.clone(),
                             map_id: map.id(),
                         },
                         attack_value: combat_stats.attack,
+                    });
+
+                    // This entity will try to speak to a tile
+                    ev_try_speak.send(TrySpeak {
+                        map_position: MapPosition {
+                            pos: new_pos,
+                            map_id: map.id(),
+                        },
                     });
 
                     info!("{} attempted to move but failed", name);

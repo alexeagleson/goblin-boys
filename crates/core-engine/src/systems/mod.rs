@@ -9,5 +9,6 @@ pub mod movement_keys;
 pub mod pathing;
 pub mod persistence;
 pub mod spawn_walls;
+pub mod speaking;
 pub mod update_client;
 pub mod update_map;

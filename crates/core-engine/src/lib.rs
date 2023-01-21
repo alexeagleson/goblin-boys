@@ -17,12 +17,12 @@ use core_api::{
 use data::{
     enemy_configs::EnemyConfigs, enemy_configs_str, player_config::PlayerConfig, player_config_str,
 };
-use events::TryAttack;
+use events::{TryAttack, TrySpeak};
 use resources::{DatabaseReceiver, DatabaseSender};
 use systems::{
     combat::combat_system,
     pathing::pathing_system,
-    persistence::{database_receiver_system, database_sender_system},
+    persistence::{database_receiver_system, database_sender_system}, speaking::speaking_system,
 };
 use tokio::sync::mpsc::{UnboundedReceiver, UnboundedSender};
 
@@ -68,6 +68,7 @@ pub fn start_game_engine(
         .add_event::<ShouldUpdateMap>()
         .add_event::<ShouldSendFullMapUpdateToClient>()
         .add_event::<TryAttack>()
+        .add_event::<TrySpeak>()
         .add_startup_system(spawn_walls_system)
         .add_system(update_client_system.before(message_system))
         .add_system(message_system)
@@ -83,6 +84,7 @@ pub fn start_game_engine(
             update_map_system.after(movement_keys_system), // .after(combat_system), // .after(pathing_system),
         )
         .add_system(combat_system.after(update_map_system))
+        .add_system(speaking_system.after(update_map_system))
         .add_system(database_sender_system.after(update_map_system))
         .add_system(database_receiver_system.after(update_map_system))
         .add_plugins(MinimalPlugins)

@@ -43,8 +43,6 @@ pub struct LogMessage(pub String);
 #[serde(rename_all = "camelCase")]
 /// A sprite to render that represents a visible entity
 pub enum SpriteTexture {
-    // Bunny,
-    // Carrot,
     WallBrick,
     PcBoneyBoi,
     PcKidZilla,

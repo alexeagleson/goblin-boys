@@ -10,3 +10,7 @@ pub struct TryAttack {
     pub map_position: MapPosition,
     pub attack_value: i32,
 }
+
+pub struct TrySpeak {
+    pub map_position: MapPosition,
+}

@@ -13,13 +13,11 @@ use crate::{
 };
 
 pub fn combat_system(
-    // sender_single_client: Res<MessageSenderSingleClient>,
     mut query: Query<(Entity, &Name, &mut Hp, &MapPosition, &CombatStats)>,
-    // mut ev_update_client: EventWriter<ShouldSendFullMapUpdateToClient>,
-    // mut current_user_maps: ResMut<CurrentUserMaps>,
+
     mut ev_try_attack: EventReader<TryAttack>,
     mut commands: Commands,
-    mut current_user_maps: ResMut<CurrentUserMaps>,
+    current_user_maps: ResMut<CurrentUserMaps>,
     sender_single_client: Res<MessageSenderSingleClient>,
     mut ev_update_map: EventWriter<ShouldUpdateMap>,
 ) {

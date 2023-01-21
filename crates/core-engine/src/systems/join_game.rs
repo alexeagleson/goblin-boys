@@ -56,23 +56,23 @@ pub fn join_game_system(
         // Track the current map the new user is on
         current_user_maps.0.insert(user_id, player_map_position);
 
-        // Spawn a carrot every time a new player joins
-        let mut carrot_commands = commands.spawn(Item);
-        carrot_commands
-            .insert(Name::new(enemy_configs.carrot.name.clone()))
-            // A walking carrot...
+        // Spawn a slime every time a new player joins
+        let mut slime_commands = commands.spawn(Item);
+        slime_commands
+            .insert(Name::new(enemy_configs.slime.name.clone()))
+            // A walking slime...?
             .insert(MapPosition {
                 pos: map.random_movement_unblocked_tile(),
                 map_id: map.id(),
             })
             .insert(Renderable {
-                texture: enemy_configs.carrot.texture,
+                texture: enemy_configs.slime.texture,
             })
-            .insert(enemy_configs.carrot.hp.clone())
-            .insert(enemy_configs.carrot.combat_stats.clone());
+            .insert(enemy_configs.slime.hp.clone())
+            .insert(enemy_configs.slime.combat_stats.clone());
 
         // Spawn a test NPC
-        let mut npc_commands = commands.spawn(Speaks);
+        let mut npc_commands = commands.spawn(Speaks("I AM A RAT".to_string()));
         npc_commands
             .insert(Name::new("Npc Rat".to_string()))
             .insert(MapPosition {
@@ -81,7 +81,9 @@ pub fn join_game_system(
             })
             .insert(Renderable {
                 texture: SpriteTexture::NpcRat,
-            });
+            })
+            .insert(BlocksLight)
+            .insert(BlocksMovement);
 
         // Refresh the full map of all clients when a player joins
         // [TODO] This is probably overkill -- could just send the new player sprite

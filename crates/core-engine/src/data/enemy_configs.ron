@@ -1,5 +1,5 @@
 (
-    carrot: (
+    slime: (
         name: "Slime",
         blocks_movement: true,
         paths: true,
