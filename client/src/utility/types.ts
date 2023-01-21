@@ -59,8 +59,19 @@ export enum BodyRelative {
 export enum SpriteTexture {
 	Bunny = "bunny",
 	Carrot = "carrot",
-	Wall = "wall",
+	WallBrick = "wallBrick",
+	CharacterBoneyBoi = "characterBoneyBoi",
+	ObjectRedSoda = "objectRedSoda",
+	ObjectSewerGrate = "objectSewerGrate",
+	ObjectWindow = "objectWindow",
+	ObjectLadderUp = "objectLadderUp",
+	ObjectLadderDown = "objectLadderDown",
+	EnvironmentSlime = "environmentSlime",
+	EnvironmentWater = "environmentWater",
+	EnvironmentGrass = "environmentGrass",
 	FloorConcrete = "floorConcrete",
+	Unrecognized = "unrecognized",
+	None = "none",
 }
 
 /** Tell client to play audio */

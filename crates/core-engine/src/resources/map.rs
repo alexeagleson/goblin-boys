@@ -8,8 +8,8 @@ use tv_shadowcasting::get_visible_idxs;
 
 use super::world::MapId;
 
-pub const MAP_WIDTH: i32 = 7;
-pub const MAP_HEIGHT: i32 = 7;
+// pub const MAP_WIDTH: i32 = 7;
+// pub const MAP_HEIGHT: i32 = 7;
 
 pub const PRIMARY_MAP_ID: i32 = 1;
 
@@ -36,10 +36,10 @@ impl VisibilityGrid {
         self.grid[pos.to_idx(self.width)] == 1
     }
 
-    #[allow(dead_code)]
-    pub fn pretty_print(&self) {
-        pretty_print_idx_map(&self.grid)
-    }
+    // #[allow(dead_code)]
+    // pub fn pretty_print(&self) {
+    //     pretty_print_idx_map(&self.grid)
+    // }
 }
 
 #[derive(Debug)]
@@ -97,16 +97,16 @@ fn index_grid_to_positions(grid: &IndexGrid, grid_width: usize, blocking: bool) 
 
 /// Can use to print either an array of light blocking entities or
 /// a map of visible tiles, both use the same format
-fn pretty_print_idx_map(idxs: &[u8]) {
-    println!();
-    for y in 0..MAP_HEIGHT {
-        for x in 0..MAP_WIDTH {
-            print!("{}", idxs[(MAP_WIDTH * y) as usize + x as usize])
-        }
-        println!();
-    }
-    println!();
-}
+// fn pretty_print_idx_map(idxs: &[u8]) {
+//     println!();
+//     for y in 0..MAP_HEIGHT {
+//         for x in 0..MAP_WIDTH {
+//             print!("{}", idxs[(MAP_WIDTH * y) as usize + x as usize])
+//         }
+//         println!();
+//     }
+//     println!();
+// }
 
 #[derive(Debug, Resource)]
 pub struct GameMap {
@@ -131,12 +131,12 @@ impl GameMap {
         self.map_id
     }
 
-    pub fn new(width: i32, height: i32) -> Self {
+    pub fn new(dimensions: Dimensions2d) -> Self {
         Self {
             map_id: MapId(MAP_ID_COUNTER.fetch_add(1, Ordering::Relaxed)),
-            dimensions: Dimensions2d { width, height },
-            light_blocking_grid: LightBlockingGrid::new(width, height),
-            movement_blocking_grid: MovementBlockingGrid::new(width, height),
+            dimensions: dimensions.clone(),
+            light_blocking_grid: LightBlockingGrid::new(dimensions.width, dimensions.height),
+            movement_blocking_grid: MovementBlockingGrid::new(dimensions.width, dimensions.height),
         }
     }
 
@@ -241,11 +241,11 @@ impl GameMap {
     }
 }
 
-impl Default for GameMap {
-    fn default() -> Self {
-        Self::new(MAP_WIDTH, MAP_HEIGHT)
-    }
-}
+// impl Default for GameMap {
+//     fn default() -> Self {
+//         Self::new(MAP_WIDTH, MAP_HEIGHT)
+//     }
+// }
 
 #[cfg(test)]
 mod tests {

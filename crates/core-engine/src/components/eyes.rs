@@ -27,7 +27,7 @@ impl Eyes {
         self.visibility_grid.position_visible(pos)
     }
 
-    pub fn pretty_print(&self) {
-        self.visibility_grid.pretty_print();
-    }
+    // pub fn pretty_print(&self) {
+    //     self.visibility_grid.pretty_print();
+    // }
 }

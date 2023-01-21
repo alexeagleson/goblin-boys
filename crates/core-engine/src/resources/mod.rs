@@ -1,5 +1,6 @@
 pub mod map;
 pub mod world;
+pub mod raw_maps;
 
 use std::collections::{HashMap, VecDeque};
 

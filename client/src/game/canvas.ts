@@ -62,6 +62,8 @@ export const createGameApp = async (
     height: dimensions.height * tileSize,
   });
 
+  app.stage.sortableChildren = true;
+
   const bunny = (await Assets.load("sprites/character/zilla_1.png")) as Texture;
   const carrot = (await Assets.load("sprites/character/test_1.png")) as Texture;
   const wall = (await Assets.load("sprites/environment/brick.png")) as Texture;
@@ -75,20 +77,85 @@ export const createGameApp = async (
     "sprites/environment/concrete_3.png"
   )) as Texture;
 
+  const objectRedSoda = (await Assets.load(
+    "sprites/object/red_soda.png"
+  )) as Texture;
+
+  const objectSewerGrate = (await Assets.load(
+    "sprites/environment/sewer_grate.png"
+  )) as Texture;
+
+  const environmentGrass = (await Assets.load(
+    "sprites/environment/grass.png"
+  )) as Texture;
+
+  const environmentSlime = (await Assets.load(
+    "sprites/environment/slime.png"
+  )) as Texture;
+
+  const environmentWater = (await Assets.load(
+    "sprites/environment/water.png"
+  )) as Texture;
+
+  const objectWindow = (await Assets.load(
+    "sprites/object/window.png"
+  )) as Texture;
+
+  const objectLadderUp = (await Assets.load(
+    "sprites/object/ladder_up.png"
+  )) as Texture;
+
+  const objectLadderDown = (await Assets.load(
+    "sprites/object/ladder_down.png"
+  )) as Texture;
+
+  const characterBoneyBoi = (await Assets.load(
+    "sprites/character/boney_boi.png"
+  )) as Texture;
+
   bunny.baseTexture.scaleMode = SCALE_MODES.NEAREST;
   carrot.baseTexture.scaleMode = SCALE_MODES.NEAREST;
   wall.baseTexture.scaleMode = SCALE_MODES.NEAREST;
   concrete1.baseTexture.scaleMode = SCALE_MODES.NEAREST;
   concrete2.baseTexture.scaleMode = SCALE_MODES.NEAREST;
   concrete3.baseTexture.scaleMode = SCALE_MODES.NEAREST;
+  objectRedSoda.baseTexture.scaleMode = SCALE_MODES.NEAREST;
+  objectSewerGrate.baseTexture.scaleMode = SCALE_MODES.NEAREST;
+  environmentGrass.baseTexture.scaleMode = SCALE_MODES.NEAREST;
 
-  // bunny.scaleMode = SCALE_MODES.LINEAR;
+  environmentSlime.baseTexture.scaleMode = SCALE_MODES.NEAREST;
+  environmentWater.baseTexture.scaleMode = SCALE_MODES.NEAREST;
+
+  objectWindow.baseTexture.scaleMode = SCALE_MODES.NEAREST;
+  objectLadderUp.baseTexture.scaleMode = SCALE_MODES.NEAREST;
+  objectLadderDown.baseTexture.scaleMode = SCALE_MODES.NEAREST;
+
+  characterBoneyBoi.baseTexture.scaleMode = SCALE_MODES.NEAREST;
 
   const TEXTURE_MAP: Record<SpriteTexture, Texture> = {
     [SpriteTexture.Bunny]: bunny,
     [SpriteTexture.Carrot]: carrot,
-    [SpriteTexture.Wall]: wall,
+    [SpriteTexture.WallBrick]: wall,
     [SpriteTexture.FloorConcrete]: concrete1,
+    [SpriteTexture.ObjectRedSoda]: objectRedSoda,
+    [SpriteTexture.ObjectSewerGrate]: objectSewerGrate,
+
+    [SpriteTexture.EnvironmentGrass]: environmentGrass,
+
+    [SpriteTexture.EnvironmentSlime]: environmentSlime,
+
+    [SpriteTexture.EnvironmentWater]: environmentWater,
+
+    [SpriteTexture.ObjectWindow]: objectWindow,
+    [SpriteTexture.ObjectLadderUp]: objectLadderUp,
+    [SpriteTexture.ObjectLadderDown]: objectLadderDown,
+
+    [SpriteTexture.CharacterBoneyBoi]: characterBoneyBoi,
+
+    // Represents a character on the map that didn't appear in the legend
+    [SpriteTexture.Unrecognized]: carrot,
+    // Client should never receive this value
+    [SpriteTexture.None]: carrot,
   };
 
   const tileToPx = (tilePos: Position): Position => {
@@ -139,13 +206,22 @@ export const createGameApp = async (
 
       const getSprite = (): Sprite => {
         if (spriteUpdate.sprite == SpriteTexture.FloorConcrete) {
-          return new Sprite(randomElement([concrete1, concrete2, concrete3]));
+          const sprite = new Sprite(
+            randomElement([concrete1, concrete2, concrete3])
+          );
+          sprite.zIndex = 0;
+          return sprite;
         } else {
-          return new Sprite(TEXTURE_MAP[spriteUpdate.sprite]);
+          const sprite = new Sprite(TEXTURE_MAP[spriteUpdate.sprite]);
+          sprite.zIndex = 1;
+
+          return sprite;
         }
       };
 
       const newSprite = getSprite();
+
+      // var shadowLayer = new DisplayGroup(-1, false);
 
       newSprite.anchor.x = 0.5;
       newSprite.anchor.y = 0.5;
