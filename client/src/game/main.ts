@@ -44,7 +44,7 @@ export const initializeGame = async (
 
   // gameState.dimensions = await mapDimensionsResponse.json();
 
-  const { addSprite, gameCanvas, removeSprite, setSpritePosition } =
+  const { addSprite, gameCanvas, removeSprite, setSpritePosition, showAttackAnimation } =
     await createGameApp({ width: CAMERA_SIZE, height: CAMERA_SIZE }, TILE_SIZE);
 
   const onMessage = (msg: MessageEvent<unknown>) => {
@@ -55,6 +55,8 @@ export const initializeGame = async (
     const response: ServerMessageAllClients | ServerMessageSingleClient =
       JSON.parse(msg.data);
 
+
+      // showAttackAnimation
     switch (response.type) {
       case "showDialogue":
         onDialogue(response.content);

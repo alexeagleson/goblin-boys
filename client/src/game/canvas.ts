@@ -83,7 +83,7 @@ export const createGameApp = async (
     }
 
     try {
-      console.log(textureId)
+      console.log(textureId);
       if (textureId.includes("Frames")) {
         const [_, frames] = textureId.split("Frames");
         const framesNum = Number(frames);
@@ -107,28 +107,7 @@ export const createGameApp = async (
         // Create object to store sprite sheet data
         const atlasData = {
           frames: framesArray,
-          // {
-          //   rat1: {
-          //     frame: { x: 0, y: 0, w: 16, h: 16 },
-          //     sourceSize: { w: 16, h: 16 },
-          //     spriteSourceSize: { x: 0, y: 0, w: 16, h: 16 },
-          //   },
-          //   rat2: {
-          //     frame: { x: 16, y: 0, w: 16, h: 16 },
-          //     sourceSize: { w: 16, h: 16 },
-          //     spriteSourceSize: { x: 0, y: 0, w: 16, h: 16 },
-          //   },
-          //   rat3: {
-          //     frame: { x: 32, y: 0, w: 16, h: 16 },
-          //     sourceSize: { w: 16, h: 16 },
-          //     spriteSourceSize: { x: 0, y: 0, w: 16, h: 16 },
-          //   },
-          //   rat4: {
-          //     frame: { x: 48, y: 0, w: 16, h: 16 },
-          //     sourceSize: { w: 16, h: 16 },
-          //     spriteSourceSize: { x: 0, y: 0, w: 16, h: 16 },
-          //   },
-          // },
+
           meta: {
             image: `sprites/v2/${textureId}.png`,
             // image: "sprites/npcs/rat-sheet.png",
@@ -141,8 +120,6 @@ export const createGameApp = async (
             // rat: ["rat1", "rat2", "rat3", "rat4"], //array of frames by name
           },
         };
-
-        console.log(atlasData, textureId);
 
         // Create the SpriteSheet from data and image
         const spriteSheet = new Spritesheet(
@@ -307,9 +284,78 @@ export const createGameApp = async (
 
   const gameCanvas = app.view as HTMLCanvasElement;
 
-  // app.rend
+  const prepAttackAnimation = async () => {
+    const animationsArray: any[] = [];
+    const framesArray = {} as any;
+    for (let i = 0; i < 4; i++) {
+      framesArray[`animFrame${i}`] = {
+        frame: { x: i * 16, y: 0, w: 16, h: 16 },
+        sourceSize: { w: 16, h: 16 },
+        spriteSourceSize: { x: 0, y: 0, w: 16, h: 16 },
+      };
 
-  // app.stage.scale.set(7);
+      animationsArray.push(`animFrame${i}`);
+    }
 
-  return { addSprite, removeSprite, setSpritePosition, gameCanvas };
+    // Create object to store sprite sheet data
+    const atlasData = {
+      frames: framesArray,
+
+      meta: {
+        image: `sprites/v2/attackBatFrames4.png`,
+        format: "RGBA8888",
+        size: { w: 16 * SPRITE_SCALE, h: 16 },
+        scale: "1",
+      },
+      animations: {
+        anim: animationsArray,
+      },
+    };
+
+    // Create the SpriteSheet from data and image
+    const spriteSheet = new Spritesheet(
+      BaseTexture.from(atlasData.meta.image),
+      atlasData
+    );
+
+    // Generate all the Textures asynchronously
+    await spriteSheet.parse();
+
+    const animatedSprite = new AnimatedSprite(spriteSheet.animations.anim);
+
+    animatedSprite.texture.baseTexture.scaleMode = SCALE_MODES.NEAREST;
+    animatedSprite.animationSpeed = 0.25;
+
+    animatedSprite.scale = { x: SPRITE_SCALE, y: SPRITE_SCALE };
+    animatedSprite.zIndex = 2;
+    animatedSprite.loop = false;
+    animatedSprite.visible = false;
+
+    app.stage.addChild(animatedSprite);
+
+    animatedSprite.onComplete = () => {
+      animatedSprite.visible = false;
+      animatedSprite.gotoAndStop(0);
+    };
+
+    return animatedSprite;
+  };
+
+  const attackSprite = await prepAttackAnimation();
+
+  const showAttackAnimation = () => {
+    attackSprite.visible = true;
+    const pxPos = tileToPx({ x: 3, y: 3 });
+    attackSprite.x = pxPos.x;
+    attackSprite.y = pxPos.y;
+    attackSprite.play();
+  };
+
+  return {
+    addSprite,
+    removeSprite,
+    setSpritePosition,
+    gameCanvas,
+    showAttackAnimation,
+  };
 };
