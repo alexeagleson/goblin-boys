@@ -32,7 +32,7 @@ pub const EXAMPLE_MAP_1: &str = r#"
 ###############################################
 #q.#######........#...........................#
 #.......##...ww...#...........................#
-##...........www..#...................o.......#
+##...........www..#.......@...........o.......#
 ##......##........#..........y.z..............#
 ##......##........#..hh...............n.......#
 ##......##........#..h........................#
@@ -71,7 +71,14 @@ pub fn example_map_1_legend(character: char) -> (SpriteTexture, Option<DialogueM
         'j' => (SpriteTexture::NpcMallChick2Frames6, None),
         'k' => (SpriteTexture::NpcPersonFrames2, None),
         'l' => (SpriteTexture::NpcRatFrames4, None),
-        'm' => (SpriteTexture::NpcSewerKidFrames6, None),
+        'm' => (
+            SpriteTexture::NpcSewerKidFrames6,
+            Some(
+                ron::from_str::<DialogueContents>(dialogue_contents_str)
+                    .unwrap()
+                    .sewer_kid,
+            ),
+        ),
         'n' => (SpriteTexture::NpcSmallRatFrames6, None),
         'o' => (SpriteTexture::ObjectLadderDown, None),
         'p' => (SpriteTexture::ObjectLadderUp, None),
@@ -83,6 +90,7 @@ pub fn example_map_1_legend(character: char) -> (SpriteTexture, Option<DialogueM
         'v' => (SpriteTexture::FloorSlime, None),
         'y' => (SpriteTexture::NpcRealEstateDickFrames21, None),
         'z' => (SpriteTexture::ObjectNewspaper, None),
+        '@' => (SpriteTexture::ObjectRedSoda, None),
         _ => panic!(
             "Encountered an unrecognized character on map 1: {}",
             character
@@ -95,29 +103,21 @@ pub fn example_map_1_legend(character: char) -> (SpriteTexture, Option<DialogueM
 pub const DEFAULT_FLOOR_MAP_2: SpriteTexture = SpriteTexture::FloorGrass;
 
 pub const EXAMPLE_MAP_2: &str = r#"
-##########
-#t.#######
-#....r..##
-##......##
-##...#..##
-##...#..##
-##...#..##
-##...#..##
-##########
-##########
+###########################
+#t.#######................#
+#....r..##................#
+##........................#
+##...#..##................#
+##...#..##................#
+##...#..##................#
+##...#..##................#
+##########................#
+###########################
 "#;
 
 pub fn example_map_2_legend(character: char) -> (SpriteTexture, Option<DialogueMap>) {
     match character {
         '#' => (SpriteTexture::WallBrick, None),
-        'r' => (
-            SpriteTexture::ObjectRedSoda,
-            Some(
-                ron::from_str::<DialogueContents>(dialogue_contents_str)
-                    .unwrap()
-                    .sewer_kid,
-            ),
-        ),
         't' => (SpriteTexture::ObjectWarpTeeveeFrames3, None),
         '.' => (SpriteTexture::Empty, None),
         _ => panic!(
