@@ -6,16 +6,20 @@ use crate::{
     components::{speaks::Speaks, BlocksLight, BlocksMovement, MapPosition, Renderable},
     resources::{
         map::GameMap,
-        raw_maps::{example_map_1_legend, example_map_2_legend, EXAMPLE_MAP_1, EXAMPLE_MAP_2},
+        raw_maps::{
+            example_map_1_legend, example_map_2_legend, DEFAULT_FLOOR_MAP_1, DEFAULT_FLOOR_MAP_2,
+            EXAMPLE_MAP_1, EXAMPLE_MAP_2,
+        },
         world::{GameWorld, MapId},
     },
 };
 
 fn str_map_to_game_map(
     string_map: &str,
-    legend: &dyn Fn(char) -> (String, SpriteTexture, Option<DialogueMap>),
+    legend: &dyn Fn(char) -> (SpriteTexture, Option<DialogueMap>),
     commands: &mut Commands,
     map: &GameMap,
+    floor: SpriteTexture,
 ) {
     let lines = string_map.lines().filter_map(|line| {
         let trimmed_line = line.trim();
@@ -39,15 +43,12 @@ fn str_map_to_game_map(
                     pos: pos.clone(),
                     map_id: map.id(),
                 })
-                // .insert(BlocksMovement)
-                .insert(Renderable {
-                    texture: SpriteTexture::FloorConcrete,
-                })
+                .insert(Renderable { texture: floor })
                 .id()
                 .index();
 
             // Check if there is stuff on top of the floor
-            let (name, sprite, maybe_dialogue_map) = legend(character);
+            let (sprite, maybe_dialogue_map) = legend(character);
 
             if sprite != SpriteTexture::Empty {
                 let mut sprite_command = commands.spawn(Renderable { texture: sprite });
@@ -56,16 +57,62 @@ fn str_map_to_game_map(
                     sprite_command.insert(Speaks(maybe_dialogue_map));
                 }
 
+                let blocks_movement_and_light = match sprite {
+                    SpriteTexture::WallBrick => true,
+                    SpriteTexture::PcBoneyBoi => true,
+                    SpriteTexture::PcKidZilla => true,
+                    SpriteTexture::ObjectRedSoda => true,
+                    SpriteTexture::ObjectSewerGrate => false,
+                    SpriteTexture::ObjectWindow => true,
+                    SpriteTexture::ObjectLadderUp => false,
+                    SpriteTexture::ObjectLadderDown => false,
+                    SpriteTexture::ObjectWater => true,
+                    SpriteTexture::FloorGrass => false,
+                    SpriteTexture::FloorConcrete => false,
+                    SpriteTexture::FloorSlime => false,
+                    SpriteTexture::NpcFatherNeilFrames6 => true,
+                    SpriteTexture::NpcMallChickFrames6 => true,
+                    SpriteTexture::NpcKingRatFrames4 => true,
+                    SpriteTexture::NpcSewerKidFrames6 => true,
+                    SpriteTexture::NpcSlime => true,
+                    SpriteTexture::Unrecognized => false,
+                    SpriteTexture::Empty => false,
+                };
+
+                let name = match sprite {
+                    SpriteTexture::WallBrick => "Brick Wall".to_string(),
+                    SpriteTexture::PcBoneyBoi => "Boney Boi".to_string(),
+                    SpriteTexture::PcKidZilla => "Kidzilla".to_string(),
+                    SpriteTexture::ObjectRedSoda => "Soda".to_string(),
+                    SpriteTexture::ObjectSewerGrate => "Sewer Grate".to_string(),
+                    SpriteTexture::ObjectWindow => "Window".to_string(),
+                    SpriteTexture::ObjectLadderUp => "Ladder (Up)".to_string(),
+                    SpriteTexture::ObjectLadderDown => "Ladder (Down)".to_string(),
+                    SpriteTexture::ObjectWater => "Water".to_string(),
+                    SpriteTexture::FloorGrass => "Grass".to_string(),
+                    SpriteTexture::FloorConcrete => "Concrete".to_string(),
+                    SpriteTexture::FloorSlime => "Slime Floor".to_string(),
+                    SpriteTexture::NpcFatherNeilFrames6 => "Father Neil".to_string(),
+                    SpriteTexture::NpcMallChickFrames6 => "Mall Chick".to_string(),
+                    SpriteTexture::NpcKingRatFrames4 => "King Rat".to_string(),
+                    SpriteTexture::NpcSewerKidFrames6 => "Sewer Kid".to_string(),
+                    SpriteTexture::NpcSlime => "Slime".to_string(),
+                    SpriteTexture::Unrecognized => "XXX UNRECOGNIZED XXX".to_string(),
+                    SpriteTexture::Empty => "XXX EMPTY XXX".to_string(),
+                };
+
                 sprite_command.insert(Name::new(name));
+
+                if blocks_movement_and_light {
+                    sprite_command.insert(BlocksMovement);
+                    sprite_command.insert(BlocksLight);
+                };
 
                 sprite_command
                     .insert(MapPosition {
                         pos: pos.clone(),
                         map_id: map.id(),
                     })
-                    .insert(BlocksLight)
-                    .insert(BlocksMovement)
-                    // .insert()
                     .id()
                     .index();
             }
@@ -77,9 +124,21 @@ fn str_map_to_game_map(
 pub fn spawn_walls_system(game_world: Res<GameWorld>, mut commands: Commands) {
     for map in game_world.game_maps.values() {
         if map.id() == (MapId(1)) {
-            str_map_to_game_map(EXAMPLE_MAP_1, &example_map_1_legend, &mut commands, map);
+            str_map_to_game_map(
+                EXAMPLE_MAP_1,
+                &example_map_1_legend,
+                &mut commands,
+                map,
+                DEFAULT_FLOOR_MAP_1,
+            );
         } else {
-            str_map_to_game_map(EXAMPLE_MAP_2, &example_map_2_legend, &mut commands, map);
+            str_map_to_game_map(
+                EXAMPLE_MAP_2,
+                &example_map_2_legend,
+                &mut commands,
+                map,
+                DEFAULT_FLOOR_MAP_2,
+            );
         }
     }
 }

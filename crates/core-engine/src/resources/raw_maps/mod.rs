@@ -26,6 +26,8 @@ pub fn str_map_dimensions(str_map: &str) -> Dimensions2d {
 
 // EXAMPLE_MAP_1
 
+pub const DEFAULT_FLOOR_MAP_1: SpriteTexture = SpriteTexture::FloorConcrete;
+
 pub const EXAMPLE_MAP_1: &str = r#"
 ##########################
 #..#######........#......#
@@ -39,18 +41,20 @@ pub const EXAMPLE_MAP_1: &str = r#"
 ##########################
 "#;
 
-pub fn example_map_1_legend(character: char) -> (String, SpriteTexture, Option<DialogueMap>) {
+pub fn example_map_1_legend(character: char) -> (SpriteTexture, Option<DialogueMap>) {
     match character {
-        '#' => (String::from("Wall"), SpriteTexture::WallBrick, None),
-        's' => (String::from("Sewer"), SpriteTexture::ObjectSewerGrate, None),
-        '.' => (String::from("???"), SpriteTexture::Empty, None),
-        'w' => (String::from("Water"), SpriteTexture::ObjectWater, None),
-        'h' => (String::from("Grass"), SpriteTexture::FloorGrass, None),
-        _ => (String::from("???"), SpriteTexture::Unrecognized, None),
+        '#' => (SpriteTexture::WallBrick, None),
+        's' => (SpriteTexture::ObjectSewerGrate, None),
+        '.' => (SpriteTexture::Empty, None),
+        'w' => (SpriteTexture::ObjectWater, None),
+        'h' => (SpriteTexture::FloorGrass, None),
+        _ => (SpriteTexture::Unrecognized, None),
     }
 }
 
 // EXAMPLE_MAP_2
+
+pub const DEFAULT_FLOOR_MAP_2: SpriteTexture = SpriteTexture::FloorGrass;
 
 pub const EXAMPLE_MAP_2: &str = r#"
 ##########
@@ -65,11 +69,10 @@ pub const EXAMPLE_MAP_2: &str = r#"
 ##########
 "#;
 
-pub fn example_map_2_legend(character: char) -> (String, SpriteTexture, Option<DialogueMap>) {
+pub fn example_map_2_legend(character: char) -> (SpriteTexture, Option<DialogueMap>) {
     match character {
-        '#' => (String::from("Wall"), SpriteTexture::WallBrick, None),
+        '#' => (SpriteTexture::WallBrick, None),
         'r' => (
-            String::from("Soda Can"),
             SpriteTexture::ObjectRedSoda,
             Some(
                 ron::from_str::<DialogueContents>(dialogue_contents_str)
@@ -77,7 +80,7 @@ pub fn example_map_2_legend(character: char) -> (String, SpriteTexture, Option<D
                     .sewer_kid,
             ),
         ),
-        '.' => (String::from("???"), SpriteTexture::Empty, None),
-        _ => (String::from("???"), SpriteTexture::Unrecognized, None),
+        '.' => (SpriteTexture::Empty, None),
+        _ => (SpriteTexture::Unrecognized, None),
     }
 }
