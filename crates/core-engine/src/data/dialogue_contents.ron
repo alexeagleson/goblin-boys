@@ -1,3 +1,5 @@
+// hello
+
 DialogueContents(
     rat: DialogueMap({
         0: (         
@@ -32,6 +34,7 @@ DialogueContents(
         ),
         1: (         
             text: "Yeah I know.  Well... with great power, comes stink.",
+        
             response_1_text: None,
             response_1_id: None,
             response_2_text: None,
