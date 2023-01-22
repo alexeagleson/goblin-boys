@@ -1,6 +1,7 @@
 (
     slime: (
         name: "Slime",
+        visibility: 5,
         blocks_movement: true,
         paths: true,
         texture: npcSlime,

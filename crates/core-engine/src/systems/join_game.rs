@@ -23,7 +23,6 @@ pub fn join_game_system(
     game_world: Res<GameWorld>,
     mut commands: Commands,
     mut connect_buffer: ResMut<ConnectBuffer>,
-    // query: Query<(Entity, &MapPosition, &Renderable)>,
     mut ev_update_client: EventWriter<ShouldSendFullMapUpdateToClient>,
     mut current_user_maps: ResMut<CurrentUserMaps>,
     player_config: Res<PlayerConfig>,
@@ -59,25 +58,25 @@ pub fn join_game_system(
 
         // Spawn a slime every time a new player joins
         let mut slime_commands = commands.spawn(Item);
+        let slime_config = &enemy_configs.slime;
         slime_commands
-            .insert(Name::new(enemy_configs.slime.name.clone()))
+            .insert(Name::new(slime_config.name.clone()))
             // A walking slime...?
             .insert(MapPosition {
                 pos: map.random_movement_unblocked_tile(),
                 map_id: map.id(),
             })
             .insert(Renderable {
-                texture: enemy_configs.slime.texture,
+                texture: slime_config.texture,
             })
-            .insert(enemy_configs.slime.hp.clone())
-            .insert(enemy_configs.slime.combat_stats.clone())
+            .insert(slime_config.hp.clone())
+            .insert(slime_config.combat_stats.clone())
             .insert(BlocksMovement)
             .insert(Ai {
                 action: None,
                 cooldown: 0.0,
             })
-            .insert(Eyes::new(map, 100));
-        // .insert(Speaks("I AM A SLIME".to_string()));
+            .insert(Eyes::new(map, slime_config.visibility));
 
         // Spawn a test NPC
         let mut npc_commands = commands.spawn(
@@ -85,7 +84,6 @@ pub fn join_game_system(
         );
 
         npc_commands
-            // .insert())
             .insert(MapPosition {
                 pos: map.random_movement_unblocked_tile(),
                 map_id: map.id(),
