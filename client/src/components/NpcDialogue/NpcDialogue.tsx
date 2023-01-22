@@ -36,7 +36,7 @@ export const NpcDialogue: React.FC<NpcDialogueProps> = ({
   return (
     <div className="dialogue-container">
       <div className="sprite-and-name">
-        <img src="sprites/v2/objectRedSoda.png" />
+        <img className="dialogue-portrait" src="sprites/v2/objectRedSoda.png" />
         <p>{entityName}</p>
       </div>
       <p className="dialogue-text">{text}</p>

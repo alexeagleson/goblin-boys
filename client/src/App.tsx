@@ -8,6 +8,7 @@ import {
   NpcDialogue,
   NpcDialogueProps,
 } from "./components/NpcDialogue/NpcDialogue";
+import { MainTitle } from "./components/MainTitle/MainTitle";
 
 const gameInputState: GameInputState = { enabled: true };
 
@@ -22,6 +23,7 @@ const App = () => {
   const [moveCount, setMoveCount] = useState<number>();
   const [directionHandlers, setDirectionHandlers] =
     useState<DirectionHandlers>();
+  const [enableMainTitle, setEnableMainTitle] = useState<boolean>(false);
 
   const onHover = (x: number, y: number, entityData?: EntityData) => {
     if (!entityData) {
@@ -93,21 +95,33 @@ const App = () => {
   });
 
   return (
-    <div className="game-container">
-      <p>All time totals moves: {moveCount}</p>
-      <div className="canvas-and-log-container">
-        <div className="canvas-container" ref={canvasContainer}>
-          {hoverMenu && <HoverMenu {...hoverMenu} />}
-          {npcDialogueMenu && <NpcDialogue {...npcDialogueMenu} />}
-          {/* {directionHandlers && (
-            <ControlOverlay directionHandlers={directionHandlers} />
-          )} */}
+    <>
+      <button
+        onClick={() => {
+          setEnableMainTitle((oldVal) => !oldVal);
+        }}
+      >
+        Test title sequence
+      </button>
+      {enableMainTitle && <MainTitle />}
+      {!enableMainTitle && (
+        <div className="game-container">
+          <p>All time totals moves: {moveCount}</p>
+          <div className="canvas-and-log-container">
+            <div className="canvas-container" ref={canvasContainer}>
+              {/* {hoverMenu && <HoverMenu {...hoverMenu} />} */}
+              {npcDialogueMenu && <NpcDialogue {...npcDialogueMenu} />}
+              {/* {directionHandlers && (
+              <ControlOverlay directionHandlers={directionHandlers} />
+            )} */}
+            </div>
+            <div ref={logContainer} className="log-container">
+              <Log log={log} />
+            </div>
+          </div>
         </div>
-        <div ref={logContainer} className="log-container">
-          <Log log={log} />
-        </div>
-      </div>
-    </div>
+      )}
+    </>
   );
 };
 

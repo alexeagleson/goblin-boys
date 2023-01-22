@@ -1,0 +1,43 @@
+.main-title-wrapper {
+  position: relative;
+}
+
+.main-title-wrapper img {
+  position: absolute;
+}
+
+.title-image {
+  z-index: 0;
+  animation-name: image-fade-in;
+  animation-duration: 4s;
+}
+
+.title-text {
+  z-index: 1;
+  opacity: 0;
+
+  animation-name: text-fade-in;
+  animation-duration: 2s;
+  animation-delay: 4s;
+  animation-fill-mode: forwards;
+}
+
+@keyframes image-fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes text-fade-in {
+  from {
+    opacity: 0;
+    transform: rotate(270deg) scale(0.25);
+  }
+  to {
+    opacity: 1;
+    transform: rotate(360deg) scale(1);
+  }
+}
