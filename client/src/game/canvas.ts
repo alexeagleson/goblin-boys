@@ -82,61 +82,87 @@ export const createGameApp = async (
       continue;
     }
 
-    if (textureId === "npcRat") {
-      // Create object to store sprite sheet data
-      const atlasData = {
-        frames: {
-          rat1: {
-            frame: { x: 0, y: 0, w: 16, h: 16 },
-            sourceSize: { w: 16, h: 16 },
-            spriteSourceSize: { x: 0, y: 0, w: 16, h: 16 },
-          },
-          rat2: {
-            frame: { x: 16, y: 0, w: 16, h: 16 },
-            sourceSize: { w: 16, h: 16 },
-            spriteSourceSize: { x: 0, y: 0, w: 16, h: 16 },
-          },
-          rat3: {
-            frame: { x: 32, y: 0, w: 16, h: 16 },
-            sourceSize: { w: 16, h: 16 },
-            spriteSourceSize: { x: 0, y: 0, w: 16, h: 16 },
-          },
-          rat4: {
-            frame: { x: 48, y: 0, w: 16, h: 16 },
-            sourceSize: { w: 16, h: 16 },
-            spriteSourceSize: { x: 0, y: 0, w: 16, h: 16 },
-          },
-        },
-        meta: {
-          image: "sprites/npcs/rat-sheet.png",
-          format: "RGBA8888",
-          size: { w: 16 * 4, h: 16 },
-          scale: "1",
-        },
-        animations: {
-          rat: ["rat1", "rat2", "rat3", "rat4"], //array of frames by name
-        },
-      };
-
-      // Create the SpriteSheet from data and image
-      const spriteSheet = new Spritesheet(
-        BaseTexture.from(atlasData.meta.image),
-        atlasData
-      );
-
-      // Generate all the Textures asynchronously
-      await spriteSheet.parse();
-
-      TEXTURE_MAP[textureId as unknown as SpriteTexture] = spriteSheet;
-
-      continue;
-    }
-
     try {
+      console.log(textureId)
+      if (textureId.includes("Frames")) {
+        const [_, frames] = textureId.split("Frames");
+        const framesNum = Number(frames);
+        if (framesNum > 0 === false) {
+          console.error("Error with frame count: ", textureId);
+          throw Error;
+        }
+
+        const animationsArray: any[] = [];
+        const framesArray = {} as any;
+        for (let i = 0; i < framesNum; i++) {
+          framesArray[`animFrame${i}`] = {
+            frame: { x: i * 16, y: 0, w: 16, h: 16 },
+            sourceSize: { w: 16, h: 16 },
+            spriteSourceSize: { x: 0, y: 0, w: 16, h: 16 },
+          };
+
+          animationsArray.push(`animFrame${i}`);
+        }
+
+        // Create object to store sprite sheet data
+        const atlasData = {
+          frames: framesArray,
+          // {
+          //   rat1: {
+          //     frame: { x: 0, y: 0, w: 16, h: 16 },
+          //     sourceSize: { w: 16, h: 16 },
+          //     spriteSourceSize: { x: 0, y: 0, w: 16, h: 16 },
+          //   },
+          //   rat2: {
+          //     frame: { x: 16, y: 0, w: 16, h: 16 },
+          //     sourceSize: { w: 16, h: 16 },
+          //     spriteSourceSize: { x: 0, y: 0, w: 16, h: 16 },
+          //   },
+          //   rat3: {
+          //     frame: { x: 32, y: 0, w: 16, h: 16 },
+          //     sourceSize: { w: 16, h: 16 },
+          //     spriteSourceSize: { x: 0, y: 0, w: 16, h: 16 },
+          //   },
+          //   rat4: {
+          //     frame: { x: 48, y: 0, w: 16, h: 16 },
+          //     sourceSize: { w: 16, h: 16 },
+          //     spriteSourceSize: { x: 0, y: 0, w: 16, h: 16 },
+          //   },
+          // },
+          meta: {
+            image: `sprites/v2/${textureId}.png`,
+            // image: "sprites/npcs/rat-sheet.png",
+            format: "RGBA8888",
+            size: { w: 16 * SPRITE_SCALE, h: 16 },
+            scale: "1",
+          },
+          animations: {
+            anim: animationsArray,
+            // rat: ["rat1", "rat2", "rat3", "rat4"], //array of frames by name
+          },
+        };
+
+        console.log(atlasData, textureId);
+
+        // Create the SpriteSheet from data and image
+        const spriteSheet = new Spritesheet(
+          BaseTexture.from(atlasData.meta.image),
+          atlasData
+        );
+
+        // Generate all the Textures asynchronously
+        await spriteSheet.parse();
+
+        TEXTURE_MAP[textureId as unknown as SpriteTexture] = spriteSheet;
+
+        continue;
+      }
+
       const texture = (await Assets.load(
         `sprites/v2/${textureId}.png`
       )) as Texture;
 
+      // If that success, it's a regular static texture
       texture.baseTexture.scaleMode = SCALE_MODES.NEAREST;
       TEXTURE_MAP[textureId as unknown as SpriteTexture] = texture;
     } catch (e) {
@@ -204,22 +230,18 @@ export const createGameApp = async (
         const textureOrArray = TEXTURE_MAP[spriteUpdate.sprite];
 
         if (textureOrArray instanceof Spritesheet) {
-          // spritesheet is ready to use!
-          const animatedSprite = new AnimatedSprite(textureOrArray.animations.rat);
+          const animatedSprite = new AnimatedSprite(
+            textureOrArray.animations.anim
+          );
 
           animatedSprite.texture.baseTexture.scaleMode = SCALE_MODES.NEAREST;
-          // animatedSprite.scale = { x: SPRITE_SCALE, y: SPRITE_SCALE };
+
           // set the animation speed
           animatedSprite.animationSpeed = 0.1666;
 
           // play the animation on a loop
           animatedSprite.play();
 
-          // const texture = (await Assets.load(
-          //   `sprites/v2/${textureId}.png`
-          // )) as Texture;
-
-          // animTexture.baseTexture.scaleMode = SCALE_MODES.NEAREST;
           return animatedSprite;
         } else if (Array.isArray(textureOrArray)) {
           const sprite = new Sprite(randomElement(textureOrArray));

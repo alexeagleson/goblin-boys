@@ -80,6 +80,8 @@ export enum SpriteTexture {
 	FloorGrass = "floorGrass",
 	FloorConcrete = "floorConcrete",
 	NpcRat = "npcRat",
+	NpcFatherNeilFrames6 = "npcFatherNeilFrames6",
+	NpcMallChickFrames6 = "npcMallChickFrames6",
 	Unrecognized = "unrecognized",
 	Empty = "empty",
 }

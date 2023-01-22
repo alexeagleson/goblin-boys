@@ -58,6 +58,8 @@ pub enum SpriteTexture {
     FloorGrass,
     FloorConcrete,
     NpcRat,
+    NpcFatherNeilFrames6,
+    NpcMallChickFrames6,
     Unrecognized,
     Empty,
 }
