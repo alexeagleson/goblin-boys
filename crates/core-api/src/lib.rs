@@ -46,12 +46,12 @@ pub struct LogMessage(pub String);
 /// A sprite to render that represents a visible entity
 pub enum SpriteTexture {
     WallBrick,
-
     ObjectRedSoda,
     ObjectSewerGrate,
     ObjectWindow,
     ObjectLadderUp,
     ObjectLadderDown,
+    ObjectNewspaper,
     ObjectWater,
     ObjectWarpTeeveeFrames3,
     FloorGrass,
@@ -69,6 +69,7 @@ pub enum SpriteTexture {
     NpcMallChick2Frames6,
     NpcPersonFrames2,
     NpcRatFrames4,
+    NpcRealEstateDickFrames21,
     NpcSewerKidFrames6,
     NpcSmallRatFrames6,
     NpcSlime,

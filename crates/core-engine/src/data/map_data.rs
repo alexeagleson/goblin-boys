@@ -33,7 +33,7 @@ pub const EXAMPLE_MAP_1: &str = r#"
 #q.#######........#...........................#
 #.......##...ww...#...........................#
 ##...........www..#...................o.......#
-##......##........#...........................#
+##......##........#..........y.z..............#
 ##......##........#..hh...............n.......#
 ##......##........#..h........................#
 ##.............s..#............x......m.......#
@@ -81,6 +81,8 @@ pub fn example_map_1_legend(character: char) -> (SpriteTexture, Option<DialogueM
         't' => (SpriteTexture::PcBoneyBoiFrames4, None),
         'u' => (SpriteTexture::PcGhostBoyFrames8, None),
         'v' => (SpriteTexture::FloorSlime, None),
+        'y' => (SpriteTexture::NpcRealEstateDickFrames21, None),
+        'z' => (SpriteTexture::ObjectNewspaper, None),
         _ => panic!(
             "Encountered an unrecognized character on map 1: {}",
             character

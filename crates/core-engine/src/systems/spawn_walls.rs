@@ -95,6 +95,9 @@ fn str_map_to_game_map(
                     SpriteTexture::PcAntBoiFrames4 => true,
                     SpriteTexture::PcBoneyBoiFrames4 => true,
                     SpriteTexture::PcGhostBoyFrames8 => true,
+                    SpriteTexture::ObjectNewspaper => true,
+                    SpriteTexture::NpcRealEstateDickFrames21 => true,
+                    
                 };
 
                 let name = match sprite {
@@ -133,6 +136,10 @@ fn str_map_to_game_map(
                     SpriteTexture::PcAntBoiFrames4 => "Ant Boi".to_string(),
                     SpriteTexture::PcBoneyBoiFrames4 => "Boney Boi".to_string(),
                     SpriteTexture::PcGhostBoyFrames8 => "Ghost Boy".to_string(),
+                    SpriteTexture::ObjectNewspaper => "Newspaper".to_string(),
+                    SpriteTexture::NpcRealEstateDickFrames21 => "Real Estate Dick".to_string(),
+
+                    
                 };
 
                 sprite_command.insert(Name::new(name));
