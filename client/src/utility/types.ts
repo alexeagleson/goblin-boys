@@ -12,46 +12,46 @@ export type DialogueMap = Record<number, DialogueContent>;
  * values intended to be either 1, 0 or -1 and transformed from a `Direction`
  */
 export interface Delta {
-	x: number;
-	y: number;
+  x: number;
+  y: number;
 }
 
 /** Information about the size of a 2D space */
 export interface Dimensions2d {
-	width: number;
-	height: number;
+  width: number;
+  height: number;
 }
 
 /** Represents the location of something on a 2D grid */
 export interface Position {
-	x: number;
-	y: number;
+  x: number;
+  y: number;
 }
 
 export interface EntityIndex {
-	idx: number;
+  idx: number;
 }
 
 /** Information about a sprite to render */
 export interface SpriteUpdate {
-	entity: EntityIndex;
-	pos: Position;
-	sprite: SpriteTexture;
+  entity: EntityIndex;
+  pos: Position;
+  sprite: SpriteTexture;
 }
 
 /** Information about an entity to display to the user */
 export interface EntityData {
-	name: string;
-	blocksLight: boolean;
-	visibleToPlayer: boolean;
+  name: string;
+  blocksLight: boolean;
+  visibleToPlayer: boolean;
 }
 
 export interface DialogueContent {
-	text: string;
-	response_1_text?: string;
-	response_1_id?: number;
-	response_2_text?: string;
-	response_2_id?: number;
+  text: string;
+  response_1_text?: string;
+  response_1_id?: number;
+  response_2_text?: string;
+  response_2_id?: number;
 }
 
 /**
@@ -59,71 +59,78 @@ export interface DialogueContent {
  * https://en.wikipedia.org/wiki/Body_relative_direction
  */
 export enum BodyRelative {
-	Up = "up",
-	Down = "down",
-	Left = "left",
-	Right = "right",
+  Up = "up",
+  Down = "down",
+  Left = "left",
+  Right = "right",
 }
 
 /** A sprite to render that represents a visible entity */
 export enum SpriteTexture {
-	WallBrick = "wallBrick",
-	PcBoneyBoi = "pcBoneyBoi",
-	PcKidZilla = "pcKidZilla",
-	ObjectRedSoda = "objectRedSoda",
-	ObjectSewerGrate = "objectSewerGrate",
-	ObjectWindow = "objectWindow",
-	ObjectLadderUp = "objectLadderUp",
-	ObjectLadderDown = "objectLadderDown",
-	ObjectSlime = "objectSlime",
-	ObjectWater = "objectWater",
-	FloorGrass = "floorGrass",
-	FloorConcrete = "floorConcrete",
-	NpcRat = "npcRat",
-	NpcFatherNeilFrames6 = "npcFatherNeilFrames6",
-	NpcMallChickFrames6 = "npcMallChickFrames6",
-	NpcKingRatFrames4 = "npcKingRatFrames4",
-	NpcSewerKidFrames6 = "npcSewerKidFrames6",
-	Unrecognized = "unrecognized",
-	Empty = "empty",
+  WallBrick = "wallBrick",
+  PcBoneyBoi = "pcBoneyBoi",
+  PcKidZilla = "pcKidZilla",
+  ObjectRedSoda = "objectRedSoda",
+  ObjectSewerGrate = "objectSewerGrate",
+  ObjectWindow = "objectWindow",
+  ObjectLadderUp = "objectLadderUp",
+  ObjectLadderDown = "objectLadderDown",
+  ObjectSlime = "objectSlime",
+  ObjectWater = "objectWater",
+  FloorGrass = "floorGrass",
+  FloorConcrete = "floorConcrete",
+  NpcRat = "npcRat",
+  NpcFatherNeilFrames6 = "npcFatherNeilFrames6",
+  NpcMallChickFrames6 = "npcMallChickFrames6",
+  NpcKingRatFrames4 = "npcKingRatFrames4",
+  NpcSewerKidFrames6 = "npcSewerKidFrames6",
+  Unrecognized = "unrecognized",
+  Empty = "empty",
 }
 
 /** Tell client to play audio */
 export enum Sound {
-	Punch = "punch",
+  Punch = "punch",
 }
 
 /** An input interaction from the client */
-export type ClientMessage = 
-	| { type: "tileHover", content: Position }
-	| { type: "tileClick", content: Position }
-	| { type: "initialize", content?: undefined }
-	| { type: "keypress", content: BodyRelative }
-	| { type: "disconnect", content?: undefined }
-	/**
-	 * Clients should send every 30 seconds or so to
-	 * keep from getting your socket closed when hosting on free services
-	 */
-	| { type: "keepAlive", content?: undefined };
+export type ClientMessage =
+  | { type: "tileHover"; content: Position }
+  | { type: "tileClick"; content: Position }
+  | { type: "initialize"; content?: undefined }
+  | { type: "keypress"; content: BodyRelative }
+  | { type: "disconnect"; content?: undefined }
+  /**
+   * Clients should send every 30 seconds or so to
+   * keep from getting your socket closed when hosting on free services
+   */
+  | { type: "keepAlive"; content?: undefined };
 
 /** Communicates information about the active game to one client */
-export type ServerMessageSingleClient = 
-	| { type: "tileHover", content?: EntityData }
-	| { type: "entityPositionChange", content: SpriteUpdate }
-	| { type: "centreCamera", content: Position }
-	| { type: "updateFullGameMap", content: {
-	camera: Position;
-	entities: SpriteUpdate[];
-}}
-	| { type: "removeSprite", content: EntityIndex }
-	| { type: "playSound", content: Sound }
-	| { type: "showDialogue", content: {
-	entity_name: string;
-	dialogue_map: DialogueMap;
-}};
+export type ServerMessageSingleClient =
+  | { type: "tileHover"; content?: EntityData }
+  | { type: "entityPositionChange"; content: SpriteUpdate }
+  | { type: "centreCamera"; content: Position }
+  | {
+      type: "updateFullGameMap";
+      content: {
+        camera: Position;
+        entities: SpriteUpdate[];
+      };
+    }
+  | { type: "removeSprite"; content: EntityIndex }
+  | { type: "playSound"; content: Sound }
+  | {
+      type: "showDialogue";
+      content: {
+        entity_name: string;
+        dialogue_map: DialogueMap;
+      };
+    };
 
 /** Communicates information about the active game to one client */
-export type ServerMessageAllClients = 
-	| { type: "tileClick", content: LogMessage }
-	| { type: "moveCount", content: number };
-
+export type ServerMessageAllClients =
+  | { type: "tileClick"; content: LogMessage }
+  | { type: "death"; content: LogMessage }
+  | { type: "damage"; content: LogMessage }
+  | { type: "moveCount"; content: number };

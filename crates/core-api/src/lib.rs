@@ -137,6 +137,8 @@ pub enum ServerMessageAllClients {
     // EntityPositionChange(EntityPosition),
     TileClick(LogMessage),
     MoveCount(i32),
+    Damage(LogMessage),
+    Death(LogMessage),
 }
 
 #[derive(Debug)]
