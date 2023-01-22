@@ -3,21 +3,21 @@
 DialogueContents(
     rat: DialogueMap({
         0: (         
-            text: "Hi I'm a rat",
-            response_1_text: Some("why"),
+            text: "RrrrrrrrrrrrrrrrraaaaTT!!!",
+            response_1_text: Some("Excuse me?"),
             response_1_id: Some(1),
-            response_2_text: Some("ok"),
+            response_2_text: Some("RAAAAT!!!"),
             response_2_id: Some(2), 
         ),
         1: (         
-            text: "UNCOOL",
+            text: "Beat it punk",
             response_1_text: None,
             response_1_id: None,
             response_2_text: None,
             response_2_id: None,
         ),
         2: (         
-            text: "COOL",
+            text: "Ehhhh hehehe",
             response_1_text: None,
             response_1_id: None,
             response_2_text: None,

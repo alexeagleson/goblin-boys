@@ -70,7 +70,14 @@ pub fn example_map_1_legend(character: char) -> (SpriteTexture, Option<DialogueM
         'i' => (SpriteTexture::NpcMallChick1Frames6, None),
         'j' => (SpriteTexture::NpcMallChick2Frames6, None),
         'k' => (SpriteTexture::NpcPersonFrames2, None),
-        'l' => (SpriteTexture::NpcRatFrames4, None),
+        'l' => (
+            SpriteTexture::NpcRatFrames4,
+            Some(
+                ron::from_str::<DialogueContents>(dialogue_contents_str)
+                    .unwrap()
+                    .voidcat,
+            ),
+        ),
         'm' => (
             SpriteTexture::NpcSewerKidFrames6,
             Some(
@@ -79,7 +86,14 @@ pub fn example_map_1_legend(character: char) -> (SpriteTexture, Option<DialogueM
                     .sewer_kid,
             ),
         ),
-        'n' => (SpriteTexture::NpcSmallRatFrames6, None),
+        'n' => (
+            SpriteTexture::NpcSmallRatFrames6,
+            Some(
+                ron::from_str::<DialogueContents>(dialogue_contents_str)
+                    .unwrap()
+                    .voidcat,
+            ),
+        ),
         'o' => (SpriteTexture::ObjectLadderDown, None),
         'p' => (SpriteTexture::ObjectLadderUp, None),
         'q' => (SpriteTexture::ObjectWarpTeeveeFrames3, None),
