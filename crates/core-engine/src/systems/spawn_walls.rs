@@ -4,12 +4,12 @@ use core_api::{DialogueMap, SpriteTexture};
 
 use crate::{
     components::{speaks::Speaks, BlocksLight, BlocksMovement, MapPosition, Renderable},
+    data::map_data::{
+        example_map_1_legend, example_map_2_legend, DEFAULT_FLOOR_MAP_1, DEFAULT_FLOOR_MAP_2,
+        EXAMPLE_MAP_1, EXAMPLE_MAP_2,
+    },
     resources::{
         map::GameMap,
-        raw_maps::{
-            example_map_1_legend, example_map_2_legend, DEFAULT_FLOOR_MAP_1, DEFAULT_FLOOR_MAP_2,
-            EXAMPLE_MAP_1, EXAMPLE_MAP_2,
-        },
         world::{GameWorld, MapId},
     },
 };
@@ -71,12 +71,30 @@ fn str_map_to_game_map(
                     SpriteTexture::FloorConcrete => false,
                     SpriteTexture::FloorSlime => false,
                     SpriteTexture::NpcFatherNeilFrames6 => true,
-                    SpriteTexture::NpcMallChickFrames6 => true,
+
                     SpriteTexture::NpcKingRatFrames4 => true,
                     SpriteTexture::NpcSewerKidFrames6 => true,
                     SpriteTexture::NpcSlime => true,
-                    SpriteTexture::Unrecognized => false,
                     SpriteTexture::Empty => false,
+
+                    SpriteTexture::NpcFootballFrames4 => true,
+                    SpriteTexture::NpcGoon1Frames4 => true,
+                    SpriteTexture::NpcGoon2Frames4 => true,
+                    SpriteTexture::NpcGoon3Frames4 => true,
+                    SpriteTexture::NpcGoon4Frames4 => true,
+                    SpriteTexture::NpcGraceJonesFrames6 => true,
+                    SpriteTexture::NpcMallChick1Frames6 => true,
+                    SpriteTexture::NpcMallChick2Frames6 => true,
+                    SpriteTexture::NpcPersonFrames2 => true,
+                    SpriteTexture::NpcRatFrames4 => true,
+                    SpriteTexture::NpcSmallRatFrames6 => true,
+
+                    SpriteTexture::ObjectWarpTeeveeFrames3 => false,
+
+                    SpriteTexture::PcAntBoi => true,
+                    SpriteTexture::PcAntBoiFrames4 => true,
+                    SpriteTexture::PcBoneyBoiFrames4 => true,
+                    SpriteTexture::PcGhostBoyFrames8 => true,
                 };
 
                 let name = match sprite {
@@ -93,12 +111,28 @@ fn str_map_to_game_map(
                     SpriteTexture::FloorConcrete => "Concrete".to_string(),
                     SpriteTexture::FloorSlime => "Slime Floor".to_string(),
                     SpriteTexture::NpcFatherNeilFrames6 => "Father Neil".to_string(),
-                    SpriteTexture::NpcMallChickFrames6 => "Mall Chick".to_string(),
                     SpriteTexture::NpcKingRatFrames4 => "King Rat".to_string(),
                     SpriteTexture::NpcSewerKidFrames6 => "Sewer Kid".to_string(),
                     SpriteTexture::NpcSlime => "Slime".to_string(),
-                    SpriteTexture::Unrecognized => "XXX UNRECOGNIZED XXX".to_string(),
                     SpriteTexture::Empty => "XXX EMPTY XXX".to_string(),
+
+                    SpriteTexture::NpcFootballFrames4 => "Football".to_string(),
+                    SpriteTexture::NpcGoon1Frames4 => "Goon".to_string(),
+                    SpriteTexture::NpcGoon2Frames4 => "Goon".to_string(),
+                    SpriteTexture::NpcGoon3Frames4 => "Goon".to_string(),
+                    SpriteTexture::NpcGoon4Frames4 => "Goon".to_string(),
+                    SpriteTexture::NpcGraceJonesFrames6 => "Grace Jones".to_string(),
+                    SpriteTexture::NpcMallChick1Frames6 => "Mall Chick".to_string(),
+                    SpriteTexture::NpcMallChick2Frames6 => "Mall Chick".to_string(),
+                    SpriteTexture::NpcPersonFrames2 => "Person".to_string(),
+                    SpriteTexture::NpcRatFrames4 => "Rat".to_string(),
+                    SpriteTexture::NpcSmallRatFrames6 => "Small Rat".to_string(),
+
+                    SpriteTexture::ObjectWarpTeeveeFrames3 => "Warp Teevee".to_string(),
+                    SpriteTexture::PcAntBoi => "Ant Boi".to_string(),
+                    SpriteTexture::PcAntBoiFrames4 => "Ant Boi".to_string(),
+                    SpriteTexture::PcBoneyBoiFrames4 => "Boney Boi".to_string(),
+                    SpriteTexture::PcGhostBoyFrames8 => "Ghost Boy".to_string(),
                 };
 
                 sprite_command.insert(Name::new(name));

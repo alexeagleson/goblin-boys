@@ -2,10 +2,9 @@ use std::collections::HashMap;
 
 use bevy::prelude::*;
 
-use super::{
-    map::GameMap,
-    raw_maps::{str_map_dimensions, EXAMPLE_MAP_1, EXAMPLE_MAP_2},
-};
+use crate::data::map_data::{str_map_dimensions, EXAMPLE_MAP_1, EXAMPLE_MAP_2};
+
+use super::map::GameMap;
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct MapId(pub i32);
@@ -20,7 +19,7 @@ pub struct GameWorld {
 impl Default for GameWorld {
     fn default() -> Self {
         let dimensions = str_map_dimensions(EXAMPLE_MAP_1);
-        dbg!("{:?}", &dimensions);
+        
         let default_map = GameMap::new(dimensions);
 
         let mut game_maps: GameMaps = HashMap::new();
