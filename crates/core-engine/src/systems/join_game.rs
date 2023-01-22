@@ -73,19 +73,22 @@ pub fn join_game_system(
             })
             .insert(enemy_configs.slime.hp.clone())
             .insert(enemy_configs.slime.combat_stats.clone())
-            .insert(BlocksMovement)
-            .insert(Speaks("I AM A SLIME".to_string()));
+            .insert(BlocksMovement);
+        // .insert(Speaks("I AM A SLIME".to_string()));
 
         // Spawn a test NPC
-        let mut npc_commands = commands.spawn(Speaks("I AM A RAT".to_string()));
+        let mut npc_commands = commands.spawn(
+            Name::new("Npc Rat".to_string()), // Speaks(DialogueContents)
+        );
+
         npc_commands
-            .insert(Name::new("Npc Rat".to_string()))
+            // .insert())
             .insert(MapPosition {
                 pos: map.random_movement_unblocked_tile(),
                 map_id: map.id(),
             })
             .insert(Renderable {
-                texture: SpriteTexture::NpcKingRatFrames4,
+                texture: SpriteTexture::NpcSewerKidFrames6,
             })
             .insert(BlocksLight)
             .insert(BlocksMovement);

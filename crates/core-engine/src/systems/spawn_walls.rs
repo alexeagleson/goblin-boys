@@ -1,9 +1,9 @@
 use ae_position::Position;
 use bevy::prelude::*;
-use core_api::SpriteTexture;
+use core_api::{DialogueMap, SpriteTexture};
 
 use crate::{
-    components::{BlocksLight, BlocksMovement, MapPosition, Renderable},
+    components::{speaks::Speaks, BlocksLight, BlocksMovement, MapPosition, Renderable},
     resources::{
         map::GameMap,
         raw_maps::{example_map_1_legend, example_map_2_legend, EXAMPLE_MAP_1, EXAMPLE_MAP_2},
@@ -13,7 +13,7 @@ use crate::{
 
 fn str_map_to_game_map(
     string_map: &str,
-    legend: &dyn Fn(char) -> SpriteTexture,
+    legend: &dyn Fn(char) -> (String, SpriteTexture, Option<DialogueMap>),
     commands: &mut Commands,
     map: &GameMap,
 ) {
@@ -48,18 +48,25 @@ fn str_map_to_game_map(
                 .index();
 
             // Check if there is stuff on top of the floor
-            let sprite = legend(character);
+            let (name, sprite, maybe_dialogue_map) = legend(character);
 
             if sprite != SpriteTexture::Empty {
-                commands
-                    .spawn(Name::new("Wall"))
+                let mut sprite_command = commands.spawn(Renderable { texture: sprite });
+
+                if let Some(maybe_dialogue_map) = maybe_dialogue_map {
+                    sprite_command.insert(Speaks(maybe_dialogue_map));
+                }
+
+                sprite_command.insert(Name::new(name));
+
+                sprite_command
                     .insert(MapPosition {
                         pos: pos.clone(),
                         map_id: map.id(),
                     })
                     .insert(BlocksLight)
                     .insert(BlocksMovement)
-                    .insert(Renderable { texture: sprite })
+                    // .insert()
                     .id()
                     .index();
             }

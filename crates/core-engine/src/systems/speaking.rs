@@ -55,7 +55,7 @@ pub fn speaking_system(
                     speak_event.user_id,
                     ServerMessageSingleClient::ShowDialogue {
                         entity_name: name.to_string(),
-                        dialogue_map: dialogue_contents.rat.clone(),
+                        dialogue_map: speak.0.clone(),
                     },
                 ))
                 .ok();

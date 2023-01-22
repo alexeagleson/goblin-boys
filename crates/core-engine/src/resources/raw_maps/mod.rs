@@ -1,5 +1,7 @@
 use ae_position::Dimensions2d;
-use core_api::SpriteTexture;
+use core_api::{DialogueMap, SpriteTexture};
+
+use crate::data::{dialogue_contents::DialogueContents, dialogue_contents_str};
 
 // Utility
 
@@ -37,14 +39,14 @@ pub const EXAMPLE_MAP_1: &str = r#"
 ##########################
 "#;
 
-pub fn example_map_1_legend(character: char) -> SpriteTexture {
+pub fn example_map_1_legend(character: char) -> (String, SpriteTexture, Option<DialogueMap>) {
     match character {
-        '#' => SpriteTexture::WallBrick,
-        's' => SpriteTexture::ObjectSewerGrate,
-        '.' => SpriteTexture::Empty,
-        'w' => SpriteTexture::ObjectWater,
-        'h' => SpriteTexture::FloorGrass,
-        _ => SpriteTexture::Unrecognized,
+        '#' => (String::from("Wall"), SpriteTexture::WallBrick, None),
+        's' => (String::from("Sewer"), SpriteTexture::ObjectSewerGrate, None),
+        '.' => (String::from("???"), SpriteTexture::Empty, None),
+        'w' => (String::from("Water"), SpriteTexture::ObjectWater, None),
+        'h' => (String::from("Grass"), SpriteTexture::FloorGrass, None),
+        _ => (String::from("???"), SpriteTexture::Unrecognized, None),
     }
 }
 
@@ -63,11 +65,19 @@ pub const EXAMPLE_MAP_2: &str = r#"
 ##########
 "#;
 
-pub fn example_map_2_legend(character: char) -> SpriteTexture {
+pub fn example_map_2_legend(character: char) -> (String, SpriteTexture, Option<DialogueMap>) {
     match character {
-        '#' => SpriteTexture::WallBrick,
-        'r' => SpriteTexture::ObjectRedSoda,
-        '.' => SpriteTexture::Empty,
-        _ => SpriteTexture::Unrecognized,
+        '#' => (String::from("Wall"), SpriteTexture::WallBrick, None),
+        'r' => (
+            String::from("Soda Can"),
+            SpriteTexture::ObjectRedSoda,
+            Some(
+                ron::from_str::<DialogueContents>(dialogue_contents_str)
+                    .unwrap()
+                    .sewer_kid,
+            ),
+        ),
+        '.' => (String::from("???"), SpriteTexture::Empty, None),
+        _ => (String::from("???"), SpriteTexture::Unrecognized, None),
     }
 }
