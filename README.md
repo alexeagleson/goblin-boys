@@ -1,4 +1,6 @@
-# Rust / Bevy / Typescript Game Template
+# Goblin Boys
+
+Or previously: Rust / Bevy / Typescript Game Template
 
 A complete template for building a 2D grid based game with a Rust backend with Bevy engine, and Typescript frontend.
 
