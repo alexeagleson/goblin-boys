@@ -13,9 +13,6 @@ use super::resources::world::MapId;
 pub struct User(pub UserId);
 
 #[derive(Component)]
-pub struct Name(pub String);
-
-#[derive(Component)]
 pub struct Item;
 
 #[derive(Component)]

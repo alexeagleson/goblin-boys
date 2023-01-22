@@ -11,6 +11,10 @@ export interface DirectionHandlers {
   down: () => void;
 }
 
+export interface GameInputState {
+  enabled: boolean
+}
+
 const isTouchStart = (e: MouseEvent | TouchEvent): e is TouchEvent => {
   return e.type === "touchstart";
 };
@@ -18,7 +22,8 @@ const isTouchStart = (e: MouseEvent | TouchEvent): e is TouchEvent => {
 export const addInputListeners = (
   gameCanvas: HTMLCanvasElement,
   updateHoverMenuPosition: (x: number, y: number) => void,
-  safeSend: SafeSend
+  safeSend: SafeSend,
+  gameInputState: GameInputState
 ) => {
   const processTileSelectEvent = (e: MouseEvent | TouchEvent) => {
     const rect = gameCanvas.getBoundingClientRect();
@@ -75,6 +80,9 @@ export const addInputListeners = (
   // any keys supported by the game
   window.addEventListener("keydown", (e) => {
     e.preventDefault();
+    if (gameInputState.enabled === false) {
+      return;
+    }
 
     switch (e.key) {
       case "ArrowUp":

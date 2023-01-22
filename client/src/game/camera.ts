@@ -5,7 +5,7 @@ export const SPRITE_SCALE = 4;
 // Game config
 export const TILE_SIZE = 16 * SPRITE_SCALE;
 
-export const CAMERA_RADIUS = 4;
+export const CAMERA_RADIUS = 6;
 export const CAMERA_SIZE = CAMERA_RADIUS * 2 + 1;
 
 export interface Camera {

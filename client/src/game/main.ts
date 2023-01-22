@@ -3,6 +3,7 @@
 import { connectToGameServer } from "./connection";
 import { clearEverything, createGameApp, spriteMap } from "./canvas";
 import {
+  DialogueMap,
   EntityData,
   EntityIndex,
   ServerMessageAllClients,
@@ -12,10 +13,12 @@ import {
 } from "../utility/types";
 import { assertNever, log } from "../utility/functions";
 import { GAME_CONFIG_URI } from "../utility/config";
-import { addInputListeners } from "./input";
+import { addInputListeners, GameInputState } from "./input";
 import { CAMERA_SIZE, setCamera, TILE_SIZE } from "./camera";
 
 var punch = new Audio("punch.ogg");
+
+const music = new Audio("audio/music/supersewerslug.ogg");
 
 let xPixel = 0;
 let yPixel = 0;
@@ -29,13 +32,11 @@ export const initializeGame = async (
   onHover: (x: number, y: number, entityData?: EntityData) => void,
   onClick: (log: string) => void,
   onMoveCount: (count: number) => void,
-  onDialogue: ({
-    entity,
-    dialogue,
-  }: {
-    entity: EntityIndex;
-    dialogue: string;
-  }) => void
+  onDialogue: (nameAndDialogueMap: {
+    entity_name: string;
+    dialogue_map: DialogueMap;
+  }) => void,
+  gameInputState: GameInputState
 ) => {
   // const mapDimensionsResponse = await fetch(GAME_CONFIG_URI, { method: "GET" });
 
@@ -65,10 +66,6 @@ export const initializeGame = async (
         setCamera(response.content);
 
         for (const [entityIndex, spritePosition] of spriteMap) {
-          // if (spritePosition.texture === SpriteTexture.Bunny) {
-          //   log.trace("Player", entityIndex, spritePosition);
-          //   log.trace("Player new position", response.content);
-          // }
           setSpritePosition({
             entity: { idx: entityIndex },
             pos: spritePosition.pos,
@@ -80,15 +77,7 @@ export const initializeGame = async (
       case "entityPositionChange":
         setSpritePosition(response.content);
         break;
-      // case "newEntity":
-      //   addSprite(response.content);
-      //   break;
-      // case "newEntities":
-      // case "existingEntities":
-      //   response.content.forEach((renderData) => {
-      //     addSprite(renderData);
-      //   });
-      //   break;
+
       case "updateFullGameMap":
         clearEverything();
 
@@ -134,7 +123,8 @@ export const initializeGame = async (
   const directionHandlers = addInputListeners(
     gameCanvas,
     updateHoverMenuPosition,
-    safeSend
+    safeSend,
+    gameInputState
   );
 
   let interval = setInterval(() => {
@@ -143,6 +133,13 @@ export const initializeGame = async (
       clearInterval(interval);
     }
   }, 100);
+
+  gameCanvas.onclick = () => {
+    if (music.currentTime === 0) {
+      music.play();
+      music.loop = true;
+    }
+  };
 
   return { gameCanvas, directionHandlers };
 };

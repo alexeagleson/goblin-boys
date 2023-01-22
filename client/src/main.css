@@ -1,5 +1,5 @@
 :root {
-  font-family: Inter, Avenir, Helvetica, Arial, sans-serif;
+  font-family: "Press Start 2P", Inter, Avenir, Helvetica, Arial, sans-serif;
   font-size: 14px;
   line-height: 24px;
   font-weight: 400;
@@ -26,6 +26,10 @@ body {
 
 p {
   margin: 0;
+}
+
+button {
+  font-family: "Press Start 2P", Inter, Avenir, Helvetica, Arial, sans-serif;
 }
 
 @media (prefers-color-scheme: light) {
