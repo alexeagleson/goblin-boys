@@ -11,9 +11,11 @@ use super::world::MapId;
 // pub const MAP_WIDTH: i32 = 7;
 // pub const MAP_HEIGHT: i32 = 7;
 
-pub const PRIMARY_MAP_ID: i32 = 1;
+pub const PEACEFUL_MAP_ID: i32 = 1;
 
-pub static MAP_ID_COUNTER: AtomicI32 = AtomicI32::new(PRIMARY_MAP_ID);
+pub const BAD_GUY_MAP_ID: i32 = 2;
+
+pub static MAP_ID_COUNTER: AtomicI32 = AtomicI32::new(PEACEFUL_MAP_ID);
 
 type IndexGrid = Vec<u8>;
 

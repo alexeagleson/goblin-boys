@@ -91,6 +91,14 @@ pub enum AnimationTexture {
 }
 
 #[typeshare]
+#[derive(Serialize, Deserialize, Debug, Clone, Copy, PartialEq, Eq)]
+#[serde(rename_all = "camelCase")]
+/// A sprite to render that represents a temporary animation to show
+pub enum SpawnableEnemy {
+    Slime,
+}
+
+#[typeshare]
 #[derive(Serialize, Deserialize, Debug, Clone)]
 // Intentionally does not serde renameAll due to some challenges with .ron files
 pub struct DialogueContent {
@@ -127,6 +135,7 @@ pub enum ClientMessage {
     /// Clients should send every 30 seconds or so to
     /// keep from getting your socket closed when hosting on free services
     KeepAlive,
+    Spawn(SpawnableEnemy)
 }
 
 #[typeshare]
@@ -137,6 +146,7 @@ pub enum ServerMessageSingleClient {
     TileHover(Option<EntityData>),
     // ExistingEntities(Vec<EntityRenderData>),
     EntityPositionChange(SpriteUpdate),
+    AddSprite(SpriteUpdate),
     CentreCamera(Position),
     UpdateFullGameMap {
         camera: Position,

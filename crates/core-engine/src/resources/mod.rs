@@ -9,7 +9,7 @@ use ae_position::Position;
 use bevy::{prelude::Resource, time::Stopwatch};
 use core_api::{
     ClientMessage, DatabaseRequest, DatabaseResponse, ServerMessageAllClients,
-    ServerMessageSingleClient, UserId,
+    ServerMessageSingleClient, UserId, SpawnableEnemy,
 };
 use tokio::sync::mpsc::{UnboundedReceiver, UnboundedSender};
 
@@ -44,6 +44,10 @@ pub struct MouseHoverBuffer(pub VecDeque<(UserId, Position)>);
 
 #[derive(Resource, Default)]
 pub struct MouseClickBuffer(pub VecDeque<(UserId, Position)>);
+
+#[derive(Resource, Default)]
+pub struct SpawnableEnemyBuffer(pub VecDeque<(UserId, SpawnableEnemy)>);
+
 
 #[derive(Resource)]
 pub struct MoveStopwatch(pub Stopwatch);

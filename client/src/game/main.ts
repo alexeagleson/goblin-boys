@@ -9,6 +9,7 @@ import {
   ServerMessageAllClients,
   ServerMessageSingleClient,
   Sound,
+  SpawnableEnemy,
   SpriteTexture,
 } from "../utility/types";
 import { assertNever, log } from "../utility/functions";
@@ -90,6 +91,9 @@ export const initializeGame = async (
       case "entityPositionChange":
         setSpritePosition(response.content);
         break;
+      case "addSprite":
+        addSprite(response.content);
+        break;
 
       case "updateFullGameMap":
         clearEverything();
@@ -154,5 +158,9 @@ export const initializeGame = async (
     }
   }, 100);
 
-  return { gameCanvas, directionHandlers };
+  const spawnSlime = () => {
+    safeSend({ type: "spawn", content: SpawnableEnemy.Slime });
+  };
+
+  return { gameCanvas, directionHandlers, spawnSlime };
 };

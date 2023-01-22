@@ -10,7 +10,7 @@ git push
 JUST GET EVERYONE ELSE'S CHANGES
 
 ```
-git pull
+git pull --rebase
 ```
 
 FOR MIKE:

@@ -3,7 +3,7 @@ use core_api::ClientMessage;
 
 use crate::resources::{
     ConnectBuffer, DisconnectBuffer, KeypressBuffer, MessageReceiver, MouseClickBuffer,
-    MouseHoverBuffer,
+    MouseHoverBuffer, SpawnableEnemyBuffer,
 };
 
 /// Handles all messages received from the client and places them into separate resource
@@ -15,6 +15,7 @@ pub fn message_system(
     mut connect_buffer: ResMut<ConnectBuffer>,
     mut mouse_hover_buffer: ResMut<MouseHoverBuffer>,
     mut mouse_click_buffer: ResMut<MouseClickBuffer>,
+    mut spawnable_enemy_buffer: ResMut<SpawnableEnemyBuffer>,
 ) {
     while let Ok((id, message)) = receiver.0.try_recv() {
         match message {
@@ -33,6 +34,10 @@ pub fn message_system(
             ClientMessage::TileClick(pos) => {
                 mouse_click_buffer.0.push_back((id, pos));
             }
+            ClientMessage::Spawn(enemy) => {
+                dbg!();
+                spawnable_enemy_buffer.0.push_back((id, enemy));
+            },
             ClientMessage::KeepAlive => {
                 // No action
             }

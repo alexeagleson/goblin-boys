@@ -14,6 +14,8 @@ const music = new Audio("audio/music/supersewerslug.ogg");
 
 const gameInputState: GameInputState = { enabled: true };
 
+let spawnHandler: () => void | undefined;
+
 const App = () => {
   const initialized = useRef<boolean>(false);
   const canvasContainer = useRef<HTMLDivElement | null>(null);
@@ -77,7 +79,8 @@ const App = () => {
         setMoveCount,
         onDialogue,
         gameInputState
-      ).then(({ gameCanvas, directionHandlers: dirHandlers }) => {
+      ).then(({ gameCanvas, directionHandlers: dirHandlers, spawnSlime }) => {
+        spawnHandler = spawnSlime;
         setDirectionHandlers(dirHandlers);
         canvasContainer.current?.appendChild(gameCanvas);
         let canvasHeight = gameCanvas.height;
@@ -122,6 +125,14 @@ const App = () => {
         }}
       >
         Test music
+      </button>
+      <button
+        onClick={() => {
+          console.log(spawnHandler);
+          spawnHandler?.();
+        }}
+      >
+        Spawn a Slime
       </button>
       {enableMainTitle && <MainTitle />}
       {!enableMainTitle && (

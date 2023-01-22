@@ -12,7 +12,7 @@ use crate::{
     },
     events::ShouldSendFullMapUpdateToClient,
     resources::{
-        map::PRIMARY_MAP_ID,
+        map::PEACEFUL_MAP_ID,
         world::{GameWorld, MapId},
         ConnectBuffer, CurrentUserMaps,
     },
@@ -26,11 +26,11 @@ pub fn join_game_system(
     mut ev_update_client: EventWriter<ShouldSendFullMapUpdateToClient>,
     mut current_user_maps: ResMut<CurrentUserMaps>,
     player_config: Res<PlayerConfig>,
-    enemy_configs: Res<EnemyConfigs>,
+    // enemy_configs: Res<EnemyConfigs>,
 ) {
     let map = game_world
         .game_maps
-        .get(&MapId(PRIMARY_MAP_ID))
+        .get(&MapId(PEACEFUL_MAP_ID))
         .expect("Somehow the primary map does not exist");
 
     if let Some(user_id) = connect_buffer.0.pop_front() {
@@ -56,43 +56,43 @@ pub fn join_game_system(
         // Track the current map the new user is on
         current_user_maps.0.insert(user_id, player_map_position);
 
-        // Spawn a slime every time a new player joins
-        let mut slime_commands = commands.spawn(Item);
-        let slime_config = &enemy_configs.slime;
-        slime_commands
-            .insert(Name::new(slime_config.name.clone()))
-            // A walking slime...?
-            .insert(MapPosition {
-                pos: map.random_movement_unblocked_tile(),
-                map_id: map.id(),
-            })
-            .insert(Renderable {
-                texture: slime_config.texture,
-            })
-            .insert(slime_config.hp.clone())
-            .insert(slime_config.combat_stats.clone())
-            .insert(BlocksMovement)
-            .insert(Ai {
-                action: None,
-                cooldown: 0.0,
-            })
-            .insert(Eyes::new(map, slime_config.visibility));
+        // // Spawn a slime every time a new player joins
+        // let mut slime_commands = commands.spawn(Item);
+        // let slime_config = &enemy_configs.slime;
+        // slime_commands
+        //     .insert(Name::new(slime_config.name.clone()))
+        //     // A walking slime...?
+        //     .insert(MapPosition {
+        //         pos: map.random_movement_unblocked_tile(),
+        //         map_id: map.id(),
+        //     })
+        //     .insert(Renderable {
+        //         texture: slime_config.texture,
+        //     })
+        //     .insert(slime_config.hp.clone())
+        //     .insert(slime_config.combat_stats.clone())
+        //     .insert(BlocksMovement)
+        //     .insert(Ai {
+        //         action: None,
+        //         cooldown: 0.0,
+        //     })
+        //     .insert(Eyes::new(map, slime_config.visibility));
 
-        // Spawn a test NPC
-        let mut npc_commands = commands.spawn(
-            Name::new("Npc Rat".to_string()), // Speaks(DialogueContents)
-        );
+        // // Spawn a test NPC
+        // let mut npc_commands = commands.spawn(
+        //     Name::new("Npc Rat".to_string()), // Speaks(DialogueContents)
+        // );
 
-        npc_commands
-            .insert(MapPosition {
-                pos: map.random_movement_unblocked_tile(),
-                map_id: map.id(),
-            })
-            .insert(Renderable {
-                texture: SpriteTexture::NpcSewerKidFrames6,
-            })
-            .insert(BlocksLight)
-            .insert(BlocksMovement);
+        // npc_commands
+        //     .insert(MapPosition {
+        //         pos: map.random_movement_unblocked_tile(),
+        //         map_id: map.id(),
+        //     })
+        //     .insert(Renderable {
+        //         texture: SpriteTexture::NpcSewerKidFrames6,
+        //     })
+        //     .insert(BlocksLight)
+        //     .insert(BlocksMovement);
 
         // Refresh the full map of all clients when a player joins
         // [TODO] This is probably overkill -- could just send the new player sprite

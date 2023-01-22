@@ -18,7 +18,7 @@ use data::{
     dialogue_contents::DialogueContents, dialogue_contents_str, enemy_configs::EnemyConfigs,
     enemy_configs_str, player_config::PlayerConfig, player_config_str,
 };
-use resources::{DatabaseReceiver, DatabaseSender};
+use resources::{DatabaseReceiver, DatabaseSender, SpawnableEnemyBuffer};
 use systems::{
     ai::ai_system,
     death::death_system,
@@ -26,6 +26,7 @@ use systems::{
     resolve_melee_attack::resolve_melee_attack_system,
     resolve_move::resolve_move_system,
     resolve_speak::resolve_speak_system,
+    spawn_enemy::spawn_enemy_system,
 };
 use tokio::sync::mpsc::{UnboundedReceiver, UnboundedSender};
 
@@ -37,9 +38,9 @@ use crate::{
         MouseHoverBuffer, MoveStopwatch,
     },
     systems::{
-        change_map::change_map_system, join_game::join_game_system, leave_game::leave_game_system,
-        message::message_system, mouse_click::mouse_click_system, mouse_hover::mouse_hover_system,
-        movement_keys::movement_keys_system, spawn_walls::spawn_walls_system,
+        build_maps::build_maps_system, change_map::change_map_system, join_game::join_game_system,
+        leave_game::leave_game_system, message::message_system, mouse_click::mouse_click_system,
+        mouse_hover::mouse_hover_system, movement_keys::movement_keys_system,
         update_client::update_client_system, update_map::update_map_system,
     },
 };
@@ -63,6 +64,7 @@ pub fn start_game_engine(
         .insert_resource(ConnectBuffer::default())
         .insert_resource(MouseHoverBuffer::default())
         .insert_resource(MouseClickBuffer::default())
+        .insert_resource(SpawnableEnemyBuffer::default())
         .insert_resource(MoveStopwatch::new())
         .insert_resource(Time::default())
         .insert_resource(CurrentUserMaps::default())
@@ -71,10 +73,11 @@ pub fn start_game_engine(
         .insert_resource(ron::from_str::<DialogueContents>(dialogue_contents_str).unwrap())
         .add_event::<ShouldUpdateMap>()
         .add_event::<ShouldSendFullMapUpdateToClient>()
-        .add_startup_system(spawn_walls_system)
+        .add_startup_system(build_maps_system)
         .add_system(update_client_system.before(message_system))
         .add_system(message_system)
         .add_system(join_game_system.after(message_system))
+        .add_system(spawn_enemy_system.after(message_system))
         .add_system(movement_keys_system.after(message_system))
         .add_system(ai_system.after(movement_keys_system))
         .add_system(resolve_move_system.after(message_system))

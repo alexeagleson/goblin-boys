@@ -5,7 +5,7 @@ use core_api::{EntityIndex, ServerMessageSingleClient};
 use crate::{
     components::{MapPosition, User},
     events::ShouldSendFullMapUpdateToClient,
-    resources::{world::MapId, CurrentUserMaps, MessageSenderSingleClient},
+    resources::{world::MapId, CurrentUserMaps, MessageSenderSingleClient, map::{BAD_GUY_MAP_ID, PEACEFUL_MAP_ID}},
 };
 
 /// [TODO] Turn this prototype into something more permanent
@@ -25,9 +25,9 @@ pub fn change_map_system(
         if map_pos.pos == arbitrary_position {
             let previous_map_id = map_pos.map_id;
             let new_map_id = if map_pos.map_id == (MapId(1)) {
-                MapId(2)
+                MapId(BAD_GUY_MAP_ID)
             } else {
-                MapId(1)
+                MapId(PEACEFUL_MAP_ID)
             };
 
             current_user_maps

@@ -162,7 +162,7 @@ fn str_map_to_game_map(
 }
 
 /// Adds the all tiles to the maps on initial load
-pub fn spawn_walls_system(game_world: Res<GameWorld>, mut commands: Commands) {
+pub fn build_maps_system(game_world: Res<GameWorld>, mut commands: Commands) {
     for map in game_world.game_maps.values() {
         if map.id() == (MapId(1)) {
             str_map_to_game_map(

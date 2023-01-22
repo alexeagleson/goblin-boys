@@ -12,6 +12,7 @@ pub mod persistence;
 pub mod resolve_melee_attack;
 pub mod resolve_move;
 pub mod resolve_speak;
-pub mod spawn_walls;
+pub mod build_maps;
 pub mod update_client;
 pub mod update_map;
+pub mod spawn_enemy;
