@@ -67,6 +67,14 @@ pub enum SpriteTexture {
 }
 
 #[typeshare]
+#[derive(Serialize, Deserialize, Debug, Clone, Copy, PartialEq, Eq)]
+#[serde(rename_all = "camelCase")]
+/// A sprite to render that represents a temporary animation to show
+pub enum AnimationTexture {
+    AttackBatFrames4,
+}
+
+#[typeshare]
 #[derive(Serialize, Deserialize, Debug, Clone)]
 // Intentionally does not serde renameAll due to some challenges with .ron files
 pub struct DialogueContent {
@@ -123,6 +131,10 @@ pub enum ServerMessageSingleClient {
     ShowDialogue {
         entity_name: String,
         dialogue_map: DialogueMap,
+    },
+    ShowAnimation {
+        position: Position,
+        animation: AnimationTexture,
     },
 }
 

@@ -324,12 +324,14 @@ export const createGameApp = async (
     const animatedSprite = new AnimatedSprite(spriteSheet.animations.anim);
 
     animatedSprite.texture.baseTexture.scaleMode = SCALE_MODES.NEAREST;
-    animatedSprite.animationSpeed = 0.25;
+    animatedSprite.animationSpeed = 0.4;
 
     animatedSprite.scale = { x: SPRITE_SCALE, y: SPRITE_SCALE };
     animatedSprite.zIndex = 2;
     animatedSprite.loop = false;
     animatedSprite.visible = false;
+    animatedSprite.anchor.x = 0.5;
+    animatedSprite.anchor.y = 0.5;
 
     app.stage.addChild(animatedSprite);
 
@@ -343,9 +345,10 @@ export const createGameApp = async (
 
   const attackSprite = await prepAttackAnimation();
 
-  const showAttackAnimation = () => {
+  const showAttackAnimation = (pos: Position) => {
+    const screenPos = mapPosToScreenPos(pos);
     attackSprite.visible = true;
-    const pxPos = tileToPx({ x: 3, y: 3 });
+    const pxPos = tileToPx(screenPos);
     attackSprite.x = pxPos.x;
     attackSprite.y = pxPos.y;
     attackSprite.play();

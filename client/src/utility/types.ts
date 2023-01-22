@@ -88,6 +88,11 @@ export enum SpriteTexture {
 	Empty = "empty",
 }
 
+/** A sprite to render that represents a temporary animation to show */
+export enum AnimationTexture {
+	AttackBatFrames4 = "attackBatFrames4",
+}
+
 /** Tell client to play audio */
 export enum Sound {
 	Punch = "punch",
@@ -120,6 +125,10 @@ export type ServerMessageSingleClient =
 	| { type: "showDialogue", content: {
 	entity_name: string;
 	dialogue_map: DialogueMap;
+}}
+	| { type: "showAnimation", content: {
+	position: Position;
+	animation: AnimationTexture;
 }};
 
 /** Communicates information about the active game to one client */

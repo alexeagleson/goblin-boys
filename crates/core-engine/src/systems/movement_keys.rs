@@ -65,20 +65,20 @@ pub fn movement_keys_system(
                         position: new_pos.clone(),
                     });
                 }
-                for (ohter_ent, other_map_pos, other_combat_stats, other_speaks) in
+                for (other_ent, other_map_pos, other_combat_stats, other_speaks) in
                     blocker_query.iter()
                 {
                     if other_map_pos.map_id == map_pos.map_id && other_map_pos.pos == new_pos {
                         if other_speaks.is_some() {
                             commands
                                 .entity(entity)
-                                .insert(IntendSpeak { target: ohter_ent });
+                                .insert(IntendSpeak { target: other_ent });
                             break;
                         }
                         if other_combat_stats.is_some() {
                             commands
                                 .entity(entity)
-                                .insert(IntendMeleeAttack { target: ohter_ent });
+                                .insert(IntendMeleeAttack { target: other_ent });
                             break;
                         }
                     }
