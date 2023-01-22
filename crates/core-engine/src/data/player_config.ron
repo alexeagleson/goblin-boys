@@ -1,7 +1,6 @@
 (
     visibility: 10,
     blocks_movement: true,
-    blocks_light: true,
     texture: pcKidZilla,
     combat_stats: (
       attack: 6,

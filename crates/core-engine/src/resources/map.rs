@@ -19,8 +19,8 @@ type IndexGrid = Vec<u8>;
 
 #[derive(Debug)]
 pub struct VisibilityGrid {
-    grid: IndexGrid,
-    width: usize,
+    pub grid: IndexGrid,
+    pub width: usize,
 }
 
 impl VisibilityGrid {
@@ -224,6 +224,19 @@ impl GameMap {
         let perimeter = perimeter_index_grid(self.width(), self.height());
         let map_width = self.width() as usize;
         index_grid_to_positions(&perimeter, map_width, true)
+    }
+
+    pub fn get_unblocked_idxs(&self) -> Vec<usize> {
+        self.movement_blocking_grid
+            .0
+            .iter()
+            .enumerate()
+            .fold(vec![], |mut idxs, (idx, val)| {
+                if *val == 0 {
+                    idxs.push(idx)
+                }
+                idxs
+            })
     }
 
     /// Returns a random position on the map that doesn't block movement

@@ -7,7 +7,6 @@ use serde::{Deserialize, Serialize};
 pub struct PlayerConfig {
     pub visibility: u32,
     pub blocks_movement: bool,
-    pub blocks_light: bool,
     pub texture: SpriteTexture,
     pub combat_stats: CombatStats,
     pub hp: Hp,

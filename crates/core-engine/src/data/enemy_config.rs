@@ -7,6 +7,7 @@ use crate::components::{combat_stats::CombatStats, hp::Hp};
 #[derive(Debug, Deserialize, Serialize, Resource)]
 pub struct EnemyConfig {
     pub name: String,
+    pub visibility: u32,
     pub blocks_movement: bool,
     pub paths: bool,
     pub texture: SpriteTexture,

@@ -11,6 +11,7 @@ use crate::{
 };
 use ae_position::Position;
 use bevy::prelude::*;
+use rand::seq::SliceRandom;
 use tv_utility_ai::{choose::choose_action_fuzzy, curve, WeightedAction};
 
 fn distance_between_positions(pos: &Position, other: &Position) -> u32 {
@@ -19,6 +20,19 @@ fn distance_between_positions(pos: &Position, other: &Position) -> u32 {
 
 fn is_adjacent(pos: &Position, other: &Position) -> bool {
     distance_between_positions(pos, other) <= 1
+}
+
+fn get_visible_floor_positions(
+    visibility_grid: &Vec<u8>,
+    floor_idxs: &Vec<usize>,
+    grid_width: usize,
+) -> Vec<Position> {
+    floor_idxs.iter().fold(vec![], |mut acc, idx| {
+        if let Some(1) = visibility_grid.get(*idx) {
+            acc.push(Position::from_idx(*idx, grid_width))
+        }
+        acc
+    })
 }
 
 fn make_attack_action(entity: Entity, enemy_hp: &Hp, offset: f32) -> WeightedAction<AiAction> {
@@ -70,7 +84,7 @@ pub fn ai_system(
         if let Some(map) = game_world.game_maps.get(&map_pos.map_id) {
             let visibility_grid =
                 map.visibility_grid_from_position(&map_pos.pos, eyes.visible_distance);
-            for (user_ent, user, user_hp, user_pos) in visible_user_query.iter() {
+            for (user_ent, _user, user_hp, user_pos) in visible_user_query.iter() {
                 if user_pos.map_id == map_pos.map_id
                     && visibility_grid.position_visible(&user_pos.pos)
                 {
@@ -96,13 +110,24 @@ pub fn ai_system(
                     }
                 }
             }
-            // think about it more.
-            // if let Some(AiAction::Wander(position)) = ai.action {
-            //     if position == map_pos.pos {
-            //         weighted_actions.push(make_wander_action())
-            //     }
-            // }
 
+            // Keep wandering in the same direction if it is already wandering
+            let position = match &ai.action {
+                Some(AiAction::Wander(position)) if position != &map_pos.pos => {
+                    Some(position.clone())
+                }
+                _ => get_visible_floor_positions(
+                    &visibility_grid.grid,
+                    &map.get_unblocked_idxs(),
+                    visibility_grid.width,
+                )
+                .choose(&mut rand::thread_rng())
+                .cloned(),
+            };
+            if let Some(position) = position {
+                println!("got position {:?}", position);
+                weighted_actions.push(make_wander_action(&position));
+            }
             // we hold the ai action to give the next chosen action some additional weight
             // choice offset should use random number here
             ai.action = choose_action_fuzzy(weighted_actions, 0.1, 0.6);
