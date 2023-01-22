@@ -35,9 +35,13 @@ const App = () => {
     }
   };
 
-  const onClick = (logEntry: string) => {
+  const addLogEntry = (logEntry: string) => {
     setLog((oldLog) => [logEntry, ...oldLog]);
   };
+
+  const onClick = addLogEntry;
+  const onDamage = addLogEntry;
+  const onDeath = addLogEntry;
 
   const onDialogueClose = () => {
     gameInputState.enabled = true;
@@ -68,6 +72,8 @@ const App = () => {
       initializeGame(
         onHover,
         onClick,
+        onDeath,
+        onDamage,
         setMoveCount,
         onDialogue,
         gameInputState

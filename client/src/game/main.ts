@@ -29,6 +29,8 @@ const updateHoverMenuPosition = (x: number, y: number) => {
 export const initializeGame = async (
   onHover: (x: number, y: number, entityData?: EntityData) => void,
   onClick: (log: string) => void,
+  onDeath: (log: string) => void,
+  onDamage: (log: string) => void,
   onMoveCount: (count: number) => void,
   onDialogue: (nameAndDialogueMap: {
     entity_name: string;
@@ -109,6 +111,12 @@ export const initializeGame = async (
         break;
       case "tileClick":
         onClick(response.content);
+        break;
+      case "damage":
+        onDamage(response.content);
+        break;
+      case "death":
+        onDeath(response.content);
         break;
       case "playSound":
         if (response.content == Sound.Punch) {
