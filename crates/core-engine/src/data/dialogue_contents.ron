@@ -3,7 +3,7 @@
 DialogueContents(
     rat: DialogueMap({
         0: (         
-            text: "h im a rat",
+            text: "Hi I'm a rat",
             response_1_text: Some("why"),
             response_1_id: Some(1),
             response_2_text: Some("ok"),
@@ -24,51 +24,52 @@ DialogueContents(
             response_2_id: None,
         ),
     }),
-    // GraceJones: DialogueMap({
-    //     0: (         
-    //         text: "What are you doing out here so late, Shweetheart?",
-    //         response_1_text: Some("Just enjoying the moonlight"),
-    //         response_1_id: Some(1),
-    //         response_2_text: Some("WHaTs iT tO Y0u?!"),
-    //         response_2_id: Some(2), 
-    //     ),
-    //     1: (         
-    //         text: "It's a nice night for a walk.",
-    //         response_1_text: None,
-    //         response_1_id: None,
-    //         response_2_text: None,
-    //         response_2_id: None,
-    //     ),
-    //     2: (         
-    //         text: "Just that there's been all these strange things happening *side eyes, reaches for pepper spray in purse*",
-    //         response_1_text: None,
-    //         response_1_id: None,
-    //         response_2_text: None,
-    //         response_2_id: None,
-    //     ),
-    // voidcat: DialogueMap({
-    //     0: (         
-    //         text: "Mrrow",
-    //         response_1_text: Some("Pspspspspsps"),
-    //         response_1_id: Some(1),
-    //         response_2_text: Some("Meow!"),
-    //         response_2_id: Some(2), 
-    //     ),
-    //     1: (         
-    //         text: "Pūrrrrrrrrr",
-    //         response_1_text: None,
-    //         response_1_id: None,
-    //         response_2_text: None,
-    //         response_2_id: None,
-    //     ),
-    //     2: (         
-    //         text: "*Turns it's butt to you*",
-    //         response_1_text: None,
-    //         response_1_id: None,
-    //         response_2_text: None,
-    //         response_2_id: None,
-    //     ),
-    // }),
+    grace_jones: DialogueMap({
+        0: (         
+            text: "What are you doing out here so late, Shweetheart?",
+            response_1_text: Some("Just enjoying the moonlight"),
+            response_1_id: Some(1),
+            response_2_text: Some("WHaTs iT tO Y0u?!"),
+            response_2_id: Some(2), 
+        ),
+        1: (         
+            text: "It's a nice night for a walk.",
+            response_1_text: None,
+            response_1_id: None,
+            response_2_text: None,
+            response_2_id: None,
+        ),
+        2: (         
+            text: "Just that there's been all these strange things happening *side eyes, reaches for pepper spray in purse*",
+            response_1_text: None,
+            response_1_id: None,
+            response_2_text: None,
+            response_2_id: None,
+        ),
+           }),
+    voidcat: DialogueMap({
+        0: (         
+            text: "Mrrow",
+            response_1_text: Some("Pspspspspsps"),
+            response_1_id: Some(1),
+            response_2_text: Some("Meow!"),
+            response_2_id: Some(2), 
+        ),
+        1: (         
+            text: "Pūrrrrrrrrr",
+            response_1_text: None,
+            response_1_id: None,
+            response_2_text: None,
+            response_2_id: None,
+        ),
+        2: (         
+            text: "*Turns it's butt to you*",
+            response_1_text: None,
+            response_1_id: None,
+            response_2_text: None,
+            response_2_id: None,
+        ),
+    }),
      sewer_kid: DialogueMap({
         0: (         
             text: "Hey there. I've abandoned my old life. I miss my friends, but I can't hang out with them because I'm too stinky. And I can't skateboard with them because I'm too sticky.",
