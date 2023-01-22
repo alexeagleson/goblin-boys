@@ -6,7 +6,9 @@ use crate::{
     resources::{MessageSenderAllClients, MessageSenderSingleClient},
 };
 use bevy::prelude::*;
-use core_api::{AnimationTexture, LogMessage, ServerMessageAllClients, ServerMessageSingleClient};
+use core_api::{
+    AnimationTexture, LogMessage, ServerMessageAllClients, ServerMessageSingleClient, Sound,
+};
 
 pub fn resolve_melee_attack_system(
     attacker_query: Query<(Entity, &CombatStats, &IntendMeleeAttack, &Name, &User)>,
@@ -41,6 +43,14 @@ pub fn resolve_melee_attack_system(
                         position: target_map_pos.pos.clone(),
                         animation: AnimationTexture::AttackBatFrames4,
                     },
+                ))
+                .ok();
+
+            sender_single_client
+                .0
+                .send((
+                    attacker_user.0,
+                    ServerMessageSingleClient::PlaySound(Sound::Punch),
                 ))
                 .ok();
         }

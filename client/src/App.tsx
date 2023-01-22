@@ -128,7 +128,6 @@ const App = () => {
       </button>
       <button
         onClick={() => {
-          console.log(spawnHandler);
           spawnHandler?.();
         }}
       >

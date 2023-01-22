@@ -17,7 +17,7 @@ import { GAME_CONFIG_URI } from "../utility/config";
 import { addInputListeners, GameInputState } from "./input";
 import { CAMERA_SIZE, setCamera, TILE_SIZE } from "./camera";
 
-// var punch = new Audio("punch.ogg");
+var punch = new Audio("audio/sfx/punch.ogg");
 
 let xPixel = 0;
 let yPixel = 0;
@@ -68,7 +68,7 @@ export const initializeGame = async (
 
     switch (response.type) {
       case "showAnimation":
-        console.log(response.content);
+        // console.log(response.content);
         showAttackAnimation(response.content.position);
 
         break;
@@ -124,9 +124,9 @@ export const initializeGame = async (
         break;
       case "playSound":
         if (response.content == Sound.Punch) {
-          // punch.currentTime = 0;
-          // punch.play();
-          console.log("Request to play sound was received:", response.content);
+          punch.currentTime = 0;
+          punch.play();
+          // console.log("Request to play sound was received:", response.content);
         }
         break;
       default:
