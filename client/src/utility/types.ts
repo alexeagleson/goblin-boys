@@ -5,6 +5,8 @@
 /** A single entry in the game log */
 export type LogMessage = string;
 
+export type DialogueMap = Record<number, DialogueContent>;
+
 /**
  * A single unit change in relative position meant to be added to a `Position`
  * values intended to be either 1, 0 or -1 and transformed from a `Direction`
@@ -42,6 +44,14 @@ export interface EntityData {
 	name: string;
 	blocksLight: boolean;
 	visibleToPlayer: boolean;
+}
+
+export interface DialogueContent {
+	text: string;
+	response_1_text?: string;
+	response_1_id?: number;
+	response_2_text?: string;
+	response_2_id?: number;
 }
 
 /**
@@ -104,8 +114,8 @@ export type ServerMessageSingleClient =
 	| { type: "removeSprite", content: EntityIndex }
 	| { type: "playSound", content: Sound }
 	| { type: "showDialogue", content: {
-	entity: EntityIndex;
-	dialogue: string;
+	entity_name: string;
+	dialogue_map: DialogueMap;
 }};
 
 /** Communicates information about the active game to one client */

@@ -1,0 +1,25 @@
+DialogueContents(
+    rat: DialogueMap({
+        0: (         
+            text: "h im a rat",
+            response_1_text: Some("why"),
+            response_1_id: Some(1),
+            response_2_text: Some("ok"),
+            response_2_id: Some(2), 
+        ),
+        1: (         
+            text: "UNCOOL",
+            response_1_text: None,
+            response_1_id: None,
+            response_2_text: None,
+            response_2_id: None,
+        ),
+        2: (         
+            text: "COOL",
+            response_1_text: None,
+            response_1_id: None,
+            response_2_text: None,
+            response_2_id: None,
+        ),
+    })
+)

@@ -6,7 +6,10 @@ use crate::{
         eyes::Eyes, paths::Paths, speaks::Speaks, BlocksLight, BlocksMovement, Item, MapPosition,
         Renderable, User,
     },
-    data::{enemy_configs::EnemyConfigs, player_config::PlayerConfig},
+    data::{
+        dialogue_contents::DialogueContents, enemy_configs::EnemyConfigs,
+        player_config::PlayerConfig,
+    },
     events::ShouldSendFullMapUpdateToClient,
     resources::{
         map::PRIMARY_MAP_ID,

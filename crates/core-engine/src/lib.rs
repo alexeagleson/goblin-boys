@@ -15,14 +15,16 @@ use core_api::{
     ServerMessageSingleClient, UserId,
 };
 use data::{
-    enemy_configs::EnemyConfigs, enemy_configs_str, player_config::PlayerConfig, player_config_str,
+    dialogue_contents::DialogueContents, dialogue_contents_str, enemy_configs::EnemyConfigs,
+    enemy_configs_str, player_config::PlayerConfig, player_config_str,
 };
 use events::{TryAttack, TrySpeak};
 use resources::{DatabaseReceiver, DatabaseSender};
 use systems::{
     combat::combat_system,
-    pathing::pathing_system,
-    persistence::{database_receiver_system, database_sender_system}, speaking::speaking_system,
+    // pathing::pathing_system,
+    persistence::{database_receiver_system, database_sender_system},
+    speaking::speaking_system,
 };
 use tokio::sync::mpsc::{UnboundedReceiver, UnboundedSender};
 
@@ -65,6 +67,7 @@ pub fn start_game_engine(
         .insert_resource(CurrentUserMaps::default())
         .insert_resource(ron::from_str::<PlayerConfig>(player_config_str).unwrap())
         .insert_resource(ron::from_str::<EnemyConfigs>(enemy_configs_str).unwrap())
+        .insert_resource(ron::from_str::<DialogueContents>(dialogue_contents_str).unwrap())
         .add_event::<ShouldUpdateMap>()
         .add_event::<ShouldSendFullMapUpdateToClient>()
         .add_event::<TryAttack>()

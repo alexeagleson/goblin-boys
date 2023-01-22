@@ -1,6 +1,6 @@
 use ae_position::Position;
 use bevy::prelude::*;
-use core_api::{EntityIndex, ServerMessageSingleClient};
+use core_api::{DialogueMap, EntityIndex, ServerMessageSingleClient};
 
 use crate::{
     components::{
@@ -9,6 +9,7 @@ use crate::{
         speaks::Speaks,
         MapPosition, User,
     },
+    data::dialogue_contents::DialogueContents,
     events::{ShouldSendFullMapUpdateToClient, ShouldUpdateMap, TryAttack, TrySpeak},
     resources::{world::MapId, CurrentUserMaps, MessageSenderSingleClient},
 };
@@ -21,6 +22,7 @@ pub fn speaking_system(
     current_user_maps: ResMut<CurrentUserMaps>,
     sender_single_client: Res<MessageSenderSingleClient>,
     mut ev_update_map: EventWriter<ShouldUpdateMap>,
+    dialogue_contents: Res<DialogueContents>,
 ) {
     if ev_try_speak.is_empty() {
         return;
@@ -34,7 +36,7 @@ pub fn speaking_system(
             .iter_mut()
             .find(|(_, _, map_pos, _)| &speak_event.map_position == *map_pos);
 
-        if let Some((ent, _, map_pos, speak)) = target {
+        if let Some((ent, name, map_pos, speak)) = target {
             // hp.current -= (attack_event.attack_value - combat_stats.defense).max(0);
             // println!("OW");
             // if hp.current <= 0 {
@@ -43,6 +45,7 @@ pub fn speaking_system(
             // }
             // println!("{}", speak.0);
 
+            // dbg!("{:?}", &dialogue_contents.rat);
             // Communicate the entity at the hover position to the client that requested it
             // It's important to specifically communicate `None` if there is no entity to handle
             // the case where the user hovers from a tile with an entity to a tile without one
@@ -51,8 +54,8 @@ pub fn speaking_system(
                 .send((
                     speak_event.user_id,
                     ServerMessageSingleClient::ShowDialogue {
-                        entity: EntityIndex { idx: ent.index() },
-                        dialogue: speak.0.clone(),
+                        entity_name: name.to_string(),
+                        dialogue_map: dialogue_contents.rat.clone(),
                     },
                 ))
                 .ok();

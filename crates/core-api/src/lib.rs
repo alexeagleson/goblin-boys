@@ -1,3 +1,5 @@
+use std::collections::HashMap;
+
 use ae_direction::BodyRelative;
 use ae_position::Position;
 use serde::{Deserialize, Serialize};
@@ -61,6 +63,22 @@ pub enum SpriteTexture {
 }
 
 #[typeshare]
+#[derive(Serialize, Deserialize, Debug, Clone)]
+// Intentionally does not serde renameAll due to some challenges with .ron files
+pub struct DialogueContent {
+    pub text: String,
+    pub response_1_text: Option<String>,
+    pub response_1_id: Option<i32>,
+    pub response_2_text: Option<String>,
+    pub response_2_id: Option<i32>,
+}
+
+#[typeshare]
+#[derive(Serialize, Deserialize, Debug, Clone)]
+#[serde(rename_all = "camelCase")]
+pub struct DialogueMap(pub HashMap<i32, DialogueContent>);
+
+#[typeshare]
 #[derive(Serialize, Deserialize, Debug, Clone, Copy)]
 #[serde(rename_all = "camelCase")]
 /// Tell client to play audio
@@ -99,9 +117,9 @@ pub enum ServerMessageSingleClient {
     RemoveSprite(EntityIndex),
     PlaySound(Sound),
     ShowDialogue {
-        entity: EntityIndex,
-        dialogue: String
-    }
+        entity_name: String,
+        dialogue_map: DialogueMap,
+    },
 }
 
 #[typeshare]

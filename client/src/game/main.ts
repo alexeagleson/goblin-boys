@@ -3,6 +3,7 @@
 import { connectToGameServer } from "./connection";
 import { clearEverything, createGameApp, spriteMap } from "./canvas";
 import {
+  DialogueMap,
   EntityData,
   EntityIndex,
   ServerMessageAllClients,
@@ -31,12 +32,9 @@ export const initializeGame = async (
   onHover: (x: number, y: number, entityData?: EntityData) => void,
   onClick: (log: string) => void,
   onMoveCount: (count: number) => void,
-  onDialogue: ({
-    entity,
-    dialogue,
-  }: {
-    entity: EntityIndex;
-    dialogue: string;
+  onDialogue: (nameAndDialogueMap: {
+    entity_name: string;
+    dialogue_map: DialogueMap;
   }) => void,
   gameInputState: GameInputState
 ) => {
@@ -68,10 +66,6 @@ export const initializeGame = async (
         setCamera(response.content);
 
         for (const [entityIndex, spritePosition] of spriteMap) {
-          // if (spritePosition.texture === SpriteTexture.Bunny) {
-          //   log.trace("Player", entityIndex, spritePosition);
-          //   log.trace("Player new position", response.content);
-          // }
           setSpritePosition({
             entity: { idx: entityIndex },
             pos: spritePosition.pos,
@@ -83,15 +77,7 @@ export const initializeGame = async (
       case "entityPositionChange":
         setSpritePosition(response.content);
         break;
-      // case "newEntity":
-      //   addSprite(response.content);
-      //   break;
-      // case "newEntities":
-      // case "existingEntities":
-      //   response.content.forEach((renderData) => {
-      //     addSprite(renderData);
-      //   });
-      //   break;
+
       case "updateFullGameMap":
         clearEverything();
 

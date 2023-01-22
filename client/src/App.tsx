@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { Log, HoverMenu, ControlOverlay, HoverMenuProps } from "./components";
 import { initializeGame } from "./game/main";
-import { EntityData, EntityIndex } from "./utility/types";
+import { DialogueMap, EntityData, EntityIndex } from "./utility/types";
 import { DirectionHandlers, GameInputState } from "./game/input";
 import "./App.css";
 import {
@@ -35,22 +35,18 @@ const App = () => {
     setLog((oldLog) => [logEntry, ...oldLog]);
   };
 
-  const onDialogueClick = () => {
+  const onDialogueClose = () => {
     gameInputState.enabled = true;
     setNpcDialogueMenu(undefined);
   };
 
-  const onDialogue = ({
-    entity,
-    dialogue,
-  }: {
-    entity: EntityIndex;
-    dialogue: string;
+  const onDialogue = (nameAndDialogueMap: {
+    entity_name: string;
+    dialogue_map: DialogueMap;
   }) => {
     setNpcDialogueMenu({
-      dialogue,
-      menuPosition: { x: 24, y: 24 },
-      onDialogueClick,
+      nameAndDialogueMap,
+      onClose: onDialogueClose,
     });
 
     gameInputState.enabled = false;
