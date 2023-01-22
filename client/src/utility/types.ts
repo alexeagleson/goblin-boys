@@ -82,6 +82,8 @@ export enum SpriteTexture {
 	NpcRat = "npcRat",
 	NpcFatherNeilFrames6 = "npcFatherNeilFrames6",
 	NpcMallChickFrames6 = "npcMallChickFrames6",
+	NpcKingRatFrames4 = "npcKingRatFrames4",
+	NpcSewerKidFrames6 = "npcSewerKidFrames6",
 	Unrecognized = "unrecognized",
 	Empty = "empty",
 }

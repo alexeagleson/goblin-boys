@@ -60,6 +60,8 @@ pub enum SpriteTexture {
     NpcRat,
     NpcFatherNeilFrames6,
     NpcMallChickFrames6,
+    NpcKingRatFrames4,
+    NpcSewerKidFrames6,
     Unrecognized,
     Empty,
 }

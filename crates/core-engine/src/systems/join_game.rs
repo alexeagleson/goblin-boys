@@ -85,7 +85,7 @@ pub fn join_game_system(
                 map_id: map.id(),
             })
             .insert(Renderable {
-                texture: SpriteTexture::NpcMallChickFrames6,
+                texture: SpriteTexture::NpcKingRatFrames4,
             })
             .insert(BlocksLight)
             .insert(BlocksMovement);
