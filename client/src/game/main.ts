@@ -17,6 +17,8 @@ import { CAMERA_SIZE, setCamera, TILE_SIZE } from "./camera";
 
 var punch = new Audio("punch.ogg");
 
+const music = new Audio("audio/music/supersewerslug.ogg");
+
 let xPixel = 0;
 let yPixel = 0;
 
@@ -145,6 +147,13 @@ export const initializeGame = async (
       clearInterval(interval);
     }
   }, 100);
+
+  gameCanvas.onclick = () => {
+    if (music.currentTime === 0) {
+      music.play();
+      music.loop = true;
+    }
+  };
 
   return { gameCanvas, directionHandlers };
 };
