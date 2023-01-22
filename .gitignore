@@ -1,5 +1,5 @@
 /target
-/types.ts
+client/src/utility/types.ts
 /README.dev.md
 .env
 database.sqlite*
