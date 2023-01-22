@@ -3,8 +3,8 @@ use core_api::SpriteTexture;
 
 use crate::{
     components::{
-        eyes::Eyes, paths::Paths, speaks::Speaks, BlocksLight, BlocksMovement, Item, MapPosition,
-        Renderable, User,
+        ai::Ai, eyes::Eyes, paths::Paths, speaks::Speaks, BlocksLight, BlocksMovement, Item,
+        MapPosition, Renderable, User,
     },
     data::{
         dialogue_contents::DialogueContents, enemy_configs::EnemyConfigs,
@@ -45,16 +45,14 @@ pub fn join_game_system(
         if player_config.blocks_movement {
             player_commands.insert(BlocksMovement);
         }
-        if player_config.blocks_movement {
-            player_commands.insert(BlocksLight);
-        }
         player_commands
             .insert(Name::new(player_name))
             .insert(player_map_position.clone())
             .insert(Renderable {
                 texture: SpriteTexture::PcKidZilla,
             })
-            .insert(player_config.combat_stats.clone());
+            .insert(player_config.combat_stats.clone())
+            .insert(player_config.hp.clone());
 
         // Track the current map the new user is on
         current_user_maps.0.insert(user_id, player_map_position);
@@ -73,7 +71,12 @@ pub fn join_game_system(
             })
             .insert(enemy_configs.slime.hp.clone())
             .insert(enemy_configs.slime.combat_stats.clone())
-            .insert(BlocksMovement);
+            .insert(BlocksMovement)
+            .insert(Ai {
+                action: None,
+                cooldown: 0.0,
+            })
+            .insert(Eyes::new(map, 100));
         // .insert(Speaks("I AM A SLIME".to_string()));
 
         // Spawn a test NPC

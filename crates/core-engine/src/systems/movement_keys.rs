@@ -1,50 +1,27 @@
 use ae_direction::{BodyRelative, Cardinal};
 use ae_position::Delta;
 use bevy::prelude::*;
-use core_api::{EntityIndex, ServerMessageSingleClient, Sound, SpriteUpdate};
 
 use crate::{
     components::{
-        combat_stats::CombatStats, BlocksLight, BlocksMovement, MapPosition, Renderable, User,
+        combat_stats::CombatStats, intend_melee_attack::IntendMeleeAttack, intend_move::IntendMove,
+        intend_speak::IntendSpeak, speaks::Speaks, MapPosition, User,
     },
-    events::{ShouldUpdateMap, TryAttack, TrySpeak},
-    resources::{world::GameWorld, CurrentUserMaps, KeypressBuffer, MessageSenderSingleClient},
+    resources::{world::GameWorld, KeypressBuffer},
 };
 
 /// Moves an entity based on a user keypress
 pub fn movement_keys_system(
     game_world: Res<GameWorld>,
-    sender_single_client: Res<MessageSenderSingleClient>,
-    mut ev_update_map: EventWriter<ShouldUpdateMap>,
-    mut ev_try_attack: EventWriter<TryAttack>,
-    mut ev_try_speak: EventWriter<TrySpeak>,
     mut keypress_buffer: ResMut<KeypressBuffer>,
-    mut query: Query<(
-        Entity,
-        &User,
-        &mut MapPosition,
-        &Name,
-        Option<&BlocksMovement>,
-        Option<&BlocksLight>,
-        Option<&Renderable>,
-        &CombatStats,
-    )>,
-    mut current_user_maps: ResMut<CurrentUserMaps>,
+    mover_query: Query<(Entity, &User, &MapPosition)>,
+    blocker_query: Query<(Entity, &MapPosition, Option<&CombatStats>, Option<&Speaks>)>,
+    mut commands: Commands,
 ) {
     let key = keypress_buffer.0.pop_front();
 
     if let Some((user_id, key)) = key {
-        for (
-            entity,
-            user,
-            mut map_pos,
-            name,
-            blocks_movement,
-            blocks_light,
-            renderable,
-            combat_stats,
-        ) in query.iter_mut()
-        {
+        for (entity, user, map_pos) in mover_query.iter() {
             // This user ID matches the component of the one trying to make the move
             if user.0 == user_id {
                 let new_pos = match key {
@@ -84,78 +61,27 @@ pub fn movement_keys_system(
                 ));
 
                 if !map.movement_blocked(&new_pos) {
-                    map_pos.pos = new_pos;
-
-                    info!("{} moved to {:?}", name, map_pos.pos);
-
-                    // Update the user's position in the user resource tracker
-                    current_user_maps.0.insert(user_id, map_pos.clone());
-
-                    // If an entity that blocks movement or light moves, the map needs to update
-                    if blocks_movement.is_some() || blocks_light.is_some() {
-                        ev_update_map.send(ShouldUpdateMap(map.id()));
-                    }
-
-                    // If the entity has a sprite to render, we need to tell the client to update that
-                    if let Some(renderable) = renderable {
-                        current_user_maps
-                            .0
-                            .iter()
-                            .for_each(|(user_id, user_map_pos)| {
-                                if user_map_pos.map_id == map.id() {
-                                    sender_single_client
-                                        .0
-                                        .send((
-                                            *user_id,
-                                            ServerMessageSingleClient::EntityPositionChange(
-                                                SpriteUpdate {
-                                                    entity: EntityIndex {
-                                                        idx: entity.index(),
-                                                    },
-                                                    pos: map_pos.pos.clone(),
-                                                    sprite: renderable.texture,
-                                                },
-                                            ),
-                                        ))
-                                        .ok();
-                                }
-                            });
-
-                        // Tell the user that moved to update their camera
-                        sender_single_client
-                            .0
-                            .send((
-                                user_id,
-                                ServerMessageSingleClient::CentreCamera(map_pos.pos.clone()),
-                            ))
-                            .ok();
-                    }
-                } else {
-                    // [TODO] Turn this audio trigger prototype into something more permanent
-                    sender_single_client
-                        .0
-                        .send((user_id, ServerMessageSingleClient::PlaySound(Sound::Punch)))
-                        .ok();
-
-                    // This entity will try to attack a tile
-                    ev_try_attack.send(TryAttack {
-                        map_position: MapPosition {
-                            pos: new_pos.clone(),
-                            map_id: map.id(),
-                        },
-                        attack_value: combat_stats.attack,
+                    commands.entity(entity).insert(IntendMove {
+                        position: new_pos.clone(),
                     });
-
-                    // This entity will try to speak to a tile
-                    ev_try_speak.send(TrySpeak {
-                        user_id,
-                        map_position: MapPosition {
-                            pos: new_pos,
-                            map_id: map.id(),
-                        },
-                    });
-
-                    info!("{} attempted to move but failed", name);
+                }
+                for (ohter_ent, other_map_pos, other_combat_stats, other_speaks) in
+                    blocker_query.iter()
+                {
+                    if other_map_pos.map_id == map_pos.map_id && other_map_pos.pos == new_pos {
+                        if other_speaks.is_some() {
+                            commands
+                                .entity(entity)
+                                .insert(IntendSpeak { target: ohter_ent });
+                            break;
+                        }
+                        if other_combat_stats.is_some() {
+                            commands
+                                .entity(entity)
+                                .insert(IntendMeleeAttack { target: ohter_ent });
+                            break;
+                        }
+                    }
                 }
             }
         }
