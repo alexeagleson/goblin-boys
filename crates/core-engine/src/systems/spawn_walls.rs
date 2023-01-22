@@ -39,7 +39,6 @@ fn str_map_to_game_map(
                     pos: pos.clone(),
                     map_id: map.id(),
                 })
-                .insert(BlocksLight)
                 // .insert(BlocksMovement)
                 .insert(Renderable {
                     texture: SpriteTexture::FloorConcrete,

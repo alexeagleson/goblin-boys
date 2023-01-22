@@ -18,13 +18,14 @@ use data::{
     dialogue_contents::DialogueContents, dialogue_contents_str, enemy_configs::EnemyConfigs,
     enemy_configs_str, player_config::PlayerConfig, player_config_str,
 };
-use events::{TryAttack, TrySpeak};
 use resources::{DatabaseReceiver, DatabaseSender};
 use systems::{
-    combat::combat_system,
-    // pathing::pathing_system,
+    ai::ai_system,
+    death::death_system,
     persistence::{database_receiver_system, database_sender_system},
-    speaking::speaking_system,
+    resolve_melee_attack::resolve_melee_attack_system,
+    resolve_move::resolve_move_system,
+    resolve_speak::resolve_speak_system,
 };
 use tokio::sync::mpsc::{UnboundedReceiver, UnboundedSender};
 
@@ -70,13 +71,13 @@ pub fn start_game_engine(
         .insert_resource(ron::from_str::<DialogueContents>(dialogue_contents_str).unwrap())
         .add_event::<ShouldUpdateMap>()
         .add_event::<ShouldSendFullMapUpdateToClient>()
-        .add_event::<TryAttack>()
-        .add_event::<TrySpeak>()
         .add_startup_system(spawn_walls_system)
         .add_system(update_client_system.before(message_system))
         .add_system(message_system)
         .add_system(join_game_system.after(message_system))
         .add_system(movement_keys_system.after(message_system))
+        .add_system(ai_system.after(movement_keys_system))
+        .add_system(resolve_move_system.after(message_system))
         // .add_system(pathing_system.after(message_system))
         .add_system(mouse_hover_system.after(message_system))
         .add_system(mouse_click_system.after(message_system))
@@ -86,8 +87,9 @@ pub fn start_game_engine(
         .add_system(
             update_map_system.after(movement_keys_system), // .after(combat_system), // .after(pathing_system),
         )
-        .add_system(combat_system.after(update_map_system))
-        .add_system(speaking_system.after(update_map_system))
+        .add_system(resolve_melee_attack_system.after(update_map_system))
+        .add_system(death_system.after(resolve_melee_attack_system))
+        .add_system(resolve_speak_system.after(update_map_system))
         .add_system(database_sender_system.after(update_map_system))
         .add_system(database_receiver_system.after(update_map_system))
         .add_plugins(MinimalPlugins)

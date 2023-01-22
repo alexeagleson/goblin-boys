@@ -7,8 +7,8 @@ use crate::resources::map::{GameMap, VisibilityGrid};
 
 #[derive(Component)]
 pub struct Eyes {
-    visibility_grid: VisibilityGrid,
-    visible_distance: u32,
+    pub visibility_grid: VisibilityGrid,
+    pub visible_distance: u32,
 }
 
 impl Eyes {

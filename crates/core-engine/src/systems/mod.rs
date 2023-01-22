@@ -1,5 +1,6 @@
+pub mod ai;
 pub mod change_map;
-pub mod combat;
+pub mod death;
 pub mod join_game;
 pub mod leave_game;
 pub mod message;
@@ -8,7 +9,9 @@ pub mod mouse_hover;
 pub mod movement_keys;
 pub mod pathing;
 pub mod persistence;
+pub mod resolve_melee_attack;
+pub mod resolve_move;
+pub mod resolve_speak;
 pub mod spawn_walls;
-pub mod speaking;
 pub mod update_client;
 pub mod update_map;

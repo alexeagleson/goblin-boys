@@ -6,5 +6,9 @@
     combat_stats: (
       attack: 6,
       defense: 1
+    ),
+    hp: (
+        current: 50,
+        max: 50,
     )
 )
