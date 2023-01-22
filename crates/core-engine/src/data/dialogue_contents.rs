@@ -6,4 +6,6 @@ use serde::{Deserialize, Serialize};
 pub struct DialogueContents {
     pub rat: DialogueMap,
     pub sewer_kid: DialogueMap,
+    pub grace_jones: DialogueMap,
+    pub voidcat: DialogueMap,
 }

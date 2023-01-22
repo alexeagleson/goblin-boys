@@ -58,7 +58,14 @@ pub fn example_map_1_legend(character: char) -> (SpriteTexture, Option<DialogueM
         'd' => (SpriteTexture::NpcGoon2Frames4, None),
         'e' => (SpriteTexture::NpcGoon3Frames4, None),
         'f' => (SpriteTexture::NpcGoon4Frames4, None),
-        'g' => (SpriteTexture::NpcGraceJonesFrames6, None),
+        'g' => (
+            SpriteTexture::NpcGraceJonesFrames6,
+            Some(
+                ron::from_str::<DialogueContents>(dialogue_contents_str)
+                    .unwrap()
+                    .grace_jones,
+            ),
+        ),
         'h' => (SpriteTexture::NpcKingRatFrames4, None),
         'i' => (SpriteTexture::NpcMallChick1Frames6, None),
         'j' => (SpriteTexture::NpcMallChick2Frames6, None),
