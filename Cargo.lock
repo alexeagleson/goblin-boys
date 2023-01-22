@@ -1174,6 +1174,7 @@ dependencies = [
  "simple_astar",
  "tokio",
  "tv_shadowcasting",
+ "tv_utility_ai",
 ]
 
 [[package]]
@@ -3990,6 +3991,11 @@ dependencies = [
 name = "tv_shadowcasting"
 version = "0.1.1"
 source = "git+https://github.com/tylervipond/tv-shadowcasting#f5259c455ced9c4bfeccab874501639220b7725b"
+
+[[package]]
+name = "tv_utility_ai"
+version = "0.1.0"
+source = "git+https://github.com/tylervipond/tv-utility-ai#5047c960dd55efb19f69ed57848bbb2e3eec5c82"
 
 [[package]]
 name = "twoway"
