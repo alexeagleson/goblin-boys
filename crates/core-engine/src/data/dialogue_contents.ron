@@ -33,7 +33,7 @@ DialogueContents(
             response_2_id: Some(1), 
         ),
         1: (         
-            text: "Yeah I know.  Well... with great power, comes stink.",
+            text: "Yeah I know.  Well... with great power, comes great stink.",
         
             response_1_text: None,
             response_1_id: None,
