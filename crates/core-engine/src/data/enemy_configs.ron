@@ -3,7 +3,7 @@
         name: "Slime",
         blocks_movement: true,
         paths: true,
-        texture: objectSlime,
+        texture: npcSlime,
         hp: (
             current: 10,
             max: 10,
