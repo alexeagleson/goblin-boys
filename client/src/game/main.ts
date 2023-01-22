@@ -16,9 +16,7 @@ import { GAME_CONFIG_URI } from "../utility/config";
 import { addInputListeners, GameInputState } from "./input";
 import { CAMERA_SIZE, setCamera, TILE_SIZE } from "./camera";
 
-var punch = new Audio("punch.ogg");
-
-const music = new Audio("audio/music/supersewerslug.ogg");
+// var punch = new Audio("punch.ogg");
 
 let xPixel = 0;
 let yPixel = 0;
@@ -101,8 +99,9 @@ export const initializeGame = async (
         break;
       case "playSound":
         if (response.content == Sound.Punch) {
-          punch.currentTime = 0;
-          punch.play();
+          // punch.currentTime = 0;
+          // punch.play();
+          console.log("Request to play sound was received:", response.content);
         }
         break;
       default:
@@ -133,13 +132,6 @@ export const initializeGame = async (
       clearInterval(interval);
     }
   }, 100);
-
-  gameCanvas.onclick = () => {
-    if (music.currentTime === 0) {
-      music.play();
-      music.loop = true;
-    }
-  };
 
   return { gameCanvas, directionHandlers };
 };

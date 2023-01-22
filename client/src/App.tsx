@@ -10,6 +10,8 @@ import {
 } from "./components/NpcDialogue/NpcDialogue";
 import { MainTitle } from "./components/MainTitle/MainTitle";
 
+const music = new Audio("audio/music/supersewerslug.ogg");
+
 const gameInputState: GameInputState = { enabled: true };
 
 const App = () => {
@@ -102,6 +104,18 @@ const App = () => {
         }}
       >
         Test title sequence
+      </button>
+      <button
+        onClick={() => {
+          if (music.currentTime === 0) {
+            music.play();
+            music.loop = true;
+          } else {
+            music.pause();
+          }
+        }}
+      >
+        Test music
       </button>
       {enableMainTitle && <MainTitle />}
       {!enableMainTitle && (
