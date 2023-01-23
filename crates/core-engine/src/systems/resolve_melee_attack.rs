@@ -1,7 +1,10 @@
 use crate::{
     components::{
-        combat_stats::CombatStats, hp::Hp, intend_melee_attack::IntendMeleeAttack, MapPosition,
-        User,
+        combat_stats::CombatStats,
+        cooldown::{self, Cooldown},
+        hp::Hp,
+        intend_melee_attack::IntendMeleeAttack,
+        MapPosition, User,
     },
     resources::{MessageSenderAllClients, MessageSenderSingleClient},
 };
@@ -11,13 +14,22 @@ use core_api::{
 };
 
 pub fn resolve_melee_attack_system(
-    attacker_query: Query<(Entity, &CombatStats, &IntendMeleeAttack, &Name, &User)>,
+    attacker_query: Query<(
+        Entity,
+        &CombatStats,
+        &IntendMeleeAttack,
+        &Name,
+        Option<&User>,
+        &Cooldown,
+    )>,
     mut target_query: Query<(&CombatStats, &mut Hp, &Name, &MapPosition)>,
     mut commands: Commands,
     sender_all_clients: Res<MessageSenderAllClients>,
     sender_single_client: Res<MessageSenderSingleClient>,
 ) {
-    for (ent, combat_stats, intend_melee_attack, name, attacker_user) in attacker_query.iter() {
+    for (ent, combat_stats, intend_melee_attack, name, attacker_user, cooldown) in
+        attacker_query.iter()
+    {
         if let Ok((target_combat_stats, mut target_hp, target_name, target_map_pos)) =
             target_query.get_mut(intend_melee_attack.target)
         {
@@ -34,25 +46,24 @@ pub fn resolve_melee_attack_system(
                 .0
                 .send(ServerMessageAllClients::Damage(log_message))
                 .ok();
+            if let Some(user) = attacker_user {
+                sender_single_client
+                    .0
+                    .send((
+                        user.0,
+                        ServerMessageSingleClient::ShowAnimation {
+                            position: target_map_pos.pos.clone(),
+                            animation: AnimationTexture::AttackBatFrames4,
+                            time: cooldown.attack_time,
+                        },
+                    ))
+                    .ok();
 
-            sender_single_client
-                .0
-                .send((
-                    attacker_user.0,
-                    ServerMessageSingleClient::ShowAnimation {
-                        position: target_map_pos.pos.clone(),
-                        animation: AnimationTexture::AttackBatFrames4,
-                    },
-                ))
-                .ok();
-
-            sender_single_client
-                .0
-                .send((
-                    attacker_user.0,
-                    ServerMessageSingleClient::PlaySound(Sound::Punch),
-                ))
-                .ok();
+                sender_single_client
+                    .0
+                    .send((user.0, ServerMessageSingleClient::PlaySound(Sound::Punch)))
+                    .ok();
+            }
         }
         commands.entity(ent).remove::<IntendMeleeAttack>();
     }

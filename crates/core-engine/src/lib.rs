@@ -10,6 +10,7 @@ use bevy::{
     MinimalPlugins,
 };
 
+use components::cooldown;
 use core_api::{
     ClientMessage, DatabaseRequest, DatabaseResponse, ServerMessageAllClients,
     ServerMessageSingleClient, UserId,
@@ -21,6 +22,7 @@ use data::{
 use resources::{DatabaseReceiver, DatabaseSender, SpawnableEnemyBuffer};
 use systems::{
     ai::ai_system,
+    cooldown::cooldown_system,
     death::death_system,
     persistence::{database_receiver_system, database_sender_system},
     resolve_melee_attack::resolve_melee_attack_system,
@@ -76,6 +78,7 @@ pub fn start_game_engine(
         .add_startup_system(build_maps_system)
         .add_system(update_client_system.before(message_system))
         .add_system(message_system)
+        .add_system(cooldown_system)
         .add_system(join_game_system.after(message_system))
         .add_system(spawn_enemy_system.after(message_system))
         .add_system(movement_keys_system.after(message_system))

@@ -2,7 +2,7 @@ use bevy::prelude::*;
 use core_api::{EntityIndex, ServerMessageSingleClient, SpriteUpdate};
 
 use crate::{
-    components::{ai::Ai, eyes::Eyes, BlocksMovement, MapPosition, Renderable},
+    components::{ai::Ai, cooldown::Cooldown, eyes::Eyes, BlocksMovement, MapPosition, Renderable},
     data::enemy_configs::EnemyConfigs,
     resources::{
         map::BAD_GUY_MAP_ID,
@@ -26,7 +26,6 @@ pub fn spawn_enemy_system(
         .expect("Somehow the primary map does not exist");
 
     while let Some((_user_id, enemy)) = spawnable_enemy_buffer.0.pop_front() {
-        dbg!();
         // [TODO] Right now it's slime only but in the future it could be others
         let enemy_config = match enemy {
             core_api::SpawnableEnemy::Slime => &enemy_configs.slime,
@@ -48,9 +47,11 @@ pub fn spawn_enemy_system(
             .insert(enemy_config.hp.clone())
             .insert(enemy_config.combat_stats.clone())
             .insert(BlocksMovement)
-            .insert(Ai {
-                action: None,
-                cooldown: 0.0,
+            .insert(Ai { action: None })
+            .insert(Cooldown {
+                time_remaining: 0.0,
+                attack_time: enemy_config.attack_time,
+                move_time: enemy_config.move_time,
             })
             .insert(Eyes::new(bad_guy_map, enemy_config.visibility));
 

@@ -345,12 +345,13 @@ export const createGameApp = async (
 
   const attackSprite = await prepAttackAnimation();
 
-  const showAttackAnimation = (pos: Position) => {
+  const showAttackAnimation = (pos: Position, time: number) => {
     const screenPos = mapPosToScreenPos(pos);
     attackSprite.visible = true;
     const pxPos = tileToPx(screenPos);
     attackSprite.x = pxPos.x;
     attackSprite.y = pxPos.y;
+    attackSprite.animationSpeed = ((1 / attackSprite.totalFrames) * 1) / time;
     attackSprite.play();
   };
 

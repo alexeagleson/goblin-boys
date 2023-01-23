@@ -1,5 +1,6 @@
 pub mod ai;
 pub mod change_map;
+pub mod cooldown;
 pub mod death;
 pub mod join_game;
 pub mod leave_game;
