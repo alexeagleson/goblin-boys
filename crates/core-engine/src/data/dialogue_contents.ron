@@ -24,8 +24,8 @@ DialogueContents(
             response_2_id: None,
         ),
     }),
-    grace_jones: DialogueMap({
-        0: (         
+    GraceJones: DialogueMap({
+         0: (         
             text: "What are you doing out here so late, Shweetheart?",
             response_1_text: Some("Just enjoying the moonlight"),
             response_1_id: Some(1),
@@ -40,21 +40,20 @@ DialogueContents(
             response_2_id: None,
         ),
         2: (         
-            text: "Just that there's been all these strange things happening *side eyes, reaches for pepper spray in purse*",
+           text: "Just that there's been all these strange things happening *side eyes, reaches for pepper spray in purse*",
             response_1_text: None,
             response_1_id: None,
             response_2_text: None,
             response_2_id: None,
         ),
-           }),
     voidcat: DialogueMap({
-        0: (         
+            0: (         
             text: "Mrrow",
             response_1_text: Some("Pspspspspsps"),
             response_1_id: Some(1),
             response_2_text: Some("Meow!"),
             response_2_id: Some(2), 
-        ),
+         ),
         1: (         
             text: "Pūrrrrrrrrr",
             response_1_text: None,
