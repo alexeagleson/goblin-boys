@@ -10,4 +10,6 @@ pub struct PlayerConfig {
     pub texture: SpriteTexture,
     pub combat_stats: CombatStats,
     pub hp: Hp,
+    pub attack_time: f32,
+    pub move_time: f32,
 }

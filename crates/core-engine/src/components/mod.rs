@@ -10,6 +10,7 @@ use ae_position::Position;
 use bevy::prelude::Component;
 use core_api::{SpriteTexture, UserId};
 pub mod ai;
+pub mod cooldown;
 
 use super::resources::world::MapId;
 

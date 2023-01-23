@@ -8,8 +8,7 @@ pub enum AiAction {
     Wander(Position),
 }
 
-#[derive(Component, Debug)]
+#[derive(Component, Debug, Default)]
 pub struct Ai {
     pub action: Option<AiAction>,
-    pub cooldown: f32
 }

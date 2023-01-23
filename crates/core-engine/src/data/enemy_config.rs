@@ -1,8 +1,8 @@
 use bevy::prelude::Resource;
 use core_api::SpriteTexture;
-use serde::{Serialize, Deserialize};
+use serde::{Deserialize, Serialize};
 
-use crate::components::{combat_stats::CombatStats, hp::Hp};
+use crate::components::{combat_stats::CombatStats, cooldown::Cooldown, hp::Hp};
 
 #[derive(Debug, Deserialize, Serialize, Resource)]
 pub struct EnemyConfig {
@@ -13,4 +13,6 @@ pub struct EnemyConfig {
     pub texture: SpriteTexture,
     pub hp: Hp,
     pub combat_stats: CombatStats,
+    pub attack_time: f32,
+    pub move_time: f32,
 }

@@ -3,8 +3,8 @@ use core_api::SpriteTexture;
 
 use crate::{
     components::{
-        ai::Ai, eyes::Eyes, paths::Paths, speaks::Speaks, BlocksLight, BlocksMovement, Item,
-        MapPosition, Renderable, User,
+        ai::Ai, cooldown::Cooldown, eyes::Eyes, paths::Paths, speaks::Speaks, BlocksLight,
+        BlocksMovement, Item, MapPosition, Renderable, User,
     },
     data::{
         dialogue_contents::DialogueContents, enemy_configs::EnemyConfigs,
@@ -51,12 +51,17 @@ pub fn join_game_system(
                 texture: SpriteTexture::PcKidZilla,
             })
             .insert(player_config.combat_stats.clone())
-            .insert(player_config.hp.clone());
+            .insert(player_config.hp.clone())
+            .insert(Cooldown {
+                time_remaining: 0.0,
+                move_time: player_config.move_time,
+                attack_time: player_config.attack_time,
+            });
 
         // Track the current map the new user is on
         current_user_maps.0.insert(user_id, player_map_position);
 
-        // // Spawn a slime every time a new player joins
+        // Spawn a slime every time a new player joins
         // let mut slime_commands = commands.spawn(Item);
         // let slime_config = &enemy_configs.slime;
         // slime_commands
@@ -72,9 +77,11 @@ pub fn join_game_system(
         //     .insert(slime_config.hp.clone())
         //     .insert(slime_config.combat_stats.clone())
         //     .insert(BlocksMovement)
-        //     .insert(Ai {
-        //         action: None,
-        //         cooldown: 0.0,
+        //     .insert(Ai::default())
+        //     .insert(Cooldown {
+        //         time_remaining: 0.0,
+        //         move_time: slime_config.move_time,
+        //         attack_time: slime_config.attack_time,
         //     })
         //     .insert(Eyes::new(map, slime_config.visibility));
 

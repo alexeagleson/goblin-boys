@@ -24,7 +24,7 @@ DialogueContents(
             response_2_id: None,
         ),
     }),
-    GraceJones: DialogueMap({
+    grace_jones: DialogueMap({
          0: (         
             text: "What are you doing out here so late, Shweetheart?",
             response_1_text: Some("Just enjoying the moonlight"),
@@ -46,6 +46,7 @@ DialogueContents(
             response_2_text: None,
             response_2_id: None,
         ),
+    }),
     voidcat: DialogueMap({
             0: (         
             text: "Mrrow",
@@ -85,7 +86,7 @@ DialogueContents(
             response_2_text: None,
             response_2_id: None,
         ),
-    })
+    }),
 )
 
 // hi

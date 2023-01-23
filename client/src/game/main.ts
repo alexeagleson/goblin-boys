@@ -68,13 +68,10 @@ export const initializeGame = async (
 
     switch (response.type) {
       case "showAnimation":
-        // console.log(response.content);
-        showAttackAnimation(response.content.position);
-
+        showAttackAnimation(response.content.position, response.content.time);
         break;
       case "showDialogue":
         onDialogue(response.content);
-
         break;
       case "centreCamera":
         setCamera(response.content);

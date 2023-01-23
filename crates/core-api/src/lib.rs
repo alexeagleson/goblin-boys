@@ -161,6 +161,7 @@ pub enum ServerMessageSingleClient {
     ShowAnimation {
         position: Position,
         animation: AnimationTexture,
+        time: f32,
     },
 }
 

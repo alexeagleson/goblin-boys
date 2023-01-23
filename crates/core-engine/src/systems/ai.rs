@@ -1,6 +1,7 @@
 use crate::{
     components::{
         ai::{Ai, AiAction},
+        cooldown::Cooldown,
         eyes::Eyes,
         hp::Hp,
         intend_melee_attack::IntendMeleeAttack,
@@ -68,16 +69,14 @@ fn make_wander_action(position: &Position) -> WeightedAction<AiAction> {
 }
 
 pub fn ai_system(
-    mut query: Query<(Entity, &mut Ai, &MapPosition, &Eyes)>,
+    mut query: Query<(Entity, &mut Ai, &mut Cooldown, &MapPosition, &Eyes)>,
     visible_user_query: Query<(Entity, &User, &Hp, &MapPosition)>,
     chase_target_query: Query<(&MapPosition)>,
     mut commands: Commands,
     game_world: Res<GameWorld>,
-    time: Res<Time>,
 ) {
-    for (ent, mut ai, map_pos, eyes) in query.iter_mut() {
-        if ai.cooldown > 0.0 {
-            ai.cooldown -= time.delta().as_secs_f32();
+    for (ent, mut ai, mut cooldown, map_pos, eyes) in query.iter_mut() {
+        if cooldown.time_remaining > 0.0 {
             continue;
         }
         let mut weighted_actions: Vec<WeightedAction<AiAction>> = vec![];
@@ -125,19 +124,17 @@ pub fn ai_system(
                 .cloned(),
             };
             if let Some(position) = position {
-                println!("got position {:?}", position);
                 weighted_actions.push(make_wander_action(&position));
             }
             // we hold the ai action to give the next chosen action some additional weight
             // choice offset should use random number here
             ai.action = choose_action_fuzzy(weighted_actions, 0.1, 0.6);
-            ai.cooldown = 1.0;
-            println!("{:?}", &ai.action);
             match &ai.action {
                 Some(AiAction::Attack(target_ent)) => {
                     commands.entity(ent).insert(IntendMeleeAttack {
                         target: target_ent.clone(),
                     });
+                    cooldown.time_remaining = cooldown.attack_time;
                 }
                 Some(AiAction::Chase(target_ent)) => {
                     if let Ok(target_pos) = chase_target_query.get(target_ent.clone()) {
@@ -147,6 +144,7 @@ pub fn ai_system(
                                 position: Position::from_idx(*idx as usize, map.width() as usize),
                             });
                         }
+                        cooldown.time_remaining = cooldown.move_time;
                     }
                 }
                 Some(AiAction::Wander(pos)) => {
@@ -155,6 +153,7 @@ pub fn ai_system(
                         commands.entity(ent).insert(IntendMove {
                             position: Position::from_idx(*idx as usize, map.width() as usize),
                         });
+                        cooldown.time_remaining = cooldown.move_time;
                     }
                 }
                 None => {}
