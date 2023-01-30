@@ -2,7 +2,7 @@ use bevy::prelude::Resource;
 use core_api::SpriteTexture;
 use serde::{Deserialize, Serialize};
 
-use crate::components::{combat_stats::CombatStats, cooldown::Cooldown, hp::Hp};
+use crate::components::{combat_stats::CombatStats, hp::Hp};
 
 #[derive(Debug, Deserialize, Serialize, Resource)]
 pub struct EnemyConfig {

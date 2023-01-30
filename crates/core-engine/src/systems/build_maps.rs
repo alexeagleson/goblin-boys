@@ -60,6 +60,8 @@ fn str_map_to_game_map(
 
                 let blocks_movement_and_light = match sprite {
                     SpriteTexture::WallBrick => true,
+                    SpriteTexture::WallStone => true,
+
                     SpriteTexture::PcBoneyBoi => true,
                     SpriteTexture::PcKidZilla => true,
                     SpriteTexture::ObjectRedSoda => true,
@@ -98,10 +100,15 @@ fn str_map_to_game_map(
                     SpriteTexture::PcGhostBoyFrames8 => true,
                     SpriteTexture::ObjectNewspaper => true,
                     SpriteTexture::NpcRealEstateDickFrames21 => true,
+                    SpriteTexture::ObjectShoreFrames4 => false,
+                    SpriteTexture::ObjectWaterFrames4 => true,
+                    SpriteTexture::ObjectSand => false,
                 };
 
                 let name = match sprite {
                     SpriteTexture::WallBrick => "Brick Wall".to_string(),
+                    SpriteTexture::WallStone => "Stone Wall".to_string(),
+
                     SpriteTexture::PcBoneyBoi => "Boney Boi".to_string(),
                     SpriteTexture::PcKidZilla => "Kidzilla".to_string(),
                     SpriteTexture::ObjectRedSoda => "Soda".to_string(),
@@ -138,6 +145,9 @@ fn str_map_to_game_map(
                     SpriteTexture::PcGhostBoyFrames8 => "Ghost Boy".to_string(),
                     SpriteTexture::ObjectNewspaper => "Newspaper".to_string(),
                     SpriteTexture::NpcRealEstateDickFrames21 => "Real Estate Dick".to_string(),
+                    SpriteTexture::ObjectShoreFrames4 => "Shore".to_string(),
+                    SpriteTexture::ObjectWaterFrames4 => "Moving Water".to_string(),
+                    SpriteTexture::ObjectSand => "Sand".to_string(),
                 };
 
                 sprite_command.insert(Name::new(name));

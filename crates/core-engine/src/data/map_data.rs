@@ -26,55 +26,30 @@ pub fn str_map_dimensions(str_map: &str) -> Dimensions2d {
 
 // EXAMPLE_MAP_1
 
-pub const DEFAULT_FLOOR_MAP_1: SpriteTexture = SpriteTexture::FloorConcrete;
+pub const DEFAULT_FLOOR_MAP_1: SpriteTexture = SpriteTexture::FloorGrass;
 
 pub const EXAMPLE_MAP_1: &str = r#"
-###############################################
-#q.#######........#...........................#
-#.......##...ww...#...........................#
-##...........www..#.......@...........o.......#
-##......##........#..........y.z..............#
-##......##........#..hh...............n.......#
-##......##........#..h........................#
-##.............s..#............x......m.......#
-##########....................................#
-#########################.............l.......#
-#.............................................#
-#.................a.b.c.d.e.f.g.h.i.j.k.......#
-#.........p...r.s.t.u.v.......................#
-#.............................................#
-###############################################
-###############################################
-###############################################
-###############################################
-###############################################
-###############################################
-###############################################
-###############################################
-###############################################
-###############################################
-###############################################
-###############################################
-###############################################
-###############################################
-###############################################
-###############################################
-###############################################
-###############################################
-###############################################
-###############################################
-###############################################
-###############################################
-###############################################
-###############################################
-###############################################
-###############################################
-###############################################
+#################################################BBBBBBBBBBBBBBBB
+#q.#######........#..........................CCABBBBBBBBBBBBBBBBB
+#.......##...ww...#..........................CCABBBBBBBBBBBBBBBBB
+##...........www..#.......@...........o......CCABBBBBBBBBBBBBBBBB
+##......##........#..........y.z.............CCABBBBBBBBBBBBBBBBB
+##......##........#..hh...............n......CCABBBBBBBBBBBBBBBBB
+##......##........#..h.......................CCABBBBBBBBBBBBBBBBB
+##.............s..#............x......m......CCABBBBBBBBBBBBBBBBB
+##########...................................CCABBBBBBBBBBBBBBBBB
+#########################.............l......CCABBBBBBBBBBBBBBBBB
+#............................................CCABBBBBBBBBBBBBBBBB
+#.................a.b.c.d.e.f.g.h.i.j.k......CCABBBBBBBBBBBBBBBBB
+#.........p...r.s.t.u.v......................CCABBBBBBBBBBBBBBBBB
+#............................................CCABBBBBBBBBBBBBBBBB
+############################################.CCABBBBBBBBBBBBBBBBB
+#################################################BBBBBBBBBBBBBBBB
 "#;
 
 pub fn example_map_1_legend(character: char) -> (SpriteTexture, Option<DialogueMap>) {
     match character {
-        '#' => (SpriteTexture::WallBrick, None),
+        '#' => (SpriteTexture::WallStone, None),
         's' => (SpriteTexture::ObjectSewerGrate, None),
         '.' => (SpriteTexture::Empty, None),
         'w' => (SpriteTexture::ObjectWater, None),
@@ -131,6 +106,9 @@ pub fn example_map_1_legend(character: char) -> (SpriteTexture, Option<DialogueM
         'y' => (SpriteTexture::NpcRealEstateDickFrames21, None),
         'z' => (SpriteTexture::ObjectNewspaper, None),
         '@' => (SpriteTexture::ObjectRedSoda, None),
+        'A' => (SpriteTexture::ObjectShoreFrames4, None),
+        'B' => (SpriteTexture::ObjectWaterFrames4, None),
+        'C' => (SpriteTexture::ObjectSand, None),
         _ => panic!(
             "Encountered an unrecognized character on map 1: {}",
             character
@@ -140,7 +118,7 @@ pub fn example_map_1_legend(character: char) -> (SpriteTexture, Option<DialogueM
 
 // EXAMPLE_MAP_2
 
-pub const DEFAULT_FLOOR_MAP_2: SpriteTexture = SpriteTexture::FloorGrass;
+pub const DEFAULT_FLOOR_MAP_2: SpriteTexture = SpriteTexture::FloorConcrete;
 
 pub const EXAMPLE_MAP_2: &str = r#"
 ###########################

@@ -35,7 +35,6 @@ pub fn message_system(
                 mouse_click_buffer.0.push_back((id, pos));
             }
             ClientMessage::Spawn(enemy) => {
-                dbg!();
                 spawnable_enemy_buffer.0.push_back((id, enemy));
             },
             ClientMessage::KeepAlive => {
