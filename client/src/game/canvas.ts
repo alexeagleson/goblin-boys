@@ -95,13 +95,13 @@ export const createGameApp = async (
         const animationsArray: any[] = [];
         const framesArray = {} as any;
         for (let i = 0; i < framesNum; i++) {
-          framesArray[`animFrame${i}`] = {
+          framesArray[`animFrame${i}${textureId}`] = {
             frame: { x: i * 16, y: 0, w: 16, h: 16 },
             sourceSize: { w: 16, h: 16 },
             spriteSourceSize: { x: 0, y: 0, w: 16, h: 16 },
           };
 
-          animationsArray.push(`animFrame${i}`);
+          animationsArray.push(`animFrame${i}${textureId}`);
         }
 
         // Create object to store sprite sheet data
@@ -280,6 +280,7 @@ export const createGameApp = async (
     log.trace("Removing sprite for player", entityIndex.idx);
     const spritePosition = getSpritePositionUnsafe(entityIndex);
     app.stage.removeChild(spritePosition.sprite);
+    spriteMap.delete(entityIndex.idx);
   };
 
   const gameCanvas = app.view as HTMLCanvasElement;
@@ -288,13 +289,13 @@ export const createGameApp = async (
     const animationsArray: any[] = [];
     const framesArray = {} as any;
     for (let i = 0; i < 4; i++) {
-      framesArray[`animFrame${i}`] = {
+      framesArray[`animFrame${i}${`attackBatFrames4`}`] = {
         frame: { x: i * 16, y: 0, w: 16, h: 16 },
         sourceSize: { w: 16, h: 16 },
         spriteSourceSize: { x: 0, y: 0, w: 16, h: 16 },
       };
 
-      animationsArray.push(`animFrame${i}`);
+      animationsArray.push(`animFrame${i}${`attackBatFrames4`}`);
     }
 
     // Create object to store sprite sheet data

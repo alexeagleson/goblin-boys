@@ -85,6 +85,7 @@ pub fn ai_system(
                 map.visibility_grid_from_position(&map_pos.pos, eyes.visible_distance);
             for (user_ent, _user, user_hp, user_pos) in visible_user_query.iter() {
                 if user_pos.map_id == map_pos.map_id
+                // [TODO] possible panic on `position_visible`
                     && visibility_grid.position_visible(&user_pos.pos)
                 {
                     if is_adjacent(&user_pos.pos, &map_pos.pos) {

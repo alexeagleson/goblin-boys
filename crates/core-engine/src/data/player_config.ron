@@ -10,6 +10,6 @@
         current: 50,
         max: 50,
     ),
-    attack_time: 0.3,
-    move_time: 0.25
+    attack_time: 0.2,
+    move_time: 0.05
 )

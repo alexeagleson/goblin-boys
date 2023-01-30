@@ -17,3 +17,4 @@ pub mod build_maps;
 pub mod update_client;
 pub mod update_map;
 pub mod spawn_enemy;
+pub mod debug;

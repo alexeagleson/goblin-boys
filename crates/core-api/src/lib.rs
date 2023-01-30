@@ -123,6 +123,14 @@ pub enum Sound {
 }
 
 #[typeshare]
+#[derive(Serialize, Deserialize, Debug, Clone, Copy)]
+#[serde(rename_all = "camelCase")]
+/// Tell client to play audio
+pub struct DebugData {
+    pub num_enemies: i32,
+}
+
+#[typeshare]
 #[derive(Deserialize, Debug, Clone)]
 #[serde(rename_all = "camelCase", tag = "type", content = "content")]
 /// An input interaction from the client
@@ -135,7 +143,7 @@ pub enum ClientMessage {
     /// Clients should send every 30 seconds or so to
     /// keep from getting your socket closed when hosting on free services
     KeepAlive,
-    Spawn(SpawnableEnemy)
+    Spawn(SpawnableEnemy),
 }
 
 #[typeshare]
@@ -178,6 +186,7 @@ pub enum ServerMessageAllClients {
     MoveCount(i32),
     Damage(LogMessage),
     Death(LogMessage),
+    Debug(DebugData),
 }
 
 #[derive(Debug)]

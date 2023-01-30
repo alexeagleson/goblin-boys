@@ -50,13 +50,14 @@ pub struct SpawnableEnemyBuffer(pub VecDeque<(UserId, SpawnableEnemy)>);
 
 
 #[derive(Resource)]
-pub struct MoveStopwatch(pub Stopwatch);
+pub struct DebugStopwatch(pub Stopwatch);
 
-impl MoveStopwatch {
+impl DebugStopwatch {
     pub fn new() -> Self {
         Self(Stopwatch::new())
     }
 }
+
 
 #[derive(Resource, Default)]
 

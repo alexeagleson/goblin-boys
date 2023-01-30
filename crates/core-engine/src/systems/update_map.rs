@@ -21,8 +21,6 @@ pub fn update_map_system(
         return;
     }
 
-    dbg!("update map ran");
-
     let mut updated_maps: Vec<MapId> = vec![];
     ev_update_maps.iter().for_each(|event| {
         let update_map_id = event.0;

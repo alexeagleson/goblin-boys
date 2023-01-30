@@ -1,0 +1,11 @@
+.debug-menu {
+    z-index: 1;
+    /* position: absolute; */
+    padding: 4px;
+    background-color: black;
+    border: 1px solid white;
+    color: white;
+    border-radius: 4px;
+    /* width: auto; */
+  }
+  

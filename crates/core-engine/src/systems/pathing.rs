@@ -6,12 +6,15 @@ use core_api::{EntityIndex, ServerMessageSingleClient, SpriteUpdate};
 use crate::{
     components::{paths::Paths, BlocksLight, BlocksMovement, MapPosition, Renderable, User},
     events::ShouldUpdateMap,
-    resources::{world::GameWorld, CurrentUserMaps, MessageSenderSingleClient, MoveStopwatch},
+    resources::{world::GameWorld, CurrentUserMaps, MessageSenderSingleClient, DebugStopwatch},
 };
 
+/// THIS SYSTEM IS NO LONGER USED CAN PROBABLY DELETE
+/// THIS SYSTEM IS NO LONGER USED CAN PROBABLY DELETE
+/// 
 /// Move randomly
 pub fn pathing_system(
-    mut move_stopwatch: ResMut<MoveStopwatch>,
+    mut move_stopwatch: ResMut<DebugStopwatch>,
     // sender: Res<MessageSenderAllClients>,
     game_world: Res<GameWorld>,
     time: Res<Time>,

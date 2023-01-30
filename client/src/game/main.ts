@@ -16,6 +16,7 @@ import { assertNever, log } from "../utility/functions";
 import { GAME_CONFIG_URI } from "../utility/config";
 import { addInputListeners, GameInputState } from "./input";
 import { CAMERA_SIZE, setCamera, TILE_SIZE } from "./camera";
+import { DebugMenuProps } from "../components/DebugMenu/DebugMenu";
 
 var punch = new Audio("audio/sfx/punch.ogg");
 
@@ -37,7 +38,8 @@ export const initializeGame = async (
     entity_name: string;
     dialogue_map: DialogueMap;
   }) => void,
-  gameInputState: GameInputState
+  gameInputState: GameInputState,
+  setDebugMenuProps: (props: DebugMenuProps) => void
 ) => {
   // const mapDimensionsResponse = await fetch(GAME_CONFIG_URI, { method: "GET" });
 
@@ -120,11 +122,15 @@ export const initializeGame = async (
         onDeath(response.content);
         break;
       case "playSound":
-        if (response.content == Sound.Punch) {
-          punch.currentTime = 0;
-          punch.play();
-          // console.log("Request to play sound was received:", response.content);
-        }
+        // if (response.content == Sound.Punch) {
+        //   punch.currentTime = 0;
+        //   punch.play();
+        //   // console.log("Request to play sound was received:", response.content);
+        // }
+        break;
+      case "debug":
+        // console.log(response.content);
+        setDebugMenuProps(response.content);
         break;
       default:
         assertNever(response);

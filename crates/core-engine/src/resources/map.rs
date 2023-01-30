@@ -35,7 +35,14 @@ impl VisibilityGrid {
 
     pub fn position_visible(&self, pos: &Position) -> bool {
         // [TODO] This has panicked before
-        self.grid[pos.to_idx(self.width)] == 1
+        let grid_pos = self.grid.get(pos.to_idx(self.width));
+        match grid_pos {
+            Some(grid_pos) => *grid_pos == 1,
+            None => {
+                panic!("position_visible panicked on {:?}", pos)
+            },
+        }
+        // self.grid[pos.to_idx(self.width)] == 1
     }
 
     // #[allow(dead_code)]
@@ -96,19 +103,6 @@ fn index_grid_to_positions(grid: &IndexGrid, grid_width: usize, blocking: bool) 
         .filter_map(|(idx, val)| (*val == check_val).then(|| Position::from_idx(idx, grid_width)))
         .collect()
 }
-
-/// Can use to print either an array of light blocking entities or
-/// a map of visible tiles, both use the same format
-// fn pretty_print_idx_map(idxs: &[u8]) {
-//     println!();
-//     for y in 0..MAP_HEIGHT {
-//         for x in 0..MAP_WIDTH {
-//             print!("{}", idxs[(MAP_WIDTH * y) as usize + x as usize])
-//         }
-//         println!();
-//     }
-//     println!();
-// }
 
 #[derive(Debug, Resource)]
 pub struct GameMap {
@@ -241,11 +235,26 @@ impl GameMap {
             })
     }
 
+    /// Can use to print either an array of light blocking entities or
+    /// a map of visible tiles, both use the same format
+    fn pretty_print_idx_map(&self, idxs: &[u8]) {
+        println!();
+        for y in 0..self.height() {
+            for x in 0..self.width() {
+                print!("{}", idxs[(self.width() * y) as usize + x as usize])
+            }
+            println!();
+        }
+        println!();
+    }
+
     /// Returns a random position on the map that doesn't block movement
     pub fn random_movement_unblocked_tile(&self) -> Position {
         let map_width = self.width() as usize;
         let unblocked_positions =
             index_grid_to_positions(&self.movement_blocking_grid.0, map_width, false);
+
+        // self.pretty_print_idx_map(&self.movement_blocking_grid.0);
 
         let position = unblocked_positions
             .choose(&mut rand::thread_rng())

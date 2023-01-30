@@ -9,6 +9,7 @@ import {
   NpcDialogueProps,
 } from "./components/NpcDialogue/NpcDialogue";
 import { MainTitle } from "./components/MainTitle/MainTitle";
+import { DebugMenu, DebugMenuProps } from "./components/DebugMenu/DebugMenu";
 
 const music = new Audio("audio/music/supersewerslug.ogg");
 
@@ -28,6 +29,8 @@ const App = () => {
   const [directionHandlers, setDirectionHandlers] =
     useState<DirectionHandlers>();
   const [enableMainTitle, setEnableMainTitle] = useState<boolean>(false);
+
+  const [debugMenuProps, setDebugMenuProps] = useState<DebugMenuProps>();
 
   const onHover = (x: number, y: number, entityData?: EntityData) => {
     if (!entityData) {
@@ -78,7 +81,8 @@ const App = () => {
         onDamage,
         setMoveCount,
         onDialogue,
-        gameInputState
+        gameInputState,
+        setDebugMenuProps
       ).then(({ gameCanvas, directionHandlers: dirHandlers, spawnSlime }) => {
         spawnHandler = spawnSlime;
         setDirectionHandlers(dirHandlers);
@@ -107,6 +111,7 @@ const App = () => {
 
   return (
     <>
+      {debugMenuProps && <DebugMenu {...debugMenuProps} />}
       <button
         onClick={() => {
           setEnableMainTitle((oldVal) => !oldVal);

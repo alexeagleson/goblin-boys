@@ -8,6 +8,7 @@ use crate::{
         example_map_1_legend, example_map_2_legend, DEFAULT_FLOOR_MAP_1, DEFAULT_FLOOR_MAP_2,
         EXAMPLE_MAP_1, EXAMPLE_MAP_2,
     },
+    events::ShouldUpdateMap,
     resources::{
         map::GameMap,
         world::{GameWorld, MapId},
@@ -97,7 +98,6 @@ fn str_map_to_game_map(
                     SpriteTexture::PcGhostBoyFrames8 => true,
                     SpriteTexture::ObjectNewspaper => true,
                     SpriteTexture::NpcRealEstateDickFrames21 => true,
-                    
                 };
 
                 let name = match sprite {
@@ -138,8 +138,6 @@ fn str_map_to_game_map(
                     SpriteTexture::PcGhostBoyFrames8 => "Ghost Boy".to_string(),
                     SpriteTexture::ObjectNewspaper => "Newspaper".to_string(),
                     SpriteTexture::NpcRealEstateDickFrames21 => "Real Estate Dick".to_string(),
-
-                    
                 };
 
                 sprite_command.insert(Name::new(name));
@@ -162,7 +160,11 @@ fn str_map_to_game_map(
 }
 
 /// Adds the all tiles to the maps on initial load
-pub fn build_maps_system(game_world: Res<GameWorld>, mut commands: Commands) {
+pub fn build_maps_system(
+    game_world: Res<GameWorld>,
+    mut commands: Commands,
+    mut ev_update_map: EventWriter<ShouldUpdateMap>,
+) {
     for map in game_world.game_maps.values() {
         if map.id() == (MapId(1)) {
             str_map_to_game_map(
@@ -181,5 +183,6 @@ pub fn build_maps_system(game_world: Res<GameWorld>, mut commands: Commands) {
                 DEFAULT_FLOOR_MAP_2,
             );
         }
+        ev_update_map.send(ShouldUpdateMap(map.id()));
     }
 }

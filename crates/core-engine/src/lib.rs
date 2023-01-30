@@ -28,7 +28,7 @@ use systems::{
     resolve_melee_attack::resolve_melee_attack_system,
     resolve_move::resolve_move_system,
     resolve_speak::resolve_speak_system,
-    spawn_enemy::spawn_enemy_system,
+    spawn_enemy::spawn_enemy_system, debug::debug_system,
 };
 use tokio::sync::mpsc::{UnboundedReceiver, UnboundedSender};
 
@@ -37,7 +37,7 @@ use crate::{
     resources::{
         world::GameWorld, ConnectBuffer, CurrentUserMaps, DisconnectBuffer, KeypressBuffer,
         MessageReceiver, MessageSenderAllClients, MessageSenderSingleClient, MouseClickBuffer,
-        MouseHoverBuffer, MoveStopwatch,
+        MouseHoverBuffer, DebugStopwatch,
     },
     systems::{
         build_maps::build_maps_system, change_map::change_map_system, join_game::join_game_system,
@@ -67,7 +67,7 @@ pub fn start_game_engine(
         .insert_resource(MouseHoverBuffer::default())
         .insert_resource(MouseClickBuffer::default())
         .insert_resource(SpawnableEnemyBuffer::default())
-        .insert_resource(MoveStopwatch::new())
+        .insert_resource(DebugStopwatch::new())
         .insert_resource(Time::default())
         .insert_resource(CurrentUserMaps::default())
         .insert_resource(ron::from_str::<PlayerConfig>(player_config_str).unwrap())
@@ -85,7 +85,8 @@ pub fn start_game_engine(
         .add_system(ai_system.after(movement_keys_system))
         .add_system(resolve_move_system.after(message_system))
         // .add_system(pathing_system.after(message_system))
-        .add_system(mouse_hover_system.after(message_system))
+        // THIS SYSTEM WILL PANIC
+        // .add_system(mouse_hover_system.after(message_system))
         .add_system(mouse_click_system.after(message_system))
         .add_system(leave_game_system.after(message_system))
         .add_system(change_map_system.after(message_system))
@@ -98,6 +99,7 @@ pub fn start_game_engine(
         .add_system(resolve_speak_system.after(update_map_system))
         .add_system(database_sender_system.after(update_map_system))
         .add_system(database_receiver_system.after(update_map_system))
+        .add_system(debug_system.after(database_receiver_system))
         .add_plugins(MinimalPlugins)
         .run();
 }
