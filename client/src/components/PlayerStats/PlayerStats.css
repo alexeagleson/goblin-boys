@@ -1,0 +1,14 @@
+.health-bar-wrapper {
+    width: 200px;
+    height: 10px;
+    display: block;
+    border: 2px solid black;
+  }
+
+.health-bar {
+  /* width: 100%; */
+  height: 100%;
+  display: block;
+  background-color: red;
+  transition: width 0.25s ease-in-out;
+}

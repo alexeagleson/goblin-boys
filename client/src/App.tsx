@@ -19,6 +19,7 @@ import {
   DamageNumber,
   DamageNumberProps,
 } from "./components/DamageNumber/DamageNumber";
+import { PlayerStats } from "./components/PlayerStats/PlayerStats";
 
 const music = new Audio("audio/music/supersewerslug.ogg");
 
@@ -35,6 +36,11 @@ const PLAYER_SPRITE_NAMES = [
 ] as const;
 
 export type PlayerSpriteName = typeof PLAYER_SPRITE_NAMES[number];
+
+export type PlayerStats = Extract<
+  ServerMessageSingleClient,
+  { type: "showDamage" }
+>["content"];
 
 const App = () => {
   const initialized = useRef<boolean>(false);
@@ -61,6 +67,8 @@ const App = () => {
     useState<PlayerSpriteName>("KidZilla");
 
   const [playerName, setPlayerName] = useState<string>("Player");
+
+  const [playerStats, setPlayerStats] = useState<PlayerStats>();
 
   const onHover = (x: number, y: number, entityData?: EntityData) => {
     if (!entityData) {
@@ -115,7 +123,8 @@ const App = () => {
           setDebugMenuProps,
           (payload) => setDamageNumbers((prev) => [...prev, payload]),
           playerSprite,
-          playerName
+          playerName,
+          setPlayerStats
         ).then(({ gameCanvas, directionHandlers: dirHandlers, spawnSlime }) => {
           spawnHandler = spawnSlime;
           setDirectionHandlers(dirHandlers);
@@ -208,6 +217,7 @@ const App = () => {
           {!enableMainTitle && (
             <div className="game-container">
               <p>All time totals moves: {moveCount}</p>
+
               <div className="canvas-and-log-container">
                 <div className="canvas-container" ref={canvasContainer}>
                   {damageNumbers.map((damProps, idx) => (
@@ -222,6 +232,9 @@ const App = () => {
                 <div ref={logContainer} className="log-container">
                   <Log log={log} />
                 </div>
+              </div>
+              <div style={{ display: "flex", flexDirection: "row" }}>
+                Hp: {playerStats && <PlayerStats playerStats={playerStats} />}
               </div>
             </div>
           )}

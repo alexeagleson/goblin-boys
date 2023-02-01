@@ -23,7 +23,7 @@ import { addInputListeners, GameInputState } from "./input";
 import { CAMERA_SIZE, mapPosToScreenPos, setCamera, TILE_SIZE } from "./camera";
 import { DebugMenuProps } from "../components/DebugMenu/DebugMenu";
 import { DamageNumberProps } from "../components/DamageNumber/DamageNumber";
-import { PlayerSpriteName } from "../App";
+import { PlayerSpriteName, PlayerStats } from "../App";
 
 var punch = new Audio("audio/sfx/punch.ogg");
 
@@ -59,7 +59,8 @@ export const initializeGame = async (
   setDebugMenuProps: (props: DebugMenuProps) => void,
   setDamageNumbers: (payload: DamageNumberProps) => void,
   playerSpriteName: PlayerSpriteName,
-  playerName: string
+  playerName: string,
+  setPlayerStats: (payload: PlayerStats) => void
 ) => {
   // const mapDimensionsResponse = await fetch(GAME_CONFIG_URI, { method: "GET" });
 
@@ -159,11 +160,14 @@ export const initializeGame = async (
         // console.log(response.content);
         let spritePosition = getSpritePositionUnsafe(response.content.entity);
         let screenPos = mapPosToScreenPos(spritePosition.pos);
-        console.log(screenPos);
+        // console.log(screenPos);
         setDamageNumbers({
           pixelPos: tileToPx(screenPos),
           showDamage: response.content,
         });
+        if (response.content.targetIsUser) {
+          setPlayerStats(response.content)
+        }
         break;
       default:
         assertNever(response);

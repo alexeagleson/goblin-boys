@@ -186,6 +186,8 @@ pub enum ServerMessageSingleClient {
         entity: EntityIndex,
         damage: i32,
         target_is_user: bool,
+        current_hp: i32,
+        max_hp: i32,
     },
 }
 

@@ -79,6 +79,8 @@ pub fn resolve_melee_attack_system(
                                     },
                                     damage,
                                     target_is_user: target_user.is_some(),
+                                    current_hp: target_hp.current,
+                                    max_hp: target_hp.max,
                                 },
                             ))
                             .ok();
