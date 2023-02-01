@@ -1,7 +1,12 @@
 import { useEffect, useRef, useState } from "react";
 import { Log, HoverMenu, ControlOverlay, HoverMenuProps } from "./components";
 import { initializeGame } from "./game/main";
-import { DialogueMap, EntityData, EntityIndex } from "./utility/types";
+import {
+  DialogueMap,
+  EntityData,
+  EntityIndex,
+  ServerMessageSingleClient,
+} from "./utility/types";
 import { DirectionHandlers, GameInputState } from "./game/input";
 import "./App.css";
 import {
@@ -10,12 +15,26 @@ import {
 } from "./components/NpcDialogue/NpcDialogue";
 import { MainTitle } from "./components/MainTitle/MainTitle";
 import { DebugMenu, DebugMenuProps } from "./components/DebugMenu/DebugMenu";
+import {
+  DamageNumber,
+  DamageNumberProps,
+} from "./components/DamageNumber/DamageNumber";
 
 const music = new Audio("audio/music/supersewerslug.ogg");
 
 const gameInputState: GameInputState = { enabled: true };
 
 let spawnHandler: () => void | undefined;
+
+const PLAYER_SPRITE_NAMES = [
+  "KidZilla",
+  "Ghost Boy",
+  "Boney Boy",
+  "Ant Boy",
+  "Sewer Kid",
+] as const;
+
+export type PlayerSpriteName = typeof PLAYER_SPRITE_NAMES[number];
 
 const App = () => {
   const initialized = useRef<boolean>(false);
@@ -31,6 +50,17 @@ const App = () => {
   const [enableMainTitle, setEnableMainTitle] = useState<boolean>(false);
 
   const [debugMenuProps, setDebugMenuProps] = useState<DebugMenuProps>();
+
+  const [damageNumbers, setDamageNumbers] = useState<Array<DamageNumberProps>>(
+    []
+  );
+
+  const [startGame, setStartGame] = useState(false);
+
+  const [playerSprite, setPlayerSprite] =
+    useState<PlayerSpriteName>("KidZilla");
+
+  const [playerName, setPlayerName] = useState<string>("Player");
 
   const onHover = (x: number, y: number, entityData?: EntityData) => {
     if (!entityData) {
@@ -53,10 +83,9 @@ const App = () => {
     setNpcDialogueMenu(undefined);
   };
 
-  const onDialogue = (nameAndDialogueMap: {
-    entity_name: string;
-    dialogue_map: DialogueMap;
-  }) => {
+  const onDialogue = (
+    nameAndDialogueMap: NpcDialogueProps["nameAndDialogueMap"]
+  ) => {
     setNpcDialogueMenu({
       nameAndDialogueMap,
       onClose: onDialogueClose,
@@ -72,89 +101,131 @@ const App = () => {
   // and then initializes the game.  Will only fire once (due to `initialized` check)
   // so the game state will persist during Vite dev server hot reloading
   useEffect(() => {
-    if (initialized.current === false) {
-      initialized.current = true;
-      initializeGame(
-        onHover,
-        onClick,
-        onDeath,
-        onDamage,
-        setMoveCount,
-        onDialogue,
-        gameInputState,
-        setDebugMenuProps
-      ).then(({ gameCanvas, directionHandlers: dirHandlers, spawnSlime }) => {
-        spawnHandler = spawnSlime;
-        setDirectionHandlers(dirHandlers);
-        canvasContainer.current?.appendChild(gameCanvas);
-        let canvasHeight = gameCanvas.height;
-        const canvasWidth = gameCanvas.width;
+    if (startGame) {
+      if (initialized.current === false) {
+        initialized.current = true;
+        initializeGame(
+          onHover,
+          onClick,
+          onDeath,
+          onDamage,
+          setMoveCount,
+          onDialogue,
+          gameInputState,
+          setDebugMenuProps,
+          (payload) => setDamageNumbers((prev) => [...prev, payload]),
+          playerSprite,
+          playerName
+        ).then(({ gameCanvas, directionHandlers: dirHandlers, spawnSlime }) => {
+          spawnHandler = spawnSlime;
+          setDirectionHandlers(dirHandlers);
+          canvasContainer.current?.appendChild(gameCanvas);
+          let canvasHeight = gameCanvas.height;
+          const canvasWidth = gameCanvas.width;
 
-        if (canvasContainer.current && logContainer.current) {
-          canvasContainer.current.style.height = canvasHeight + "px";
-          logContainer.current.style.width = canvasWidth + "px";
+          if (canvasContainer.current && logContainer.current) {
+            canvasContainer.current.style.height = canvasHeight + "px";
+            logContainer.current.style.width = canvasWidth + "px";
 
-          // Log height is shorter on mobile
-          if (window.matchMedia("(max-width: 600px)").matches) {
-            canvasHeight = Math.floor(canvasHeight / 2);
+            // Log height is shorter on mobile
+            if (window.matchMedia("(max-width: 600px)").matches) {
+              canvasHeight = Math.floor(canvasHeight / 2);
+            }
+
+            logContainer.current.style.height = canvasHeight + "px";
           }
 
-          logContainer.current.style.height = canvasHeight + "px";
-        }
-
-        gameCanvas.onmouseleave = () => {
-          setHoverMenu(undefined);
-        };
-      });
+          gameCanvas.onmouseleave = () => {
+            setHoverMenu(undefined);
+          };
+        });
+      }
     }
-  });
+  }, [startGame]);
+
+  const onChangeValue: React.FormEventHandler<HTMLDivElement> = (event) => {
+    const target = event.target as HTMLInputElement;
+    setPlayerSprite(target.value as PlayerSpriteName);
+  };
 
   return (
     <>
-      {debugMenuProps && <DebugMenu {...debugMenuProps} />}
-      <button
-        onClick={() => {
-          setEnableMainTitle((oldVal) => !oldVal);
-        }}
-      >
-        Test title sequence
-      </button>
-      <button
-        onClick={() => {
-          if (music.currentTime === 0) {
-            music.play();
-            music.loop = true;
-          } else {
-            music.pause();
-          }
-        }}
-      >
-        Test music
-      </button>
-      <button
-        onClick={() => {
-          spawnHandler?.();
-        }}
-      >
-        Spawn a Slime
-      </button>
-      {enableMainTitle && <MainTitle />}
-      {!enableMainTitle && (
-        <div className="game-container">
-          <p>All time totals moves: {moveCount}</p>
-          <div className="canvas-and-log-container">
-            <div className="canvas-container" ref={canvasContainer}>
-              {/* {hoverMenu && <HoverMenu {...hoverMenu} />} */}
-              {npcDialogueMenu && <NpcDialogue {...npcDialogueMenu} />}
-              {/* {directionHandlers && (
+      {startGame === false ? (
+        <div>
+          <div onChange={onChangeValue}>
+            {PLAYER_SPRITE_NAMES.map((spriteName, idx) => {
+              return (
+                <div key={idx}>
+                  <label htmlFor={spriteName}>{spriteName}</label>
+                  <input
+                    type="radio"
+                    id={spriteName}
+                    value={spriteName}
+                    name="playerSprite"
+                    checked={playerSprite === spriteName}
+                  />
+                </div>
+              );
+            })}
+          </div>
+          <input
+            type="text"
+            value={playerName}
+            onChange={(e) => setPlayerName(e.target.value)}
+          />
+          <button onClick={() => setStartGame(true)}>OK GO</button>
+        </div>
+      ) : (
+        <>
+          {debugMenuProps && <DebugMenu {...debugMenuProps} />}
+          <button
+            onClick={() => {
+              setEnableMainTitle((oldVal) => !oldVal);
+            }}
+          >
+            Test title sequence
+          </button>
+          <button
+            onClick={() => {
+              if (music.currentTime === 0) {
+                music.play();
+                music.loop = true;
+              } else {
+                music.pause();
+              }
+            }}
+          >
+            Test music
+          </button>
+          <button
+            onClick={() => {
+              spawnHandler?.();
+            }}
+          >
+            Spawn a Slime
+          </button>
+          {enableMainTitle && <MainTitle />}
+          {!enableMainTitle && (
+            <div className="game-container">
+              <p>All time totals moves: {moveCount}</p>
+              <div className="canvas-and-log-container">
+                <div className="canvas-container" ref={canvasContainer}>
+                  {damageNumbers.map((damProps, idx) => (
+                    <DamageNumber key={idx} {...damProps} />
+                  ))}
+                  {/* {hoverMenu && <HoverMenu {...hoverMenu} />} */}
+                  {npcDialogueMenu && <NpcDialogue {...npcDialogueMenu} />}
+                  {/* {directionHandlers && (
               <ControlOverlay directionHandlers={directionHandlers} />
             )} */}
+                </div>
+                <div ref={logContainer} className="log-container">
+                  <Log log={log} />
+                </div>
+              </div>
             </div>
-            <div ref={logContainer} className="log-container">
-              <Log log={log} />
-            </div>
-          </div>
-        </div>
+          )}
+        </>
       )}
     </>
   );

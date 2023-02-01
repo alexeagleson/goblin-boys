@@ -2,14 +2,14 @@ use bevy::prelude::*;
 use core_api::{DatabaseRequest, ServerMessageAllClients, UserId};
 
 use crate::{
-    components::MapPosition,
+    components::{MapPosition, User},
     resources::{DatabaseReceiver, DatabaseSender, MessageSenderAllClients},
 };
 
 /// Send any request for data, or send data to save in the SQLite database
 pub fn database_sender_system(
     db_sender: Res<DatabaseSender>,
-    query: Query<Entity, Changed<MapPosition>>,
+    query: Query<Entity, (Changed<MapPosition>, With<User>)>,
 ) {
     for _ in query.iter() {
         // Send a message to the DB any time any entity changes position for any reason

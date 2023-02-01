@@ -6,11 +6,12 @@ use crate::{
         intend_melee_attack::IntendMeleeAttack,
         MapPosition, User,
     },
-    resources::{MessageSenderAllClients, MessageSenderSingleClient},
+    resources::{CurrentUserMaps, MessageSenderAllClients, MessageSenderSingleClient},
 };
 use bevy::prelude::*;
 use core_api::{
-    AnimationTexture, LogMessage, ServerMessageAllClients, ServerMessageSingleClient, Sound,
+    AnimationTexture, EntityIndex, LogMessage, ServerMessageAllClients, ServerMessageSingleClient,
+    Sound,
 };
 
 pub fn resolve_melee_attack_system(
@@ -22,30 +23,68 @@ pub fn resolve_melee_attack_system(
         Option<&User>,
         &Cooldown,
     )>,
-    mut target_query: Query<(&CombatStats, &mut Hp, &Name, &MapPosition)>,
+    mut target_query: Query<(
+        Entity,
+        &CombatStats,
+        &mut Hp,
+        &Name,
+        &MapPosition,
+        Option<&User>,
+    )>,
     mut commands: Commands,
     sender_all_clients: Res<MessageSenderAllClients>,
     sender_single_client: Res<MessageSenderSingleClient>,
+    current_user_maps: Res<CurrentUserMaps>,
 ) {
     for (ent, combat_stats, intend_melee_attack, name, attacker_user, cooldown) in
         attacker_query.iter()
     {
-        if let Ok((target_combat_stats, mut target_hp, target_name, target_map_pos)) =
-            target_query.get_mut(intend_melee_attack.target)
+        if let Ok((
+            target_entity,
+            target_combat_stats,
+            mut target_hp,
+            target_name,
+            target_map_pos,
+            target_user,
+        )) = target_query.get_mut(intend_melee_attack.target)
         {
             let damage = (combat_stats.attack - target_combat_stats.defense).max(0);
             target_hp.current -= damage;
             let log_message = LogMessage(format!(
-                "{} attacked {} for {} damage",
+                "{} attacked {} for {} damage {}/{}",
                 String::from(name),
                 String::from(target_name),
-                damage
+                damage,
+                target_hp.current,
+                target_hp.max
             ));
 
             sender_all_clients
                 .0
                 .send(ServerMessageAllClients::Damage(log_message))
                 .ok();
+
+            current_user_maps
+                .0
+                .iter()
+                .for_each(|(user_id, user_map_pos)| {
+                    if user_map_pos.map_id == target_map_pos.map_id {
+                        sender_single_client
+                            .0
+                            .send((
+                                *user_id,
+                                ServerMessageSingleClient::ShowDamage {
+                                    entity: EntityIndex {
+                                        idx: target_entity.index(),
+                                    },
+                                    damage,
+                                    target_is_user: target_user.is_some(),
+                                },
+                            ))
+                            .ok();
+                    }
+                });
+
             if let Some(user) = attacker_user {
                 sender_single_client
                     .0

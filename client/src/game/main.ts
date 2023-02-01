@@ -1,7 +1,12 @@
 /** Glue that binds together the input, canvas and connection modules */
 
 import { connectToGameServer } from "./connection";
-import { clearEverything, createGameApp, spriteMap } from "./canvas";
+import {
+  clearEverything,
+  createGameApp,
+  getSpritePositionUnsafe,
+  spriteMap,
+} from "./canvas";
 import {
   DialogueMap,
   EntityData,
@@ -15,8 +20,10 @@ import {
 import { assertNever, log } from "../utility/functions";
 import { GAME_CONFIG_URI } from "../utility/config";
 import { addInputListeners, GameInputState } from "./input";
-import { CAMERA_SIZE, setCamera, TILE_SIZE } from "./camera";
+import { CAMERA_SIZE, mapPosToScreenPos, setCamera, TILE_SIZE } from "./camera";
 import { DebugMenuProps } from "../components/DebugMenu/DebugMenu";
+import { DamageNumberProps } from "../components/DamageNumber/DamageNumber";
+import { PlayerSpriteName } from "../App";
 
 var punch = new Audio("audio/sfx/punch.ogg");
 
@@ -28,18 +35,31 @@ const updateHoverMenuPosition = (x: number, y: number) => {
   yPixel = y;
 };
 
+const SPRITE_NAME_TO_TEXTURE: Record<PlayerSpriteName, SpriteTexture> = {
+  "Sewer Kid": SpriteTexture.PcSewerKidFrames6,
+  "Ant Boy": SpriteTexture.PcAntBoiFrames4,
+  "Boney Boy": SpriteTexture.PcBoneyBoiFrames4,
+  "Ghost Boy": SpriteTexture.PcGhostBoyFrames8,
+  KidZilla: SpriteTexture.PcKidZilla,
+};
+
 export const initializeGame = async (
   onHover: (x: number, y: number, entityData?: EntityData) => void,
   onClick: (log: string) => void,
   onDeath: (log: string) => void,
   onDamage: (log: string) => void,
   onMoveCount: (count: number) => void,
-  onDialogue: (nameAndDialogueMap: {
-    entity_name: string;
-    dialogue_map: DialogueMap;
-  }) => void,
+  onDialogue: (
+    payload: Extract<
+      ServerMessageSingleClient,
+      { type: "showDialogue" }
+    >["content"]
+  ) => void,
   gameInputState: GameInputState,
-  setDebugMenuProps: (props: DebugMenuProps) => void
+  setDebugMenuProps: (props: DebugMenuProps) => void,
+  setDamageNumbers: (payload: DamageNumberProps) => void,
+  playerSpriteName: PlayerSpriteName,
+  playerName: string
 ) => {
   // const mapDimensionsResponse = await fetch(GAME_CONFIG_URI, { method: "GET" });
 
@@ -55,6 +75,7 @@ export const initializeGame = async (
     removeSprite,
     setSpritePosition,
     showAttackAnimation,
+    tileToPx,
   } = await createGameApp(
     { width: CAMERA_SIZE, height: CAMERA_SIZE },
     TILE_SIZE
@@ -132,6 +153,18 @@ export const initializeGame = async (
         // console.log(response.content);
         setDebugMenuProps(response.content);
         break;
+      case "showDamage":
+        // console.log(response.content);
+        // setDebugMenuProps(response.content);
+        // console.log(response.content);
+        let spritePosition = getSpritePositionUnsafe(response.content.entity);
+        let screenPos = mapPosToScreenPos(spritePosition.pos);
+        console.log(screenPos);
+        setDamageNumbers({
+          pixelPos: tileToPx(screenPos),
+          showDamage: response.content,
+        });
+        break;
       default:
         assertNever(response);
     }
@@ -155,7 +188,13 @@ export const initializeGame = async (
   );
 
   let interval = setInterval(() => {
-    let result = safeSend({ type: "initialize" });
+    let result = safeSend({
+      type: "initialize",
+      content: {
+        name: playerName,
+        sprite: SPRITE_NAME_TO_TEXTURE[playerSpriteName],
+      },
+    });
     if (result === "success") {
       clearInterval(interval);
     }

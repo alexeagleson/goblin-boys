@@ -73,7 +73,6 @@ pub enum SpriteTexture {
     NpcPersonFrames2,
     NpcRatFrames4,
     NpcRealEstateDickFrames21,
-    NpcSewerKidFrames6,
     NpcSmallRatFrames6,
     NpcSlime,
     PcAntBoi,
@@ -81,6 +80,7 @@ pub enum SpriteTexture {
     PcBoneyBoi,
     PcBoneyBoiFrames4,
     PcGhostBoyFrames8,
+    PcSewerKidFrames6,
     PcKidZilla,
     WallBrick,
     WallStone,
@@ -141,7 +141,11 @@ pub struct DebugData {
 pub enum ClientMessage {
     TileHover(Position),
     TileClick(Position),
-    Initialize,
+    #[serde(rename_all = "camelCase")]
+    Initialize {
+        name: String,
+        sprite: SpriteTexture,
+    },
     Keypress(BodyRelative),
     Disconnect,
     /// Clients should send every 30 seconds or so to
@@ -166,14 +170,22 @@ pub enum ServerMessageSingleClient {
     },
     RemoveSprite(EntityIndex),
     PlaySound(Sound),
+    #[serde(rename_all = "camelCase")]
     ShowDialogue {
         entity_name: String,
         dialogue_map: DialogueMap,
     },
+    #[serde(rename_all = "camelCase")]
     ShowAnimation {
         position: Position,
         animation: AnimationTexture,
         time: f32,
+    },
+    #[serde(rename_all = "camelCase")]
+    ShowDamage {
+        entity: EntityIndex,
+        damage: i32,
+        target_is_user: bool,
     },
 }
 

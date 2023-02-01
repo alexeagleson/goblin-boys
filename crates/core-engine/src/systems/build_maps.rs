@@ -76,7 +76,7 @@ fn str_map_to_game_map(
                     SpriteTexture::NpcFatherNeilFrames6 => true,
 
                     SpriteTexture::NpcKingRatFrames4 => true,
-                    SpriteTexture::NpcSewerKidFrames6 => true,
+                    SpriteTexture::PcSewerKidFrames6 => true,
                     SpriteTexture::NpcSlime => true,
                     SpriteTexture::Empty => false,
 
@@ -122,7 +122,7 @@ fn str_map_to_game_map(
                     SpriteTexture::FloorSlime => "Slime Floor".to_string(),
                     SpriteTexture::NpcFatherNeilFrames6 => "Father Neil".to_string(),
                     SpriteTexture::NpcKingRatFrames4 => "King Rat".to_string(),
-                    SpriteTexture::NpcSewerKidFrames6 => "Sewer Kid".to_string(),
+                    SpriteTexture::PcSewerKidFrames6 => "Sewer Kid".to_string(),
                     SpriteTexture::NpcSlime => "Slime".to_string(),
                     SpriteTexture::Empty => "XXX EMPTY XXX".to_string(),
 

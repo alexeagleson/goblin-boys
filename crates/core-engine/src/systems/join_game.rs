@@ -1,15 +1,6 @@
-use bevy::prelude::*;
-use core_api::SpriteTexture;
-
 use crate::{
-    components::{
-        ai::Ai, cooldown::Cooldown, eyes::Eyes, paths::Paths, speaks::Speaks, BlocksLight,
-        BlocksMovement, Item, MapPosition, Renderable, User,
-    },
-    data::{
-        dialogue_contents::DialogueContents, enemy_configs::EnemyConfigs,
-        player_config::PlayerConfig,
-    },
+    components::{cooldown::Cooldown, eyes::Eyes, BlocksMovement, MapPosition, Renderable, User},
+    data::player_config::PlayerConfig,
     events::ShouldSendFullMapUpdateToClient,
     resources::{
         map::PEACEFUL_MAP_ID,
@@ -17,6 +8,7 @@ use crate::{
         ConnectBuffer, CurrentUserMaps,
     },
 };
+use bevy::prelude::*;
 
 /// Adds an entity to the game when the user connects
 pub fn join_game_system(
@@ -33,13 +25,13 @@ pub fn join_game_system(
         .get(&MapId(PEACEFUL_MAP_ID))
         .expect("Somehow the primary map does not exist");
 
-    if let Some(user_id) = connect_buffer.0.pop_front() {
-        let player_name = format!("Player {}", user_id.0);
+    if let Some((player_user_id, player_name, player_sprite)) = connect_buffer.0.pop_front() {
+        let player_name = format!("{}", player_name);
         let player_map_position = MapPosition {
             pos: map.random_movement_unblocked_tile(),
             map_id: map.id(),
         };
-        let mut player_commands = commands.spawn(User(user_id));
+        let mut player_commands = commands.spawn(User(player_user_id));
         player_commands.insert(Eyes::new(map, player_config.visibility));
         if player_config.blocks_movement {
             player_commands.insert(BlocksMovement);
@@ -48,7 +40,7 @@ pub fn join_game_system(
             .insert(Name::new(player_name))
             .insert(player_map_position.clone())
             .insert(Renderable {
-                texture: SpriteTexture::PcKidZilla,
+                texture: player_sprite,
             })
             .insert(player_config.combat_stats.clone())
             .insert(player_config.hp.clone())
@@ -59,47 +51,9 @@ pub fn join_game_system(
             });
 
         // Track the current map the new user is on
-        current_user_maps.0.insert(user_id, player_map_position);
-
-        // Spawn a slime every time a new player joins
-        // let mut slime_commands = commands.spawn(Item);
-        // let slime_config = &enemy_configs.slime;
-        // slime_commands
-        //     .insert(Name::new(slime_config.name.clone()))
-        //     // A walking slime...?
-        //     .insert(MapPosition {
-        //         pos: map.random_movement_unblocked_tile(),
-        //         map_id: map.id(),
-        //     })
-        //     .insert(Renderable {
-        //         texture: slime_config.texture,
-        //     })
-        //     .insert(slime_config.hp.clone())
-        //     .insert(slime_config.combat_stats.clone())
-        //     .insert(BlocksMovement)
-        //     .insert(Ai::default())
-        //     .insert(Cooldown {
-        //         time_remaining: 0.0,
-        //         move_time: slime_config.move_time,
-        //         attack_time: slime_config.attack_time,
-        //     })
-        //     .insert(Eyes::new(map, slime_config.visibility));
-
-        // // Spawn a test NPC
-        // let mut npc_commands = commands.spawn(
-        //     Name::new("Npc Rat".to_string()), // Speaks(DialogueContents)
-        // );
-
-        // npc_commands
-        //     .insert(MapPosition {
-        //         pos: map.random_movement_unblocked_tile(),
-        //         map_id: map.id(),
-        //     })
-        //     .insert(Renderable {
-        //         texture: SpriteTexture::NpcSewerKidFrames6,
-        //     })
-        //     .insert(BlocksLight)
-        //     .insert(BlocksMovement);
+        current_user_maps
+            .0
+            .insert(player_user_id, player_map_position);
 
         // Refresh the full map of all clients when a player joins
         // [TODO] This is probably overkill -- could just send the new player sprite

@@ -1,12 +1,17 @@
 import { useState } from "react";
-import { DialogueContent, DialogueMap, Position } from "../../utility/types";
+import {
+  DialogueContent,
+  DialogueMap,
+  Position,
+  ServerMessageSingleClient,
+} from "../../utility/types";
 import "./NpcDialogue.css";
 
 export interface NpcDialogueProps {
-  nameAndDialogueMap: {
-    entity_name: string;
-    dialogue_map: DialogueMap;
-  };
+  nameAndDialogueMap: Extract<
+    ServerMessageSingleClient,
+    { type: "showDialogue" }
+  >["content"];
   onClose: () => void;
 }
 
@@ -14,8 +19,7 @@ export const NpcDialogue: React.FC<NpcDialogueProps> = ({
   nameAndDialogueMap,
   onClose,
 }) => {
-  const { entity_name: entityName, dialogue_map: dialogueMap } =
-    nameAndDialogueMap;
+  const { entityName, dialogueMap } = nameAndDialogueMap;
   if (!dialogueMap[0]) {
     console.error("You forgot to start with a 0 index in your dialogue map");
     console.error(dialogueMap);

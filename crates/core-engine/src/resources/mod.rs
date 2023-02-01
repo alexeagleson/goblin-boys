@@ -1,6 +1,6 @@
 pub mod map;
-pub mod world;
 pub mod user_id_resource;
+pub mod world;
 
 use std::collections::{HashMap, VecDeque};
 
@@ -9,7 +9,7 @@ use ae_position::Position;
 use bevy::{prelude::Resource, time::Stopwatch};
 use core_api::{
     ClientMessage, DatabaseRequest, DatabaseResponse, ServerMessageAllClients,
-    ServerMessageSingleClient, UserId, SpawnableEnemy,
+    ServerMessageSingleClient, SpawnableEnemy, SpriteTexture, UserId,
 };
 use tokio::sync::mpsc::{UnboundedReceiver, UnboundedSender};
 
@@ -37,7 +37,7 @@ pub struct KeypressBuffer(pub VecDeque<(UserId, BodyRelative)>);
 pub struct DisconnectBuffer(pub VecDeque<UserId>);
 
 #[derive(Resource, Default)]
-pub struct ConnectBuffer(pub VecDeque<UserId>);
+pub struct ConnectBuffer(pub VecDeque<(UserId, String, SpriteTexture)>);
 
 #[derive(Resource, Default)]
 pub struct MouseHoverBuffer(pub VecDeque<(UserId, Position)>);
@@ -48,7 +48,6 @@ pub struct MouseClickBuffer(pub VecDeque<(UserId, Position)>);
 #[derive(Resource, Default)]
 pub struct SpawnableEnemyBuffer(pub VecDeque<(UserId, SpawnableEnemy)>);
 
-
 #[derive(Resource)]
 pub struct DebugStopwatch(pub Stopwatch);
 
@@ -57,7 +56,6 @@ impl DebugStopwatch {
         Self(Stopwatch::new())
     }
 }
-
 
 #[derive(Resource, Default)]
 

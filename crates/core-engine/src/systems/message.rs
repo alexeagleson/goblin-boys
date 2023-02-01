@@ -19,8 +19,8 @@ pub fn message_system(
 ) {
     while let Ok((id, message)) = receiver.0.try_recv() {
         match message {
-            ClientMessage::Initialize => {
-                connect_buffer.0.push_back(id);
+            ClientMessage::Initialize { name, sprite } => {
+                connect_buffer.0.push_back((id, name, sprite));
             }
             ClientMessage::Keypress(k) => {
                 keypress_buffer.0.push_back((id, k));
@@ -36,7 +36,7 @@ pub fn message_system(
             }
             ClientMessage::Spawn(enemy) => {
                 spawnable_enemy_buffer.0.push_back((id, enemy));
-            },
+            }
             ClientMessage::KeepAlive => {
                 // No action
             }

@@ -1,0 +1,21 @@
+.damage-number {
+  position: absolute;
+  font-size: 20px;
+  /* color: red; */
+
+  animation-name: damage-number-animation;
+  animation-duration: 1s;
+  /* animation-delay: 4s; */
+  animation-fill-mode: forwards;
+}
+
+@keyframes damage-number-animation {
+  from {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(-50px);
+  }
+}

@@ -22,6 +22,7 @@ import {
 } from "../utility/types";
 import { log } from "../utility/functions";
 import { CAMERA_SIZE, mapPosToScreenPos, SPRITE_SCALE } from "./camera";
+import { PlayerSpriteName } from "../App";
 
 export interface SpritePosition {
   sprite: Sprite;
@@ -41,7 +42,9 @@ export const clearEverything = () => {
 };
 
 /** Assert that a sprite exists in the render data map and return it, throw error otherwise. */
-const getSpritePositionUnsafe = (entityIndex: EntityIndex): SpritePosition => {
+export const getSpritePositionUnsafe = (
+  entityIndex: EntityIndex
+): SpritePosition => {
   const spritePosition = spriteMap.get(entityIndex.idx);
   if (STRICT_MODE && spritePosition === undefined) {
     console.error("sprite index", entityIndex.idx);
@@ -362,5 +365,6 @@ export const createGameApp = async (
     setSpritePosition,
     gameCanvas,
     showAttackAnimation,
+    tileToPx,
   };
 };
