@@ -20,6 +20,7 @@ import {
   DamageNumberProps,
 } from "./components/DamageNumber/DamageNumber";
 import { PlayerStats } from "./components/PlayerStats/PlayerStats";
+import { GAME_CONFIG, setGameConfig } from "./game/camera";
 
 const music = new Audio("audio/music/supersewerslug.ogg");
 
@@ -69,6 +70,11 @@ const App = () => {
   const [playerName, setPlayerName] = useState<string>("Player");
 
   const [playerStats, setPlayerStats] = useState<PlayerStats>();
+
+  const [cameraRadius, setCameraRadius] = useState(GAME_CONFIG.CAMERA_RADIUS);
+  const [spriteScale, setSpriteScale] = useState(GAME_CONFIG.SPRITE_SCALE);
+
+  const [logOn, setLogOn] = useState(true);
 
   const onHover = (x: number, y: number, entityData?: EntityData) => {
     if (!entityData) {
@@ -171,7 +177,8 @@ const App = () => {
                     id={spriteName}
                     value={spriteName}
                     name="playerSprite"
-                    checked={playerSprite === spriteName}
+                    // checked={playerSprite === spriteName}
+                    defaultChecked={playerSprite === spriteName}
                   />
                 </div>
               );
@@ -182,6 +189,43 @@ const App = () => {
             value={playerName}
             onChange={(e) => setPlayerName(e.target.value)}
           />
+          <div>
+            <input
+              type="range"
+              id="sprite-scale"
+              name="sprite-scale"
+              min="1"
+              max="5"
+              step="1"
+              value={spriteScale}
+              onChange={(e) => {
+                const scale = Number(e.target.value);
+
+                setSpriteScale(scale);
+                setGameConfig(scale, GAME_CONFIG.CAMERA_RADIUS);
+              }}
+            />
+            <label htmlFor="sprite-scale">Sprite Scale {spriteScale}</label>
+          </div>
+
+          <div>
+            <input
+              type="range"
+              id="camera-radius"
+              name="camera-radius"
+              min="1"
+              max="10"
+              value={cameraRadius}
+              step="1"
+              onChange={(e) => {
+                const radius = Number(e.target.value);
+
+                setCameraRadius(radius);
+                setGameConfig(GAME_CONFIG.SPRITE_SCALE, radius);
+              }}
+            />
+            <label htmlFor="camera-radius">Camera Radius {cameraRadius}</label>
+          </div>
           <button onClick={() => setStartGame(true)}>OK GO</button>
         </div>
       ) : (
@@ -213,6 +257,13 @@ const App = () => {
           >
             Spawn a Slime
           </button>
+          <button
+            onClick={() => {
+              setLogOn(false);
+            }}
+          >
+            Disable Log
+          </button>
           {enableMainTitle && <MainTitle />}
           {!enableMainTitle && (
             <div className="game-container">
@@ -229,9 +280,12 @@ const App = () => {
               <ControlOverlay directionHandlers={directionHandlers} />
             )} */}
                 </div>
-                <div ref={logContainer} className="log-container">
-                  <Log log={log} />
-                </div>
+
+                {logOn && (
+                  <div ref={logContainer} className="log-container">
+                    <Log log={log} />
+                  </div>
+                )}
               </div>
               <div style={{ display: "flex", flexDirection: "row" }}>
                 Hp: {playerStats && <PlayerStats playerStats={playerStats} />}

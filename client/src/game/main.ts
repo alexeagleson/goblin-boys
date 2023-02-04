@@ -20,7 +20,7 @@ import {
 import { assertNever, log } from "../utility/functions";
 import { GAME_CONFIG_URI } from "../utility/config";
 import { addInputListeners, GameInputState } from "./input";
-import { CAMERA_SIZE, mapPosToScreenPos, setCamera, TILE_SIZE } from "./camera";
+import { mapPosToScreenPos, setCamera, GAME_CONFIG } from "./camera";
 import { DebugMenuProps } from "../components/DebugMenu/DebugMenu";
 import { DamageNumberProps } from "../components/DamageNumber/DamageNumber";
 import { PlayerSpriteName, PlayerStats } from "../App";
@@ -78,8 +78,8 @@ export const initializeGame = async (
     showAttackAnimation,
     tileToPx,
   } = await createGameApp(
-    { width: CAMERA_SIZE, height: CAMERA_SIZE },
-    TILE_SIZE
+    { width: GAME_CONFIG.CAMERA_SIZE, height: GAME_CONFIG.CAMERA_SIZE },
+    GAME_CONFIG.TILE_SIZE
   );
 
   const onMessage = (msg: MessageEvent<unknown>) => {
@@ -166,7 +166,7 @@ export const initializeGame = async (
           showDamage: response.content,
         });
         if (response.content.targetIsUser) {
-          setPlayerStats(response.content)
+          setPlayerStats(response.content);
         }
         break;
       default:

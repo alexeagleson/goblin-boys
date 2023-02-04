@@ -21,7 +21,7 @@ import {
   SpriteUpdate,
 } from "../utility/types";
 import { log } from "../utility/functions";
-import { CAMERA_SIZE, mapPosToScreenPos, SPRITE_SCALE } from "./camera";
+import { mapPosToScreenPos, GAME_CONFIG } from "./camera";
 import { PlayerSpriteName } from "../App";
 
 export interface SpritePosition {
@@ -115,7 +115,7 @@ export const createGameApp = async (
             image: `sprites/v2/${textureId}.png`,
             // image: "sprites/npcs/rat-sheet.png",
             format: "RGBA8888",
-            size: { w: 16 * SPRITE_SCALE, h: 16 },
+            size: { w: 16 * GAME_CONFIG.SPRITE_SCALE, h: 16 },
             scale: "1",
           },
           animations: {
@@ -185,9 +185,9 @@ export const createGameApp = async (
 
     if (
       screenPos.x < 0 ||
-      screenPos.x >= CAMERA_SIZE ||
+      screenPos.x >= GAME_CONFIG.CAMERA_SIZE ||
       screenPos.y < 0 ||
-      screenPos.y >= CAMERA_SIZE
+      screenPos.y >= GAME_CONFIG.CAMERA_SIZE
     ) {
       sprite.visible = false;
     } else {
@@ -209,38 +209,37 @@ export const createGameApp = async (
       const getSprite = (): Sprite | AnimatedSprite => {
         const textureOrArray = TEXTURE_MAP[spriteUpdate.sprite];
 
+        let sprite: Sprite | AnimatedSprite | undefined = undefined;
         if (textureOrArray instanceof Spritesheet) {
-          const animatedSprite = new AnimatedSprite(
-            textureOrArray.animations.anim
-          );
+          sprite = new AnimatedSprite(textureOrArray.animations.anim);
 
-          animatedSprite.texture.baseTexture.scaleMode = SCALE_MODES.NEAREST;
+          // Guaranteed
+          if (sprite instanceof AnimatedSprite) {
+            sprite.texture.baseTexture.scaleMode = SCALE_MODES.NEAREST;
 
-          // set the animation speed
-          animatedSprite.animationSpeed = 0.1666;
+            // set the animation speed
+            sprite.animationSpeed = 0.1666;
 
-          // play the animation on a loop
-          animatedSprite.play();
-
-          return animatedSprite;
+            // play the animation on a loop
+            sprite.play();
+          }
         } else if (Array.isArray(textureOrArray)) {
-          const sprite = new Sprite(randomElement(textureOrArray));
-          sprite.zIndex = spriteUpdate.sprite
-            .toLocaleLowerCase()
-            .includes("floor")
-            ? 0
-            : 1;
+          sprite = new Sprite(randomElement(textureOrArray));
 
           return sprite;
         } else {
-          const sprite = new Sprite(textureOrArray);
-          sprite.zIndex = spriteUpdate.sprite
-            .toLocaleLowerCase()
-            .includes("floor")
-            ? 0
-            : 1;
-          return sprite;
+          sprite = new Sprite(textureOrArray);
         }
+
+        const spriteName = spriteUpdate.sprite.toLocaleLowerCase();
+
+        sprite.zIndex = spriteName.startsWith("pc")
+          ? 2
+          : spriteName.includes("floor")
+          ? 0
+          : 1;
+
+        return sprite;
       };
 
       const newSprite = getSprite();
@@ -252,7 +251,10 @@ export const createGameApp = async (
 
       // newSprite.scaleMode
 
-      newSprite.scale = { x: SPRITE_SCALE, y: SPRITE_SCALE };
+      newSprite.scale = {
+        x: GAME_CONFIG.SPRITE_SCALE,
+        y: GAME_CONFIG.SPRITE_SCALE,
+      };
 
       // Each frame we spin the sprite around in circles just for shits
       // const ticker = app.ticker.add(() => {
@@ -308,7 +310,7 @@ export const createGameApp = async (
       meta: {
         image: `sprites/v2/attackBatFrames4.png`,
         format: "RGBA8888",
-        size: { w: 16 * SPRITE_SCALE, h: 16 },
+        size: { w: 16 * GAME_CONFIG.SPRITE_SCALE, h: 16 },
         scale: "1",
       },
       animations: {
@@ -330,7 +332,10 @@ export const createGameApp = async (
     animatedSprite.texture.baseTexture.scaleMode = SCALE_MODES.NEAREST;
     animatedSprite.animationSpeed = 0.4;
 
-    animatedSprite.scale = { x: SPRITE_SCALE, y: SPRITE_SCALE };
+    animatedSprite.scale = {
+      x: GAME_CONFIG.SPRITE_SCALE,
+      y: GAME_CONFIG.SPRITE_SCALE,
+    };
     animatedSprite.zIndex = 2;
     animatedSprite.loop = false;
     animatedSprite.visible = false;

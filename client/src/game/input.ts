@@ -1,7 +1,7 @@
 /** Handlers for user input (keyboard and mouse) */
 
 import { BodyRelative, Position } from "../utility/types";
-import { screenPosToMapPos, TILE_SIZE } from "./camera";
+import { screenPosToMapPos, GAME_CONFIG } from "./camera";
 import { SafeSend } from "./connection";
 
 export interface DirectionHandlers {
@@ -12,7 +12,7 @@ export interface DirectionHandlers {
 }
 
 export interface GameInputState {
-  enabled: boolean
+  enabled: boolean;
 }
 
 const isTouchStart = (e: MouseEvent | TouchEvent): e is TouchEvent => {
@@ -42,8 +42,8 @@ export const addInputListeners = (
     const pixelPos: Position = { x: xPixel, y: yPixel };
 
     const screenPos: Position = {
-      x: Math.trunc(pixelPos.x / TILE_SIZE),
-      y: Math.trunc(pixelPos.y / TILE_SIZE),
+      x: Math.trunc(pixelPos.x / GAME_CONFIG.TILE_SIZE),
+      y: Math.trunc(pixelPos.y / GAME_CONFIG.TILE_SIZE),
     };
 
     const mapPos = screenPosToMapPos(screenPos);
