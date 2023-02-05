@@ -8,6 +8,14 @@ A complete template for building a 2D grid based game with a Rust backend with B
 
 [https://icy-shape-6464.fly.dev/](https://icy-shape-6464.fly.dev/)
 
+## Dialog Data
+
+[https://github.com/alexeagleson/goblin-boys/blob/main/crates/core-engine/src/data/dialogue_contents.ron]()
+
+## Map Data
+
+[https://github.com/alexeagleson/goblin-boys/blob/main/crates/core-engine/src/data/map_data.rs]()
+
 ## Structure
 
 ### Backend
