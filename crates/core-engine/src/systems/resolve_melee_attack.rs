@@ -50,11 +50,17 @@ pub fn resolve_melee_attack_system(
         )) = target_query.get_mut(intend_melee_attack.target)
         {
             let mut rng = rand::thread_rng();
-            let rando = rng.gen_range(0..attacker_combat_stats.attack);
+            // Damage minimum is a random number between 0 and 2
+            let minimum = rng.gen_range(0..3);
 
             let damage =
-                (attacker_combat_stats.attack - target_combat_stats.defense + rando).max(1);
+                (attacker_combat_stats.attack - target_combat_stats.defense).max(0) + minimum;
+
             target_hp.current -= damage;
+
+            // Cannot go negative HP
+            target_hp.current = target_hp.current.max(0);
+
             let log_message = LogMessage(format!(
                 "{} attacked {} for {} damage {}/{}",
                 String::from(name),
@@ -88,6 +94,7 @@ pub fn resolve_melee_attack_system(
                                         idx: target_entity.index(),
                                     },
                                     damage,
+                                    is_healing: false,
                                     target_is_user: target_user.is_some(),
                                     target_is_me: is_matching_user,
                                     current_hp: target_hp.current,

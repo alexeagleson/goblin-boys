@@ -7,4 +7,5 @@ use super::enemy_config::EnemyConfig;
 pub struct EnemyConfigs {
     pub slime: EnemyConfig,
     pub rat_king: EnemyConfig,
+    pub rat: EnemyConfig,
 }

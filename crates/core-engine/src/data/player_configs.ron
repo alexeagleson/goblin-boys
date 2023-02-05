@@ -1,0 +1,77 @@
+(
+  ghost_boy: ( 
+    visibility: 10,
+    blocks_movement: true,
+    texture: pcKidZilla,
+    combat_stats: (
+      attack: 6,
+      defense: 3
+    ),
+    hp: (
+        current: 50,
+        max: 50,
+    ),
+    attack_time: 0.2,
+    move_time: 0.05
+  ),
+  boney_boy: ( 
+    visibility: 10,
+    blocks_movement: true,
+    texture: pcKidZilla,
+    combat_stats: (
+      attack: 9,
+      defense: 2
+    ),
+    hp: (
+        current: 40,
+        max: 40,
+    ),
+    attack_time: 0.2,
+    move_time: 0.05
+  ),
+  sewer_kid: ( 
+    visibility: 10,
+    blocks_movement: true,
+    texture: pcKidZilla,
+    combat_stats: (
+      attack: 4,
+      defense: 4
+    ),
+    hp: (
+        current: 80,
+        max: 80,
+    ),
+    attack_time: 0.2,
+    move_time: 0.05
+  ),
+  ant_boy: ( 
+    visibility: 10,
+    blocks_movement: true,
+    texture: pcKidZilla,
+    combat_stats: (
+      attack: 4,
+      defense: 6
+    ),
+    hp: (
+        current: 50,
+        max: 50,
+    ),
+    attack_time: 0.2,
+    move_time: 0.05
+  ),
+  kidzilla: ( 
+    visibility: 10,
+    blocks_movement: true,
+    texture: pcKidZilla,
+    combat_stats: (
+      attack: 5,
+      defense: 4
+    ),
+    hp: (
+        current: 70,
+        max: 70,
+    ),
+    attack_time: 0.2,
+    move_time: 0.05
+  )
+)

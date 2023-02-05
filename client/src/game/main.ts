@@ -18,7 +18,7 @@ import {
   SpriteTexture,
 } from "../utility/types";
 import { assertNever, log } from "../utility/functions";
-import { GAME_CONFIG_URI } from "../utility/config";
+import { PLAYER_STATS_URI } from "../utility/config";
 import { addInputListeners, GameInputState } from "./input";
 import { mapPosToScreenPos, setCamera, GAME_CONFIG } from "./camera";
 import { DebugMenuProps } from "../components/DebugMenu/DebugMenu";
@@ -26,6 +26,56 @@ import { DamageNumberProps } from "../components/DamageNumber/DamageNumber";
 import { PlayerSpriteName, PlayerStats } from "../App";
 
 var punch = new Audio("audio/sfx/punch.ogg");
+var eatBones = new Audio("audio/sfx/bones.ogg");
+
+// punch.loop = true;
+// punch.loop = () => (punch.volume = 0);
+// eatBones.onended = () => (eatBones.currentTime = 0);
+
+// // var audioCtx, analyser, bufferLength, dataArray;
+
+// let audioCtx: AudioContext;
+// let analyser: AnalyserNode;
+// // window.addEventListener("load", initAudio, false);
+
+// let audioButton = document.createElement("button");
+// audioButton.innerText = "ENABLE AUDIO";
+// audioButton.onclick = () => punch.play();
+// document.body.appendChild(audioButton);
+
+// let punch: AudioBufferSourceNode;
+
+// function initAudio() {
+//   try {
+//     // window.audioCtx = window.AudioContext || window.webkitAudioContext;
+//     audioCtx = new AudioContext();
+//     analyser = audioCtx.createAnalyser();
+//   } catch (e) {
+//     alert("Web Audio API is not supported in this browser");
+//   }
+//   // load the audio file
+//   punch = audioCtx.createBufferSource();
+//   var request = new XMLHttpRequest();
+//   request.open("GET", "audio/sfx/punch.ogg", true);
+//   request.responseType = "arraybuffer";
+//   request.onload = function () {
+//     var audioData = request.response;
+//     audioCtx.decodeAudioData(
+//       audioData,
+//       function (buffer) {
+//         punch.buffer = buffer;
+//         punch.connect(analyser);
+//         analyser.connect(audioCtx.destination);
+//         punch.loop = true;
+//         punch.start(0);
+//       },
+//       function (e) {
+//         console.log(e);
+//       }
+//     );
+//   };
+//   request.send();
+// }
 
 let xPixel = 0;
 let yPixel = 0;
@@ -60,16 +110,9 @@ export const initializeGame = async (
   setDamageNumbers: (payload: DamageNumberProps) => void,
   playerSpriteName: PlayerSpriteName,
   playerName: string,
-  setPlayerStats: (payload: PlayerStats) => void
+  setPlayerStats: (payload: PlayerStats) => void,
+  addLogEntry: (log: string) => void
 ) => {
-  // const mapDimensionsResponse = await fetch(GAME_CONFIG_URI, { method: "GET" });
-
-  // if (!mapDimensionsResponse.ok) {
-  //   throw Error("Failed to get initial game config");
-  // }
-
-  // gameState.dimensions = await mapDimensionsResponse.json();
-
   const {
     addSprite,
     gameCanvas,
@@ -96,6 +139,9 @@ export const initializeGame = async (
         break;
       case "showDialogue":
         onDialogue(response.content);
+        break;
+      case "log":
+        addLogEntry(response.content);
         break;
       case "centreCamera":
         setCamera(response.content);
@@ -144,11 +190,22 @@ export const initializeGame = async (
         onDeath(response.content);
         break;
       case "playSound":
-        // if (response.content == Sound.Punch) {
-        //   punch.currentTime = 0;
-        //   punch.play();
-        //   // console.log("Request to play sound was received:", response.content);
-        // }
+        if (response.content == Sound.Punch) {
+          // punch.currentTime = 0;
+          // punch.play();
+          // punch?.
+          // if (punch) {
+          //   punch.playbackRate.value = 1;
+          //   setTimeout(() => {
+          //     punch.playbackRate.value = 0;
+          //   }, 100);
+          // }
+          // console.log("Request to play sound was received:", response.content);
+          // punch.play();
+        } else if (response.content == Sound.EatBones) {
+          // eatBones.currentTime = 0;
+          eatBones.play();
+        }
         break;
       case "debug":
         // console.log(response.content);

@@ -1,6 +1,7 @@
 pub mod combat_stats;
 pub mod eyes;
 pub mod hp;
+pub mod intend_consume;
 pub mod intend_melee_attack;
 pub mod intend_move;
 pub mod intend_speak;
@@ -37,3 +38,9 @@ pub struct MapPosition {
     pub pos: Position,
     pub map_id: MapId,
 }
+
+#[derive(Component)]
+pub struct Bones;
+
+#[derive(Component)]
+pub struct Enemy;

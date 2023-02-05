@@ -3,7 +3,10 @@ use core_api::{
     ServerMessageSingleClient, UserId,
 };
 use core_database::{database_setup, increment_db_move_count_and_get_total};
-use core_engine::start_game_engine;
+use core_engine::{
+    data::{player_configs::PlayerConfigs, player_configs_str},
+    start_game_engine,
+};
 use core_server::{connections::ConnectionsLock, new_connection::handle_new_connection};
 use log::info;
 use tokio::sync::mpsc::{self, UnboundedSender};
@@ -130,17 +133,14 @@ fn main() {
 
             // If you need to set REST endpoints you can use the example below
 
-            // let any_origin_get = warp::cors().allow_any_origin().allow_method("GET");
+            let any_origin_get = warp::cors().allow_any_origin().allow_method("GET");
 
-            // // GET /game-config returns a `200 OK` with a JSON array of ids:
-            // let game_config = warp::path!("api" / "game-config")
-            //     .map(|| {
-            //         warp::reply::json(&Dimensions2d {
-            //             width: MAP_WIDTH,
-            //             height: MAP_HEIGHT,
-            //         })
-            //     })
-            //     .with(any_origin_get);
+            // GET /game-config returns a `200 OK` with a JSON array of ids:
+            let player_stats = warp::path!("api" / "player-stats")
+                .map(|| {
+                    warp::reply::json(&ron::from_str::<PlayerConfigs>(player_configs_str).unwrap())
+                })
+                .with(any_origin_get);
 
             // // GET / -> index html
             // let index = warp::path::end()
@@ -149,9 +149,7 @@ fn main() {
             // Serve static directory -- not currently used
             let index = warp::fs::dir("client/dist");
 
-            let routes = index
-                // .or(game_config)
-                .or(game);
+            let routes = index.or(player_stats).or(game);
 
             warp::serve(routes).run(([0, 0, 0, 0], 8080)).await;
         });

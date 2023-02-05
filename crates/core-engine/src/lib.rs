@@ -17,27 +17,29 @@ use core_api::{
 };
 use data::{
     dialogue_contents::DialogueContents, dialogue_contents_str, enemy_configs::EnemyConfigs,
-    enemy_configs_str, player_config::PlayerConfig, player_config_str,
+    enemy_configs_str, player_configs::PlayerConfigs, player_configs_str,
 };
-use resources::{DatabaseReceiver, DatabaseSender, SpawnableEnemyBuffer};
+use resources::{DatabaseReceiver, DatabaseSender, SpawnStopWatch, SpawnableEnemyBuffer};
 use systems::{
     ai::ai_system,
     cooldown::cooldown_system,
     death::death_system,
+    debug::debug_system,
     persistence::{database_receiver_system, database_sender_system},
+    resolve_consume::resolve_consume_system,
     resolve_melee_attack::resolve_melee_attack_system,
     resolve_move::resolve_move_system,
     resolve_speak::resolve_speak_system,
-    spawn_enemy::spawn_enemy_system, debug::debug_system,
+    spawn_enemy::spawn_enemy_system,
 };
 use tokio::sync::mpsc::{UnboundedReceiver, UnboundedSender};
 
 use crate::{
     events::{ShouldSendFullMapUpdateToClient, ShouldUpdateMap},
     resources::{
-        world::GameWorld, ConnectBuffer, CurrentUserMaps, DisconnectBuffer, KeypressBuffer,
-        MessageReceiver, MessageSenderAllClients, MessageSenderSingleClient, MouseClickBuffer,
-        MouseHoverBuffer, DebugStopwatch,
+        world::GameWorld, ConnectBuffer, CurrentUserMaps, DebugStopwatch, DisconnectBuffer,
+        KeypressBuffer, MessageReceiver, MessageSenderAllClients, MessageSenderSingleClient,
+        MouseClickBuffer, MouseHoverBuffer,
     },
     systems::{
         build_maps::build_maps_system, change_map::change_map_system, join_game::join_game_system,
@@ -68,9 +70,10 @@ pub fn start_game_engine(
         .insert_resource(MouseClickBuffer::default())
         .insert_resource(SpawnableEnemyBuffer::default())
         .insert_resource(DebugStopwatch::new())
+        .insert_resource(SpawnStopWatch::new())
         .insert_resource(Time::default())
         .insert_resource(CurrentUserMaps::default())
-        .insert_resource(ron::from_str::<PlayerConfig>(player_config_str).unwrap())
+        .insert_resource(ron::from_str::<PlayerConfigs>(player_configs_str).unwrap())
         .insert_resource(ron::from_str::<EnemyConfigs>(enemy_configs_str).unwrap())
         .insert_resource(ron::from_str::<DialogueContents>(dialogue_contents_str).unwrap())
         .add_event::<ShouldUpdateMap>()
@@ -97,6 +100,7 @@ pub fn start_game_engine(
         .add_system(resolve_melee_attack_system.after(update_map_system))
         .add_system(death_system.after(resolve_melee_attack_system))
         .add_system(resolve_speak_system.after(update_map_system))
+        .add_system(resolve_consume_system.after(update_map_system))
         .add_system(database_sender_system.after(update_map_system))
         .add_system(database_receiver_system.after(update_map_system))
         .add_system(debug_system.after(database_receiver_system))

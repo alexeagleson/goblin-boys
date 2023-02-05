@@ -15,8 +15,8 @@ const PORT = 8080;
 const OPTIONAL_PORT = IS_LOCAL ? ":" + PORT : "";
 
 // API config
-export const GAME_CONFIG_URI: string =
-  "http" + SSL + "://" + HOSTNAME + OPTIONAL_PORT + "/api/game-config";
+export const PLAYER_STATS_URI: string =
+  "http" + SSL + "://" + HOSTNAME + OPTIONAL_PORT + "/api/player-stats";
 
 export const WEBSOCKET_URI: string =
   "ws" + SSL + "://" + HOSTNAME + OPTIONAL_PORT + "/api/game";

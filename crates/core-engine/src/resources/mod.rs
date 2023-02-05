@@ -57,6 +57,15 @@ impl DebugStopwatch {
     }
 }
 
+#[derive(Resource)]
+pub struct SpawnStopWatch(pub Stopwatch);
+
+impl SpawnStopWatch {
+    pub fn new() -> Self {
+        Self(Stopwatch::new())
+    }
+}
+
 #[derive(Resource, Default)]
 
 pub struct CurrentUserMaps(pub HashMap<UserId, MapPosition>);

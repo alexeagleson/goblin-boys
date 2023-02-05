@@ -12,7 +12,7 @@ export interface DamageNumberProps {
 
 export const DamageNumber: React.FC<DamageNumberProps> = ({
   pixelPos: { x, y },
-  showDamage: { damage, targetIsUser },
+  showDamage: { damage, targetIsUser, isHealing },
 }) => {
   const modifier = Math.floor((GAME_CONFIG.TILE_SIZE * Math.random()) / 2);
 
@@ -22,7 +22,7 @@ export const DamageNumber: React.FC<DamageNumberProps> = ({
       style={{
         left: x - GAME_CONFIG.TILE_SIZE / 2 + modifier,
         top: y - GAME_CONFIG.TILE_SIZE / 2 - modifier,
-        color: targetIsUser ? "red" : "white",
+        color: isHealing ? "lightgreen" : targetIsUser ? "red" : "white",
         WebkitTextStrokeWidth: "1px",
         WebkitTextStrokeColor: targetIsUser ? "white" : "black",
       }}

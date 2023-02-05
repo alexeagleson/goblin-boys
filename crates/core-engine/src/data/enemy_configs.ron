@@ -6,11 +6,11 @@
         paths: true,
         texture: npcSlime,
         hp: (
-            current: 10,
-            max: 10,
+            current: 40,
+            max: 40,
         ),
         combat_stats: (
-            attack: 2,
+            attack: 6,
             defense: 2
         ),
         attack_time: 0.5,
@@ -23,14 +23,31 @@
         paths: true,
         texture: npcKingRatFrames4,
         hp: (
-            current: 50,
-            max: 50,
+            current: 100,
+            max: 100,
         ),
         combat_stats: (
-            attack: 6,
+            attack: 10,
             defense: 4
         ),
         attack_time: 0.5,
         move_time: 0.3
+    ),
+      rat: (
+        name: "Rat",
+        visibility: 4,
+        blocks_movement: true,
+        paths: true,
+        texture: npcSmallRatFrames6,
+        hp: (
+            current: 10,
+            max: 10,
+        ),
+        combat_stats: (
+            attack: 4,
+            defense: 2
+        ),
+        attack_time: 0.5,
+        move_time: 0.4
     ),
 )

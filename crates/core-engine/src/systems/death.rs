@@ -5,20 +5,20 @@ use core_api::{
 };
 
 use crate::{
-    components::{hp::Hp, MapPosition, Renderable},
+    components::{hp::Hp, Bones, MapPosition, Renderable},
     events::ShouldUpdateMap,
     resources::{CurrentUserMaps, MessageSenderAllClients, MessageSenderSingleClient},
 };
 
 pub fn death_system(
-    query: Query<(Entity, &MapPosition, &Hp, Option<&Name>)>,
+    query: Query<(Entity, &MapPosition, &Hp, Option<&Name>, &Renderable)>,
     mut commands: Commands,
     current_user_maps: ResMut<CurrentUserMaps>,
     sender_single_client: Res<MessageSenderSingleClient>,
     mut ev_update_map: EventWriter<ShouldUpdateMap>,
     sender_all_clients: Res<MessageSenderAllClients>,
 ) {
-    for (ent, map_position, hp, name) in query.iter() {
+    for (ent, map_position, hp, name, renderable) in query.iter() {
         if hp.current <= 0 {
             commands.entity(ent).despawn();
 
@@ -30,6 +30,7 @@ pub fn death_system(
                 .insert(Renderable {
                     texture: corpse_sprite,
                 })
+                .insert(Bones)
                 .id()
                 .index();
 
@@ -69,6 +70,15 @@ pub fn death_system(
                                 }),
                             ))
                             .ok();
+
+                        if renderable.texture == SpriteTexture::NpcKingRatFrames4 {
+                            let log_message =
+                                LogMessage(format!("🎉 A KING RAT HAS BEEN KILLED! 🎉"));
+                            sender_all_clients
+                                .0
+                                .send(ServerMessageAllClients::Log(log_message))
+                                .ok();
+                        }
                     }
                 });
         }

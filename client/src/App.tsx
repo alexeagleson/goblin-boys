@@ -21,6 +21,7 @@ import {
 } from "./components/DamageNumber/DamageNumber";
 import { PlayerStats } from "./components/PlayerStats/PlayerStats";
 import { GAME_CONFIG, setGameConfig } from "./game/camera";
+import { PLAYER_STATS_URI } from "./utility/config";
 
 const music = new Audio("audio/music/supersewerslug.ogg");
 
@@ -39,10 +40,27 @@ const PLAYER_SPRITE_NAMES = [
 
 export type PlayerSpriteName = typeof PLAYER_SPRITE_NAMES[number];
 
+const toRustName = (spriteName: PlayerSpriteName): string => {
+  switch (spriteName) {
+    case "Ant Boy":
+      return "ant_boy";
+    case "Boney Boy":
+      return "boney_boy";
+    case "Ghost Boy":
+      return "ghost_boy";
+    case "KidZilla":
+      return "kidzilla";
+    case "Sewer Kid":
+      return "sewer_kid";
+  }
+};
+
 export type PlayerStats = Extract<
   ServerMessageSingleClient,
   { type: "showDamage" }
 >["content"];
+
+let statsQueried = false;
 
 const App = () => {
   const initialized = useRef<boolean>(false);
@@ -74,6 +92,7 @@ const App = () => {
   const [playerName, setPlayerName] = useState<string>("Player");
 
   const [playerStats, setPlayerStats] = useState<PlayerStats>();
+  const [allPlayerStats, setAllPlayerStats] = useState<any | undefined>();
 
   const [cameraRadius, setCameraRadius] = useState(GAME_CONFIG.CAMERA_RADIUS);
   const [spriteScale, setSpriteScale] = useState(GAME_CONFIG.SPRITE_SCALE);
@@ -136,7 +155,8 @@ const App = () => {
           (payload) => setDamageNumbers((prev) => [...prev, payload]),
           playerSprite,
           playerName,
-          setPlayerStats
+          setPlayerStats,
+          addLogEntry
         ).then(
           ({
             gameCanvas,
@@ -170,6 +190,22 @@ const App = () => {
         );
       }
     }
+
+    if (!statsQueried) {
+      statsQueried = true;
+      fetch(PLAYER_STATS_URI, {
+        method: "GET",
+      })
+        .then((playerConfigResponse) => {
+          if (!playerConfigResponse.ok) {
+            throw Error("Failed to get player stats");
+          }
+          return playerConfigResponse.json();
+        })
+        .then((playerConfigResponseJson) => {
+          setAllPlayerStats(playerConfigResponseJson);
+        });
+    }
   }, [startGame]);
 
   const onChangeValue: React.FormEventHandler<HTMLDivElement> = (event) => {
@@ -194,6 +230,30 @@ const App = () => {
                     // checked={playerSprite === spriteName}
                     defaultChecked={playerSprite === spriteName}
                   />
+                  <div
+                    style={{
+                      display: "flex",
+                      columnGap: "16px",
+                      marginBottom: "12px",
+                    }}
+                  >
+                    <p>Hp: {allPlayerStats?.[toRustName(spriteName)].hp.max}</p>
+                    <p>
+                      Atk:{" "}
+                      {
+                        allPlayerStats?.[toRustName(spriteName)].combat_stats
+                          .attack
+                      }
+                    </p>
+
+                    <p>
+                      Def:{" "}
+                      {
+                        allPlayerStats?.[toRustName(spriteName)].combat_stats
+                          .defense
+                      }
+                    </p>
+                  </div>
                 </div>
               );
             })}

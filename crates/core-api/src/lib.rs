@@ -102,6 +102,7 @@ pub enum AnimationTexture {
 pub enum SpawnableEnemy {
     Slime,
     RatKing,
+    Rat,
 }
 
 #[typeshare]
@@ -126,6 +127,7 @@ pub struct DialogueMap(pub HashMap<i32, DialogueContent>);
 /// Tell client to play audio
 pub enum Sound {
     Punch,
+    EatBones,
 }
 
 #[typeshare]
@@ -187,6 +189,7 @@ pub enum ServerMessageSingleClient {
     ShowDamage {
         entity: EntityIndex,
         damage: i32,
+        is_healing: bool,
         target_is_user: bool,
         target_is_me: bool,
         current_hp: i32,
@@ -208,6 +211,7 @@ pub enum ServerMessageAllClients {
     Damage(LogMessage),
     Death(LogMessage),
     Debug(DebugData),
+    Log(LogMessage),
 }
 
 #[derive(Debug)]

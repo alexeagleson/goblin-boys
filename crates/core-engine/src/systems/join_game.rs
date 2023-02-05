@@ -1,6 +1,6 @@
 use crate::{
     components::{cooldown::Cooldown, eyes::Eyes, BlocksMovement, MapPosition, Renderable, User},
-    data::player_config::PlayerConfig,
+    data::{player_config::PlayerConfig, player_configs::PlayerConfigs},
     events::ShouldSendFullMapUpdateToClient,
     resources::{
         map::PEACEFUL_MAP_ID,
@@ -17,7 +17,7 @@ pub fn join_game_system(
     mut connect_buffer: ResMut<ConnectBuffer>,
     mut ev_update_client: EventWriter<ShouldSendFullMapUpdateToClient>,
     mut current_user_maps: ResMut<CurrentUserMaps>,
-    player_config: Res<PlayerConfig>,
+    player_configs: Res<PlayerConfigs>,
     // enemy_configs: Res<EnemyConfigs>,
 ) {
     let map = game_world
@@ -32,7 +32,11 @@ pub fn join_game_system(
             map_id: map.id(),
         };
         let mut player_commands = commands.spawn(User(player_user_id));
+
+        let player_config = &player_configs.ghost_boy;
+
         player_commands.insert(Eyes::new(map, player_config.visibility));
+
         if player_config.blocks_movement {
             player_commands.insert(BlocksMovement);
         }
