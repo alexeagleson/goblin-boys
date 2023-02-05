@@ -11,9 +11,26 @@
         ),
         combat_stats: (
             attack: 2,
-            defense: 1
+            defense: 2
         ),
         attack_time: 0.5,
         move_time: 0.5
-    )
+    ),
+     rat_king: (
+        name: "Rat King",
+        visibility: 9,
+        blocks_movement: true,
+        paths: true,
+        texture: npcKingRatFrames4,
+        hp: (
+            current: 50,
+            max: 50,
+        ),
+        combat_stats: (
+            attack: 6,
+            defense: 4
+        ),
+        attack_time: 0.5,
+        move_time: 0.3
+    ),
 )

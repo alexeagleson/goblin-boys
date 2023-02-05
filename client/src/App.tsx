@@ -26,7 +26,8 @@ const music = new Audio("audio/music/supersewerslug.ogg");
 
 const gameInputState: GameInputState = { enabled: true };
 
-let spawnHandler: () => void | undefined;
+let spawnSlimeHandler: () => void | undefined;
+let spawnKingRatHandler: () => void | undefined;
 
 const PLAYER_SPRITE_NAMES = [
   "KidZilla",
@@ -64,8 +65,11 @@ const App = () => {
 
   const [startGame, setStartGame] = useState(false);
 
+  const randomSprite =
+    PLAYER_SPRITE_NAMES[Math.floor(Math.random() * PLAYER_SPRITE_NAMES.length)];
+
   const [playerSprite, setPlayerSprite] =
-    useState<PlayerSpriteName>("KidZilla");
+    useState<PlayerSpriteName>(randomSprite);
 
   const [playerName, setPlayerName] = useState<string>("Player");
 
@@ -75,6 +79,8 @@ const App = () => {
   const [spriteScale, setSpriteScale] = useState(GAME_CONFIG.SPRITE_SCALE);
 
   const [logOn, setLogOn] = useState(true);
+
+  const [mobileControls, setMobileControls] = useState(false);
 
   const onHover = (x: number, y: number, entityData?: EntityData) => {
     if (!entityData) {
@@ -131,29 +137,37 @@ const App = () => {
           playerSprite,
           playerName,
           setPlayerStats
-        ).then(({ gameCanvas, directionHandlers: dirHandlers, spawnSlime }) => {
-          spawnHandler = spawnSlime;
-          setDirectionHandlers(dirHandlers);
-          canvasContainer.current?.appendChild(gameCanvas);
-          let canvasHeight = gameCanvas.height;
-          const canvasWidth = gameCanvas.width;
+        ).then(
+          ({
+            gameCanvas,
+            directionHandlers: dirHandlers,
+            spawnSlime,
+            spawnRatKing,
+          }) => {
+            spawnSlimeHandler = spawnSlime;
+            spawnKingRatHandler = spawnRatKing;
+            setDirectionHandlers(dirHandlers);
+            canvasContainer.current?.appendChild(gameCanvas);
+            let canvasHeight = gameCanvas.height;
+            const canvasWidth = gameCanvas.width;
 
-          if (canvasContainer.current && logContainer.current) {
-            canvasContainer.current.style.height = canvasHeight + "px";
-            logContainer.current.style.width = canvasWidth + "px";
+            if (canvasContainer.current && logContainer.current) {
+              canvasContainer.current.style.height = canvasHeight + "px";
+              logContainer.current.style.width = canvasWidth + "px";
 
-            // Log height is shorter on mobile
-            if (window.matchMedia("(max-width: 600px)").matches) {
-              canvasHeight = Math.floor(canvasHeight / 2);
+              // Log height is shorter on mobile
+              if (window.matchMedia("(max-width: 600px)").matches) {
+                canvasHeight = Math.floor(canvasHeight / 2);
+              }
+
+              logContainer.current.style.height = canvasHeight + "px";
             }
 
-            logContainer.current.style.height = canvasHeight + "px";
+            gameCanvas.onmouseleave = () => {
+              setHoverMenu(undefined);
+            };
           }
-
-          gameCanvas.onmouseleave = () => {
-            setHoverMenu(undefined);
-          };
-        });
+        );
       }
     }
   }, [startGame]);
@@ -231,39 +245,55 @@ const App = () => {
       ) : (
         <>
           {debugMenuProps && <DebugMenu {...debugMenuProps} />}
-          <button
-            onClick={() => {
-              setEnableMainTitle((oldVal) => !oldVal);
-            }}
-          >
-            Test title sequence
-          </button>
-          <button
-            onClick={() => {
-              if (music.currentTime === 0) {
-                music.play();
-                music.loop = true;
-              } else {
-                music.pause();
-              }
-            }}
-          >
-            Test music
-          </button>
-          <button
-            onClick={() => {
-              spawnHandler?.();
-            }}
-          >
-            Spawn a Slime
-          </button>
-          <button
-            onClick={() => {
-              setLogOn(false);
-            }}
-          >
-            Disable Log
-          </button>
+          <div style={{ display: "flex", columnGap: "8px", margin: "8px" }}>
+            <button
+              onClick={() => {
+                setEnableMainTitle((oldVal) => !oldVal);
+              }}
+            >
+              Test title sequence
+            </button>
+            <button
+              onClick={() => {
+                if (music.currentTime === 0) {
+                  music.play();
+                  music.loop = true;
+                } else {
+                  music.pause();
+                }
+              }}
+            >
+              Test music
+            </button>
+            <button
+              onClick={() => {
+                spawnSlimeHandler?.();
+              }}
+            >
+              Spawn a Slime
+            </button>
+            <button
+              onClick={() => {
+                spawnKingRatHandler?.();
+              }}
+            >
+              Spawn King Rat
+            </button>
+            <button
+              onClick={() => {
+                setLogOn(false);
+              }}
+            >
+              Disable Log
+            </button>
+            <button
+              onClick={() => {
+                setMobileControls(true);
+              }}
+            >
+              Enable Control Overlay
+            </button>
+          </div>
           {enableMainTitle && <MainTitle />}
           {!enableMainTitle && (
             <div className="game-container">
@@ -276,9 +306,9 @@ const App = () => {
                   ))}
                   {/* {hoverMenu && <HoverMenu {...hoverMenu} />} */}
                   {npcDialogueMenu && <NpcDialogue {...npcDialogueMenu} />}
-                  {/* {directionHandlers && (
-              <ControlOverlay directionHandlers={directionHandlers} />
-            )} */}
+                  {mobileControls && directionHandlers && (
+                    <ControlOverlay directionHandlers={directionHandlers} />
+                  )}
                 </div>
 
                 {logOn && (

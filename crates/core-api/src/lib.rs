@@ -46,6 +46,7 @@ pub struct LogMessage(pub String);
 /// A sprite to render that represents a visible entity
 pub enum SpriteTexture {
     Empty,
+    ObjectBone,
     ObjectRedSoda,
     ObjectSewerGrate,
     ObjectWindow,
@@ -100,6 +101,7 @@ pub enum AnimationTexture {
 /// A sprite to render that represents a temporary animation to show
 pub enum SpawnableEnemy {
     Slime,
+    RatKing,
 }
 
 #[typeshare]
@@ -186,6 +188,7 @@ pub enum ServerMessageSingleClient {
         entity: EntityIndex,
         damage: i32,
         target_is_user: bool,
+        target_is_me: bool,
         current_hp: i32,
         max_hp: i32,
     },

@@ -15,7 +15,7 @@ export const setGameConfig = (spriteScale: number, cameraRadius: number) => {
 };
 
 // Default values
-setGameConfig(2, 9);
+setGameConfig(3, 7);
 
 export interface Camera {
   x: number;

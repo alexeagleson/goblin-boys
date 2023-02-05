@@ -3,8 +3,8 @@
     blocks_movement: true,
     texture: pcKidZilla,
     combat_stats: (
-      attack: 3,
-      defense: 1
+      attack: 6,
+      defense: 4
     ),
     hp: (
         current: 50,

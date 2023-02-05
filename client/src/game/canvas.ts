@@ -360,7 +360,8 @@ export const createGameApp = async (
     const pxPos = tileToPx(screenPos);
     attackSprite.x = pxPos.x;
     attackSprite.y = pxPos.y;
-    attackSprite.animationSpeed = ((1 / attackSprite.totalFrames) * 1) / time;
+    attackSprite.animationSpeed =
+      ((1 / attackSprite.totalFrames) * 1) / time / 4;
     attackSprite.play();
   };
 

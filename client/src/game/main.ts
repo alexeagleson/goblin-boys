@@ -165,7 +165,7 @@ export const initializeGame = async (
           pixelPos: tileToPx(screenPos),
           showDamage: response.content,
         });
-        if (response.content.targetIsUser) {
+        if (response.content.targetIsMe) {
           setPlayerStats(response.content);
         }
         break;
@@ -208,5 +208,9 @@ export const initializeGame = async (
     safeSend({ type: "spawn", content: SpawnableEnemy.Slime });
   };
 
-  return { gameCanvas, directionHandlers, spawnSlime };
+  const spawnRatKing = () => {
+    safeSend({ type: "spawn", content: SpawnableEnemy.RatKing });
+  };
+
+  return { gameCanvas, directionHandlers, spawnSlime, spawnRatKing };
 };

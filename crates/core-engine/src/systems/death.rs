@@ -1,8 +1,11 @@
 use bevy::prelude::*;
-use core_api::{EntityIndex, LogMessage, ServerMessageAllClients, ServerMessageSingleClient};
+use core_api::{
+    EntityIndex, LogMessage, ServerMessageAllClients, ServerMessageSingleClient, SpriteTexture,
+    SpriteUpdate,
+};
 
 use crate::{
-    components::{hp::Hp, MapPosition},
+    components::{hp::Hp, MapPosition, Renderable},
     events::ShouldUpdateMap,
     resources::{CurrentUserMaps, MessageSenderAllClients, MessageSenderSingleClient},
 };
@@ -18,6 +21,18 @@ pub fn death_system(
     for (ent, map_position, hp, name) in query.iter() {
         if hp.current <= 0 {
             commands.entity(ent).despawn();
+
+            let mut corpse_commands = commands.spawn(Name::new("Bones"));
+
+            let corpse_sprite = SpriteTexture::ObjectBone;
+            let corpse_index = corpse_commands
+                .insert(map_position.clone())
+                .insert(Renderable {
+                    texture: corpse_sprite,
+                })
+                .id()
+                .index();
+
             // Need to update the map if something dies
             ev_update_map.send(ShouldUpdateMap(map_position.map_id));
             if let Some(name) = name {
@@ -39,6 +54,18 @@ pub fn death_system(
                                 *user_id,
                                 ServerMessageSingleClient::RemoveSprite(EntityIndex {
                                     idx: ent.index(),
+                                }),
+                            ))
+                            .ok();
+
+                        sender_single_client
+                            .0
+                            .send((
+                                *user_id,
+                                ServerMessageSingleClient::AddSprite(SpriteUpdate {
+                                    entity: EntityIndex { idx: corpse_index },
+                                    pos: map_position.pos.clone(),
+                                    sprite: corpse_sprite,
                                 }),
                             ))
                             .ok();

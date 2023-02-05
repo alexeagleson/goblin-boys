@@ -13,6 +13,7 @@ use core_api::{
     AnimationTexture, EntityIndex, LogMessage, ServerMessageAllClients, ServerMessageSingleClient,
     Sound,
 };
+use rand::Rng;
 
 pub fn resolve_melee_attack_system(
     attacker_query: Query<(
@@ -36,7 +37,7 @@ pub fn resolve_melee_attack_system(
     sender_single_client: Res<MessageSenderSingleClient>,
     current_user_maps: Res<CurrentUserMaps>,
 ) {
-    for (ent, combat_stats, intend_melee_attack, name, attacker_user, cooldown) in
+    for (ent, attacker_combat_stats, intend_melee_attack, name, attacker_user, cooldown) in
         attacker_query.iter()
     {
         if let Ok((
@@ -48,7 +49,11 @@ pub fn resolve_melee_attack_system(
             target_user,
         )) = target_query.get_mut(intend_melee_attack.target)
         {
-            let damage = (combat_stats.attack - target_combat_stats.defense).max(0);
+            let mut rng = rand::thread_rng();
+            let rando = rng.gen_range(0..attacker_combat_stats.attack);
+
+            let damage =
+                (attacker_combat_stats.attack - target_combat_stats.defense + rando).max(1);
             target_hp.current -= damage;
             let log_message = LogMessage(format!(
                 "{} attacked {} for {} damage {}/{}",
@@ -69,6 +74,11 @@ pub fn resolve_melee_attack_system(
                 .iter()
                 .for_each(|(user_id, user_map_pos)| {
                     if user_map_pos.map_id == target_map_pos.map_id {
+                        let is_matching_user = match target_user {
+                            Some(target_user) => target_user.0 == *user_id,
+                            None => false,
+                        };
+
                         sender_single_client
                             .0
                             .send((
@@ -79,6 +89,7 @@ pub fn resolve_melee_attack_system(
                                     },
                                     damage,
                                     target_is_user: target_user.is_some(),
+                                    target_is_me: is_matching_user,
                                     current_hp: target_hp.current,
                                     max_hp: target_hp.max,
                                 },

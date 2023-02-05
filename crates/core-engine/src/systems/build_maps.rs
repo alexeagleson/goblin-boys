@@ -44,9 +44,9 @@ fn str_map_to_game_map(
                     pos: pos.clone(),
                     map_id: map.id(),
                 })
-                .insert(Renderable { texture: floor })
-                .id()
-                .index();
+                .insert(Renderable { texture: floor });
+            // .id()
+            // .index();
 
             // Check if there is stuff on top of the floor
             let (sprite, maybe_dialogue_map) = legend(character);
@@ -103,6 +103,7 @@ fn str_map_to_game_map(
                     SpriteTexture::ObjectShoreFrames4 => false,
                     SpriteTexture::ObjectWaterFrames4 => true,
                     SpriteTexture::ObjectSand => false,
+                    SpriteTexture::ObjectBone => false,
                 };
 
                 let name = match sprite {
@@ -148,6 +149,8 @@ fn str_map_to_game_map(
                     SpriteTexture::ObjectShoreFrames4 => "Shore".to_string(),
                     SpriteTexture::ObjectWaterFrames4 => "Moving Water".to_string(),
                     SpriteTexture::ObjectSand => "Sand".to_string(),
+
+                    SpriteTexture::ObjectBone => "Bones".to_string(),
                 };
 
                 sprite_command.insert(Name::new(name));

@@ -29,14 +29,14 @@ pub fn spawn_enemy_system(
         // [TODO] Right now it's slime only but in the future it could be others
         let enemy_config = match enemy {
             core_api::SpawnableEnemy::Slime => &enemy_configs.slime,
+            core_api::SpawnableEnemy::RatKing => &enemy_configs.rat_king,
         };
 
-        let mut slime_commands = commands.spawn(Name::new(enemy_config.name.clone()));
-        let enemy_config = &enemy_configs.slime;
+        let mut enemy_commands = commands.spawn(Name::new(enemy_config.name.clone()));
 
         let new_entity_pos = bad_guy_map.random_movement_unblocked_tile();
         let new_entity_texture = enemy_config.texture;
-        slime_commands
+        enemy_commands
             .insert(MapPosition {
                 pos: new_entity_pos.clone(),
                 map_id: bad_guy_map.id(),
@@ -55,7 +55,7 @@ pub fn spawn_enemy_system(
             })
             .insert(Eyes::new(bad_guy_map, enemy_config.visibility));
 
-        let new_entity_idx = slime_commands.id().index();
+        let new_entity_idx = enemy_commands.id().index();
 
         current_user_maps
             .0

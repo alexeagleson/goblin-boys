@@ -1,7 +1,7 @@
 .control-overlay {
   position: absolute;
-  right: 20px;
-  bottom: 20px;
+  right: 12px;
+  bottom: 12px;
   display: grid;
   grid-template-columns: 40px 40px 40px;
 }
