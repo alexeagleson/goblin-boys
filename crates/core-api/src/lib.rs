@@ -58,6 +58,7 @@ pub enum SpriteTexture {
     ObjectWarpTeeveeFrames3,
     ObjectShoreFrames4,
     ObjectSand,
+    ObjectWood,
     FloorGrass,
     FloorConcrete,
     FloorSlime,
@@ -85,6 +86,10 @@ pub enum SpriteTexture {
     PcKidZilla,
     WallBrick,
     WallStone,
+    WallFenceCornerIn,
+    WallFenceCornerOut,
+    WallFenceHorizontal,
+    WallFenceVertical,
 }
 
 #[typeshare]

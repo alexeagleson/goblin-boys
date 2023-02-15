@@ -8,4 +8,5 @@ pub struct DialogueContents {
     pub sewer_kid: DialogueMap,
     pub grace_jones: DialogueMap,
     pub voidcat: DialogueMap,
+    pub real_estate_dick: DialogueMap,
 }

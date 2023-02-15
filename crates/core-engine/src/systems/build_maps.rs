@@ -104,6 +104,13 @@ fn str_map_to_game_map(
                     SpriteTexture::ObjectWaterFrames4 => true,
                     SpriteTexture::ObjectSand => false,
                     SpriteTexture::ObjectBone => false,
+
+                    SpriteTexture::WallFenceCornerIn => true,
+                    SpriteTexture::WallFenceCornerOut => true,
+                    SpriteTexture::WallFenceHorizontal => true,
+                    SpriteTexture::WallFenceVertical => true,
+
+                    SpriteTexture::ObjectWood => false,
                 };
 
                 let name = match sprite {
@@ -151,6 +158,13 @@ fn str_map_to_game_map(
                     SpriteTexture::ObjectSand => "Sand".to_string(),
 
                     SpriteTexture::ObjectBone => "Bones".to_string(),
+
+                    SpriteTexture::WallFenceCornerIn => "Fence".to_string(),
+                    SpriteTexture::WallFenceCornerOut => "Fence".to_string(),
+                    SpriteTexture::WallFenceHorizontal => "Fence".to_string(),
+                    SpriteTexture::WallFenceVertical => "Fence".to_string(),
+
+                    SpriteTexture::ObjectWood => "Wood Floor".to_string(),
                 };
 
                 sprite_command.insert(Name::new(name));
